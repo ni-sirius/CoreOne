@@ -2,6 +2,8 @@
 #include "Render.h"
 //My stuff
 #include "Shader.h"
+#include "Texture.h"
+
 
 struct Vertex
 {
@@ -193,8 +195,8 @@ void RenderLoop()
   glBindVertexArray(0);
 
   //Texturing
-  GLuint texture0 = createTexture("Images/apple.png");
-  GLuint texture1 = createTexture("Images/flower.png");
+  Texture texture0("Images/apple.png", GL_TEXTURE_2D, 0);
+  Texture texture1("Images/flower.png", GL_TEXTURE_2D, 1);
 
   //First Transforms
   glm::vec3 position(0.f);
@@ -251,8 +253,8 @@ void RenderLoop()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     //Update uniforms
-    coreProgram.Set1i(0, "texture0");
-    coreProgram.Set1i(1, "texture1");
+    coreProgram.Set1i(texture0.GetTextureUnit(), "texture0");
+    coreProgram.Set1i(texture1.GetTextureUnit(), "texture1");
 
     //Move/rotate
     //position.z -= 0.001f;
@@ -278,11 +280,8 @@ void RenderLoop()
     coreProgram.Use();
 
     //Activate texture
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture0);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-
+    texture0.Bind();
+    texture1.Bind();
 
     //bind VBO
     glBindVertexArray(VAO);
@@ -298,8 +297,8 @@ void RenderLoop()
     coreProgram.Unuse();
 
     glBindVertexArray(0);
-    glActiveTexture(0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    texture0.Unbind();
+    texture1.Unbind();//Not necessary actually
   }
 
   //Ending
