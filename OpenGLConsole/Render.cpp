@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "Render.h"
-//My stuff
-#include "Shader.h"
-#include "Texture.h"
+
+#include "Material.h"
 
 
 struct Vertex
@@ -197,6 +196,8 @@ void RenderLoop()
   //Texturing
   Texture texture0("Images/apple.png", GL_TEXTURE_2D, 0);
   Texture texture1("Images/flower.png", GL_TEXTURE_2D, 1);
+  //Material
+  Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture0.GetTextureUnit(), texture1.GetTextureUnit());
 
   //First Transforms
   glm::vec3 position(0.f);
@@ -255,6 +256,7 @@ void RenderLoop()
     //Update uniforms
     coreProgram.Set1i(texture0.GetTextureUnit(), "texture0");
     coreProgram.Set1i(texture1.GetTextureUnit(), "texture1");
+    material0.SendToShader(coreProgram);
 
     //Move/rotate
     //position.z -= 0.001f;
