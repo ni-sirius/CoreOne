@@ -27,39 +27,39 @@ void updateInput(GLFWwindow* window)
   }
 }
 
-void updateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale)
+void updateInput(GLFWwindow* window, Mesh& mesh)
 {
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
   {
-    position.z -= 0.01f;
+    mesh.Move(glm::vec3(0.f, 0.f, -0.01f));
   }
   else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
   {
-    position.z += 0.01f;
+    mesh.Move(glm::vec3(0.f, 0.f, 0.01f));
   }
   else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
   {
-    position.x -= 0.01f;
+    mesh.Move(glm::vec3(-0.01f, 0.f, 0.f));
   }
   else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
   {
-    position.x += 0.01f;
+    mesh.Move(glm::vec3(0.01f, 0.f, 0.f));
   }
   else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
   {
-    rotation.y -= 0.5f;
+    mesh.Rotate(glm::vec3(0.f, -0.5f, 0.f));
   }
   else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
   {
-    rotation.y += 0.5f;
+    mesh.Rotate(glm::vec3(0.f, 0.5f, 0.f));
   }
   else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
   {
-    scale -= 0.01f;
+    mesh.Upscale(glm::vec3(-0.01f));
   }
   else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
   {
-    scale += 0.01f;
+    mesh.Upscale(glm::vec3(0.01f));
   }
 }
 
@@ -147,44 +147,7 @@ void RenderLoop()
   Shader coreProgram("vertex_core.glsl", "fragment_core.glsl");
 
   //MODEL
-  Mesh testMesh(vertices, nrOfVertices, indices, nrOfIndices);
-
-  //VAO VBO EBO, Generation of
-  GLuint VAO; //Vertex array object
-  glGenVertexArrays(1, &VAO);
-  glBindVertexArray(VAO);
-
-  GLuint VBO; //Vertex buffer object
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  GLuint EBO;  //Element buffer object
-  glGenBuffers(1, &EBO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-  //SET vertex attribute pointers and enable(input assembly)
-  //Example if there is no known descriptor
-  //GLuint attribLoc = glGetAttribLocation(coreProgram, "vertex_position");
-  //glVertexAttribPointer(attribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-  //glEnableVertexAttribArray(attribLoc);
-
-  //Position
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-  glEnableVertexAttribArray(0);
-  //Color
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
-  glEnableVertexAttribArray(1);
-  //Texture
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texture));
-  glEnableVertexAttribArray(2);
-  //Normal
-  glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-  glEnableVertexAttribArray(3);
-
-  //bind vao 0(unbind enything)
-  glBindVertexArray(0);
+  Mesh testMesh(vertices, nrOfVertices, indices, nrOfIndices, glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
 
   //Texturing
   Texture texture0("Images/apple.png", GL_TEXTURE_2D, 0);
@@ -193,17 +156,6 @@ void RenderLoop()
   Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture0.GetTextureUnit(), texture1.GetTextureUnit());
 
   //First Transforms
-  glm::vec3 position(0.f);
-  glm::vec3 rotation(0.f);
-  glm::vec3 scale(1.f);
-
-  glm::mat4 ModelMatrix(1.f);
-  ModelMatrix = glm::translate(ModelMatrix, position);
-  ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
-  ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
-  ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
-  ModelMatrix = glm::scale(ModelMatrix, scale);
-
   glm::vec3 camPosition(0.f, 0.f, 1.f);
   glm::vec3 worldUp(0.f, 1.f, 0.f);
   glm::vec3 camFront(0.f, 0.f, -1.f);
@@ -224,7 +176,6 @@ void RenderLoop()
   glm::vec3 lightPos0(0.f, 0.f, 0.5f);
 
   //Init uniforms
-  coreProgram.SetMat4fv(ModelMatrix, "ModelMat");
   coreProgram.SetMat4fv(ViewMatrix, "ViewMat");
   coreProgram.SetMat4fv(ProjectionMatrix, "ProjectionMat");
 
@@ -236,12 +187,12 @@ void RenderLoop()
   {
     //update input
     glfwPollEvents();
-    updateInput(window, position, rotation, scale);
+    updateInput(window, testMesh);
 
-    //update
+    //update Exit
     updateInput(window);
-    //draw
 
+    //draw
     //clear
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -251,18 +202,7 @@ void RenderLoop()
     coreProgram.Set1i(texture1.GetTextureUnit(), "texture1");
     material0.SendToShader(coreProgram);
 
-    //Move/rotate
-    //position.z -= 0.001f;
-    //rotation.y += 0.5f;
-
-    ModelMatrix = glm::mat4(1.f);
-    ModelMatrix = glm::translate(ModelMatrix, position);
-    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
-    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
-    ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
-    ModelMatrix = glm::scale(ModelMatrix, scale);
-    coreProgram.SetMat4fv(ModelMatrix, "ModelMat");
-
+    //To handle resizing of the window
     glfwGetFramebufferSize(window, &framebufferWidth, &frameBufferHeight);
     ProjectionMatrix = glm::perspective(
       glm::radians(fov),
@@ -278,14 +218,12 @@ void RenderLoop()
     texture0.Bind();
     texture1.Bind();
 
-    //bind VBO
-    glBindVertexArray(VAO);
     //draw
     //glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
     glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
 
     //Draw Mesh
-    //testMesh.Render(&coreProgram);
+    testMesh.Render(&coreProgram);
 
     //end draw
     glfwSwapBuffers(window);
