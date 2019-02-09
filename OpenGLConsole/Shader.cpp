@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "Shader.h"
 
-Shader::Shader(std::string vertexFile /*= ""*/, std::string fragmentFile /*= ""*/, std::string geometryFile /*= ""*/)
+
+Shader::Shader(const int versionMaj, const int versionMin,
+              std::string vertexFile /*= ""*/, std::string fragmentFile /*= ""*/, std::string geometryFile /*= ""*/):
+  _versionMajor(versionMaj),
+  _versionMinor(versionMin)
 {
   GLuint vertexShader = vertexFile.empty() ? 0 : loadShader(GL_VERTEX_SHADER, vertexFile);
   GLuint geometryShader = geometryFile.empty() ? 0 : loadShader(GL_GEOMETRY_SHADER, geometryFile);
@@ -113,6 +117,9 @@ std::string Shader::loadShaderSource(std::string filename)
   }
 
   in_file.close();
+
+  std::string versionNum(std::to_string(_versionMajor) + std::to_string(_versionMinor) + "0");
+  src.replace(src.find("version"), 12, "version " + versionNum);
 
   return src;
 }

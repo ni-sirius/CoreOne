@@ -141,7 +141,7 @@ void Mesh::initVAO(Primitive* primitive)
   _nrOfVertices = primitive->GetNrOfVertices();
 
   //VAO VBO EBO, Generation of
-  glGenVertexArrays(1, &_VAO);
+  glCreateVertexArrays(1, &_VAO);
   glBindVertexArray(_VAO);
 
   glGenBuffers(1, &_VBO);

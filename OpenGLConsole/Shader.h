@@ -15,7 +15,8 @@
 class Shader
 {
 public:
-  Shader(std::string vertexFile = "", std::string fragmentFile = "", std::string geometryFile = "");
+  Shader(const int versionMaj, const int versionMin,
+         std::string vertexFile = "", std::string fragmentFile = "", std::string geometryFile = "");
   ~Shader();
 
   void Use();
@@ -34,6 +35,8 @@ public:
 
 private:
   GLuint _id;
+  int _versionMajor;
+  int _versionMinor;
 
 private:
   std::string loadShaderSource(std::string filename);

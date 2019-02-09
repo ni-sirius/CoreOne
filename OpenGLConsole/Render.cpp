@@ -48,24 +48,20 @@ void updateInput(GLFWwindow* window, Mesh& mesh)
   }
 }
 
-void RenderLoop()
-{  //Init GLFW
-  glfwInit();
-
-  //Create window
-  const size_t WINDOW_WIDTH = 640;
-  const size_t WINDOW_HEIGHT = 480;
-  int framebufferWidth = 0;
-  int frameBufferHeight = 0;
-
+GLFWwindow* createWindow(std::string title,
+                         const int width, const int height,
+                         int& fbWidth, int& fbHeight,
+                         int GLMajorVer, int GLMinorVer,
+                         bool resizable)
+{
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-  glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLMajorVer);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLMinorVer);
+  glfwWindowHint(GLFW_RESIZABLE, resizable);
 
-  GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OGL Test", nullptr, nullptr);
+  GLFWwindow* window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 
-  glfwGetFramebufferSize(window, &framebufferWidth, &frameBufferHeight); //for prrojection matrix
+  glfwGetFramebufferSize(window, &fbWidth, &fbHeight); //for prrojection matrix
 
   auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
     glViewport(0, 0, frameBufWidth, frameBufHeight);
@@ -74,6 +70,27 @@ void RenderLoop()
   //glViewport(0, 0, framebufferWidth, frameBufferHeight); if static size
 
   glfwMakeContextCurrent(window);
+
+  return window;
+}
+
+void RenderLoop()
+{  //Init GLFW
+  glfwInit();
+
+  //Create window
+  const int GLMajorVer = 4;
+  const int GLMinorVer = 5;
+  const size_t WINDOW_WIDTH = 640;
+  const size_t WINDOW_HEIGHT = 480;
+  int framebufferWidth = 0;
+  int frameBufferHeight = 0;
+
+  GLFWwindow* window = createWindow("OpenGL Test App",
+                                    WINDOW_WIDTH, WINDOW_HEIGHT,
+                                    framebufferWidth, frameBufferHeight,
+                                    GLMajorVer, GLMinorVer,
+                                    false);
 
   //Init GLEW
   glewExperimental = GL_TRUE;
@@ -97,7 +114,7 @@ void RenderLoop()
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   //Shader init
-  Shader coreProgram("vertex_core.glsl", "fragment_core.glsl");
+  Shader coreProgram(GLMajorVer, GLMinorVer,"vertex_core.glsl", "fragment_core.glsl");
 
   //MODEL
   Mesh testMesh(&Quad(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
