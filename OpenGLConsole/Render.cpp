@@ -2,22 +2,14 @@
 #include "Render.h"
 
 #include "Material.h"
-
-
-struct Vertex
-{
-  glm::vec3 position;
-  glm::vec3 color;
-  glm::vec2 texture;
-  glm::vec3 normal;
-};
+#include "Mesh.h"
 
 Vertex vertices[] = {
   //position                     //color                    //uvcoords               //normals                 
-  glm::vec3(-0.5f, 0.5f, 0.0f),  glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.f, 1.f),      glm::vec3(0.f, 0.f, -1.f),
-  glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.f, 1.f, 0.f), glm::vec2(0.f, 0.f),      glm::vec3(0.f, 0.f, -1.f),
-  glm::vec3(0.5f, -0.5f, 0.0f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),      glm::vec3(0.f, 0.f, -1.f),
-  glm::vec3(0.5f, 0.5f, 0.0f),   glm::vec3(1.f, 1.f, 0.f), glm::vec2(1.f, 1.f),      glm::vec3(0.f, 0.f, -1.f)
+  glm::vec3(-0.5f, 0.5f, 0.0f),  glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.f, 1.f),      glm::vec3(0.f, 0.f, 1.f),
+  glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.f, 1.f, 0.f), glm::vec2(0.f, 0.f),      glm::vec3(0.f, 0.f, 1.f),
+  glm::vec3(0.5f, -0.5f, 0.0f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),      glm::vec3(0.f, 0.f, 1.f),
+  glm::vec3(0.5f, 0.5f, 0.0f),   glm::vec3(1.f, 1.f, 0.f), glm::vec2(1.f, 1.f),      glm::vec3(0.f, 0.f, 1.f)
 };
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
@@ -39,27 +31,27 @@ void updateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, g
 {
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
   {
-    position.z += 0.01f;
+    position.z -= 0.01f;
   }
   else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
   {
-    position.z -= 0.01f;
+    position.z += 0.01f;
   }
   else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
   {
-    position.x += 0.01f;
+    position.x -= 0.01f;
   }
   else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
   {
-    position.x -= 0.01f;
+    position.x += 0.01f;
   }
   else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
   {
-    rotation.y -= 1.f;
+    rotation.y -= 0.5f;
   }
   else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
   {
-    rotation.y += 1.f;
+    rotation.y += 0.5f;
   }
   else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
   {
@@ -155,6 +147,7 @@ void RenderLoop()
   Shader coreProgram("vertex_core.glsl", "fragment_core.glsl");
 
   //MODEL
+  Mesh testMesh(vertices, nrOfVertices, indices, nrOfIndices);
 
   //VAO VBO EBO, Generation of
   GLuint VAO; //Vertex array object
@@ -290,6 +283,9 @@ void RenderLoop()
     //draw
     //glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
     glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
+
+    //Draw Mesh
+    //testMesh.Render(&coreProgram);
 
     //end draw
     glfwSwapBuffers(window);
