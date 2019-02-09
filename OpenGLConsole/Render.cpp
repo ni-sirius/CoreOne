@@ -4,21 +4,6 @@
 #include "Material.h"
 #include "Mesh.h"
 
-Vertex vertices[] = {
-  //position                     //color                    //uvcoords               //normals                 
-  glm::vec3(-0.5f, 0.5f, 0.0f),  glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.f, 1.f),      glm::vec3(0.f, 0.f, 1.f),
-  glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.f, 1.f, 0.f), glm::vec2(0.f, 0.f),      glm::vec3(0.f, 0.f, 1.f),
-  glm::vec3(0.5f, -0.5f, 0.0f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),      glm::vec3(0.f, 0.f, 1.f),
-  glm::vec3(0.5f, 0.5f, 0.0f),   glm::vec3(1.f, 1.f, 0.f), glm::vec2(1.f, 1.f),      glm::vec3(0.f, 0.f, 1.f)
-};
-unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
-
-GLuint indices[] = {
-  0, 1, 2,
-  0, 2, 3
-};
-unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
-
 void updateInput(GLFWwindow* window)
 {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -63,39 +48,6 @@ void updateInput(GLFWwindow* window, Mesh& mesh)
   }
 }
 
-GLuint createTexture(std::string path)
-{
-  int imageWidth(0);
-  int imageHeight(0);
-  unsigned char* image = SOIL_load_image(path.c_str(), &imageWidth, &imageHeight, NULL, SOIL_LOAD_RGBA);
-
-  GLuint texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_REPEAT);
-
-  if (image)
-  {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-    glGenerateMipmap(GL_TEXTURE_2D);
-  }
-  else
-  {
-    std::cout << "Error::Texture on path " << path << " load failed" << std::endl;
-  }
-
-  glActiveTexture(0);
-  glBindTexture(GL_TEXTURE_2D, 0); // set text to 0, because if all goes wrong there is random data. insted noeow
-  SOIL_free_image_data(image);
-
-  return texture;
-}
-
-
 void RenderLoop()
 {  //Init GLFW
   glfwInit();
@@ -127,14 +79,15 @@ void RenderLoop()
   glewExperimental = GL_TRUE;
   if (glewInit() != GLEW_OK)
   {
-    std::cout << "ERROR MAIN.cpp GLEW_Init_Failed" << std::endl;
+    std::cout << "ERROR::MAIN GLEW_Init_Failed" << std::endl;
     glfwTerminate();
   }
 
   //OpenGL enable options
   glEnable(GL_DEPTH_TEST);
 
-  glEnable(GL_CULL_FACE);
+  //TODO learn culling and uncomment
+  //glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
 
@@ -147,15 +100,16 @@ void RenderLoop()
   Shader coreProgram("vertex_core.glsl", "fragment_core.glsl");
 
   //MODEL
-  Mesh testMesh(vertices, nrOfVertices, indices, nrOfIndices, glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
+  Mesh testMesh(&Quad(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
 
   //Texturing
   Texture texture0("Images/apple.png", GL_TEXTURE_2D, 0);
   Texture texture1("Images/flower.png", GL_TEXTURE_2D, 1);
+
   //Material
   Material material0(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture0.GetTextureUnit(), texture1.GetTextureUnit());
 
-  //First Transforms
+  //Matrices
   glm::vec3 camPosition(0.f, 0.f, 1.f);
   glm::vec3 worldUp(0.f, 1.f, 0.f);
   glm::vec3 camFront(0.f, 0.f, -1.f);
@@ -167,10 +121,10 @@ void RenderLoop()
   float farPlane = 1000.f;
   glm::mat4 ProjectionMatrix(1.f);
   ProjectionMatrix = glm::perspective(
-    glm::radians(fov),
-    static_cast<float>(framebufferWidth) / frameBufferHeight,
-    nearPlane,
-    farPlane);
+                                      glm::radians(fov),
+                                      static_cast<float>(framebufferWidth) / frameBufferHeight,
+                                      nearPlane,
+                                      farPlane);
 
   //Lights
   glm::vec3 lightPos0(0.f, 0.f, 0.5f);
@@ -219,8 +173,6 @@ void RenderLoop()
     texture1.Bind();
 
     //draw
-    //glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
-    glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
 
     //Draw Mesh
     testMesh.Render(&coreProgram);

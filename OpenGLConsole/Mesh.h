@@ -3,6 +3,7 @@
 
 struct Vertex;
 class Shader;
+class Primitive;
 
 class Mesh
 {
@@ -11,6 +12,10 @@ public:
        const unsigned& nrOfVertices,
        GLuint* indexArray,
        const unsigned& nrOfIndices,
+       glm::vec3 position = glm::vec3(0.f),
+       glm::vec3 rotation = glm::vec3(0.f),
+       glm::vec3 scale = glm::vec3(1.f));
+  Mesh(Primitive* primitive,
        glm::vec3 position = glm::vec3(0.f),
        glm::vec3 rotation = glm::vec3(0.f),
        glm::vec3 scale = glm::vec3(1.f));
@@ -45,6 +50,7 @@ private:
                const unsigned& nrOfVertices,
                GLuint* indexArray,
                const unsigned& nrOfIndices);
+  void initVAO(Primitive* primitive);
 
   void updateUniforms(Shader* shader);
 
