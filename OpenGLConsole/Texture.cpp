@@ -2,9 +2,8 @@
 
 #include "Texture.h"
 
-Texture::Texture(std::string path, GLenum type, GLint textureUnit):
-  _type(type),
-  _textureUnit(textureUnit)
+Texture::Texture(std::string path, GLenum type):
+  _type(type)
 {
   LoadFromFile(path);
 }
@@ -51,14 +50,9 @@ GLuint Texture::GetID() const
   return _id;
 }
 
-GLint Texture::GetTextureUnit() const
+void Texture::Bind(GLint textureUnit)
 {
-  return _textureUnit;
-}
-
-void Texture::Bind()
-{
-  glActiveTexture(GL_TEXTURE0 + _textureUnit);
+  glActiveTexture(GL_TEXTURE0 + textureUnit);
   glBindTexture(_type, _id);
 }
 

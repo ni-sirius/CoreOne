@@ -7,15 +7,14 @@
 class Texture
 {
 public:
-  Texture(std::string path, GLenum type, GLint textureUnit);
+  Texture(std::string path, GLenum type);
   ~Texture();
 
   void LoadFromFile(std::string path);
 
   GLuint GetID() const;
-  GLint GetTextureUnit() const;
 
-  void Bind();
+  void Bind(GLint textureUnit);
   void Unbind();
 
 private:
@@ -24,5 +23,4 @@ private:
   int _height;
 
   unsigned int _type;
-  GLint _textureUnit;
 };
