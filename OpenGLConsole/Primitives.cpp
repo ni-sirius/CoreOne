@@ -85,3 +85,33 @@ Triangle::Triangle()
 
   Set(vertices, nrOfVertices, indices, nrOfIndices);
 }
+
+Pyramid::Pyramid()
+{
+  Vertex vertices[] = {
+    //position                     //color                    //uvcoords               //normals                 
+    glm::vec3(0.0f, 0.5f, 0.0f),   glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.5f, 1.f),     glm::vec3(0.f, 0.f, 1.f),
+    glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.f, 1.f, 0.f), glm::vec2(0.f, 0.f),      glm::vec3(0.f, 0.f, 1.f),
+    glm::vec3(0.5f, -0.5f, 0.5f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),      glm::vec3(0.f, 0.f, 1.f),
+
+    //position                     //color                    //uvcoords               //normals                 
+    glm::vec3(0.0f, 0.5f, 0.0f),    glm::vec3(1.f, 1.f, 0.f), glm::vec2(0.5f, 1.f),     glm::vec3(-1.f, 0.f, 0.f),
+    glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.f, 0.f, 1.f), glm::vec2(0.f, 0.f),      glm::vec3(-1.f, 0.f, 0.f),
+    glm::vec3(-0.5f, -0.5f, 0.5f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),      glm::vec3(-1.f, 0.f, 0.f),
+
+    //position                     //color                    //uvcoords               //normals                 
+    glm::vec3(0.0f, 0.5f, 0.0f),  glm::vec3(1.f, 1.f, 0.f), glm::vec2(0.5f, 1.f),      glm::vec3(0.f, 0.f, -1.f),
+    glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.f, 0.f, 1.f), glm::vec2(0.f, 0.f),      glm::vec3(0.f, 0.f, -1.f),
+    glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),    glm::vec3(0.f, 0.f, -1.f),
+
+    //position                     //color                    //uvcoords               //normals                 
+    glm::vec3(0.0f, 0.5f, 0.0f),  glm::vec3(1.f, 1.f, 0.f), glm::vec2(0.5, 1.f),      glm::vec3(1.f, 0.f, 0.f),
+    glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.f, 0.f, 1.f), glm::vec2(0.f, 0.f),      glm::vec3(1.f, 0.f, 0.f),
+    glm::vec3(0.5f, -0.5f, -0.5f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),      glm::vec3(1.f, 0.f, 0.f)
+  };
+  unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
+
+  unsigned nrOfIndices = 0;
+
+  Set(vertices, nrOfVertices, nullptr, nrOfIndices);
+}

@@ -11,6 +11,7 @@ class Shader;
 class Texture;
 class Material;
 class Mesh;
+class Camera;
 
 class Core
 {
@@ -43,12 +44,11 @@ private:
   glm::mat4 _viewMat;
   glm::mat4 _projectionMat;
 
-  glm::vec3 _cameraPos;
-  glm::vec3 _cameraFront;
-  glm::vec3 _worldUp;
+  //Camera
   float _fov;
   float _nearPlane;
   float _farPlane;
+  Camera _camera;
 
   //Graphic stuff
   std::vector< std::shared_ptr<Shader> > _shaders;
@@ -56,6 +56,20 @@ private:
   std::vector< std::shared_ptr<Material> > _materials;
   std::vector< std::shared_ptr<Mesh> > _meshes;
   std::vector< std::shared_ptr<glm::vec3> > _lights;
+
+  //delta time
+  float _deltaTime;
+  float _curTime;
+  float _lastTime;
+
+  //Mouse input
+  double _lastMouseX;
+  double _lastMouseY;
+  double _mouseX;
+  double _mouseY;
+  double _mouseOffsetX;
+  double _mouseOffsetY;
+  bool _firstMouse;
 
 private:
   bool initGLFW();
@@ -74,6 +88,12 @@ private:
   void initLights();
 
   //Updaters
+  void updateDeltaTime();
+
+  void updateKeyboardInput();
+  void updateMouseInput();
+
+  //Object move(unused)
   void updateInput(GLFWwindow* window);
   void updateInput(GLFWwindow* window, Mesh& mesh);
 

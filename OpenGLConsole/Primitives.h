@@ -36,3 +36,9 @@ class Triangle : public Primitive
 public:
   Triangle();
 };
+
+class Pyramid : public Primitive
+{
+public:
+  Pyramid();
+};

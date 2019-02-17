@@ -6,7 +6,7 @@
 
 void RenderLoop()
 {
-  Core coreObject("OpenGL Test App", 640, 480, 4, 5, false);
+  Core coreObject("OpenGL Test App", 1024, 768, 4, 5, false);
 
   //Main loop
   while (!coreObject.GetWindiwShouldClose())

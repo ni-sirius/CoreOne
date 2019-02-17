@@ -33,7 +33,9 @@ Mesh::~Mesh()
 {
   glDeleteVertexArrays(1, &_VAO);
   glDeleteBuffers(1, &_VBO);
-  glDeleteBuffers(1, &_EBO);
+
+  if (_nrOfIndices > 0)
+    glDeleteBuffers(1, &_EBO);
 }
 
 void Mesh::SetPosition(const glm::vec3 position)
@@ -108,9 +110,12 @@ void Mesh::initVAO(Vertex* vertexArray,
   glBindBuffer(GL_ARRAY_BUFFER, _VBO);
   glBufferData(GL_ARRAY_BUFFER, _nrOfVertices * sizeof(Vertex), vertexArray, GL_STATIC_DRAW);
 
-  glGenBuffers(1, &_EBO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nrOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
+  if (nrOfIndices > 0)
+  {
+    glGenBuffers(1, &_EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nrOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
+  }
 
   //SET vertex attribute pointers and enable(input assembly)
   //Example if there is no known descriptor
@@ -148,9 +153,12 @@ void Mesh::initVAO(Primitive* primitive)
   glBindBuffer(GL_ARRAY_BUFFER, _VBO);
   glBufferData(GL_ARRAY_BUFFER, _nrOfVertices * sizeof(Vertex), primitive->GetVertices(), GL_STATIC_DRAW);
 
-  glGenBuffers(1, &_EBO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nrOfIndices * sizeof(GLuint), primitive->GetIndices(), GL_STATIC_DRAW);
+  if (_nrOfIndices > 0)
+  {
+    glGenBuffers(1, &_EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _nrOfIndices * sizeof(GLuint), primitive->GetIndices(), GL_STATIC_DRAW);
+  }
 
   //SET vertex attribute pointers and enable(input assembly)
   //Example if there is no known descriptor

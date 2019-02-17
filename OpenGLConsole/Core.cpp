@@ -3,6 +3,8 @@
 #include "Material.h"
 #include "Mesh.h"
 
+
+
 Core::Core(std::string title,
            const int width, const int height,
            int GLMajorVer, int GLMinorVer,
@@ -14,14 +16,22 @@ Core::Core(std::string title,
   _frameBufferHeight(0),
   _GLVerMajor(GLMajorVer),
   _GLVerMinor(GLMinorVer),
-  _cameraPos(0.f, 0.f, 1.f),
-  _worldUp(0.f, 1.f, 0.f),
-  _cameraFront(0.f, 0.f, -1.f),
   _fov(90.f),
   _nearPlane(0.1f),
   _farPlane(1000.f),
   _projectionMat(1.f),
-  _viewMat(1.f)
+  _viewMat(1.f),
+  _deltaTime(0.f),
+  _curTime(0.f),
+  _lastTime(0.f),
+  _lastMouseX(0.0),
+  _lastMouseY(0.0),
+  _mouseX(0.0),
+  _mouseY(0.0),
+  _mouseOffsetX(0.0),
+  _mouseOffsetY(0.0),
+  _firstMouse(true),
+  _camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f))
 {
   if (initGLFW())
     if (initWindow(title, resizable))
@@ -47,16 +57,21 @@ Core::~Core()
 
 void Core::Update()
 {
-  glfwPollEvents();
+  updateDeltaTime();
 
+  glfwPollEvents();
+  updateKeyboardInput();
+  updateMouseInput();
+
+  _camera.UpdateInput(_deltaTime, -1, _mouseOffsetX, _mouseOffsetY);
 }
 
 void Core::Render()
 {
   //update move
-  updateInput(_window, *_meshes[MESH_QUAD]);
+  //updateInput(_window, *_meshes[MESH_QUAD]);
   //update Exit
-  updateInput(_window);
+  //updateInput(_window);
 
   //clear
   glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -154,7 +169,7 @@ void Core::initOpenGlOptions()
   glEnable(GL_DEPTH_TEST);
 
   //TODO learn culling and uncomment
-  //glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
 
@@ -162,11 +177,14 @@ void Core::initOpenGlOptions()
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  //Input options
+  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void Core::initMatrices()
 {
-  _viewMat = glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _worldUp);
+  _viewMat = _camera.GetViewMatrix();
 
   _projectionMat = glm::perspective(
     glm::radians(_fov),
@@ -198,7 +216,7 @@ void Core::initMaterials()
 
 void Core::initMeshes()
 {
-  _meshes.push_back(std::make_shared<Mesh>(&Quad(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
+  _meshes.push_back(std::make_shared<Mesh>(&Pyramid(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
 }
 
 void Core::initUniforms()
@@ -207,12 +225,18 @@ void Core::initUniforms()
   _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetMat4fv(_projectionMat, "ProjectionMat");
 
   _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(*_lights[0], "LightPos0");
-  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(_cameraPos, "CameraPos");
 }
 
 void Core::initLights()
 {
-  _lights.push_back(std::make_shared<glm::vec3>(0.f, 0.f, 0.5f));
+  _lights.push_back(std::make_shared<glm::vec3>(0.f, 1.5f, 1.5f));
+}
+
+void Core::updateDeltaTime()
+{
+  _curTime = static_cast<float>(glfwGetTime());
+  _deltaTime = _curTime - _lastTime;
+  _lastTime = _curTime;
 }
 
 void Core::updateInput(GLFWwindow* window)
@@ -259,8 +283,64 @@ void Core::updateInput(GLFWwindow* window, Mesh& mesh)
   }
 }
 
+void Core::updateKeyboardInput()
+{
+  if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+  {
+    glfwSetWindowShouldClose(_window, GLFW_TRUE);
+  }
+
+  if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+  {
+    _camera.UpdateKeyboardInput(_deltaTime, Camera::FORWARD);
+  }
+  if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+  {
+    _camera.UpdateKeyboardInput(_deltaTime, Camera::BACK);
+  }
+  if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+  {
+    _camera.UpdateKeyboardInput(_deltaTime, Camera::LEFT);
+  }
+  if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
+  {
+    _camera.UpdateKeyboardInput(_deltaTime, Camera::RIGHT);
+  }
+  if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+  {
+    _camera.UpdateKeyboardInput(_deltaTime, Camera::UP);
+  }
+  if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS)
+  {
+    _camera.UpdateKeyboardInput(_deltaTime, Camera::DOWN);
+  }
+}
+
+void Core::updateMouseInput()
+{
+  glfwGetCursorPos(_window, &_mouseX, &_mouseY);
+  static bool firstFlag(true);
+  if (firstFlag)
+  {
+    _lastMouseX = _mouseX;
+    _lastMouseY = _mouseY;
+    firstFlag = false;
+  }
+
+  _mouseOffsetX = _mouseX - _lastMouseX;
+  _mouseOffsetY = _lastMouseY - _mouseY;
+
+  _lastMouseX = _mouseX;
+  _lastMouseY = _mouseY;
+}
+
 void Core::updateUniforms()
 {
+  _viewMat = _camera.GetViewMatrix();//glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _worldUp);
+  _shaders[SHADER_CORE_PROGRAM]->SetMat4fv(_viewMat, "ViewMat");
+
+  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(_camera.GetCameraPosition()/*_cameraPos*/, "CameraPos");
+
   //To handle resizing of the window
   glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
   _projectionMat = glm::perspective(
