@@ -115,3 +115,74 @@ Pyramid::Pyramid()
 
   Set(vertices, nrOfVertices, nullptr, nrOfIndices);
 }
+
+Cube::Cube()
+{
+  Vertex vertices[] = {
+    //back
+    //position                       //color                      //uvcoords               //normals                 
+    glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.f, 0.f),     glm::vec3(0.0f,  0.0f, -1.0f),
+    glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(0.f, 1.f, 0.f), glm::vec2(1.f, 0.f),     glm::vec3(0.0f,  0.0f, -1.0f),
+    glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(0.f, 0.f, 1.f),  glm::vec2(1.f, 1.f),     glm::vec3(0.0f,  0.0f, -1.0f),
+    //position                       //color                      //uvcoords               //normals                 
+    glm::vec3(-0.5f,  0.5f, -0.5f),  glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 1.f),     glm::vec3(0.0f,  0.0f, -1.0f),
+    glm::vec3( 0.5f,  0.5f, -0.5f),  glm::vec3(0.f, 1.f, 0.f),   glm::vec2(0.f, 1.f),     glm::vec3(0.0f,  0.0f, -1.0f),
+    glm::vec3( 0.5f, -0.5f, -0.5f),  glm::vec3(1.f, 0.f, 0.f),  glm::vec2(0.f, 0.f),     glm::vec3(0.0f,  0.0f, -1.0f),
+ 
+    //front
+    //position                     //color                      //uvcoords              //normals                 
+    glm::vec3(-0.5f, -0.5f,  0.5f),  glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.f, 0.f),     glm::vec3(0.0f,  0.0f, 1.0f),
+    glm::vec3(0.5f, -0.5f,  0.5f),   glm::vec3(0.f, 1.f, 0.f), glm::vec2(1.f, 0.f),     glm::vec3(0.0f,  0.0f, 1.0f),
+    glm::vec3(0.5f,  0.5f,  0.5f),   glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 1.f),     glm::vec3(0.0f,  0.0f, 1.0f),
+    //position                     //color                      //uvcoords              //normals                 
+    glm::vec3(0.5f, 0.5f,  0.5f),  glm::vec3(0.f, 0.f, 1.f),  glm::vec2(1.f, 1.f),     glm::vec3(0.0f,  0.0f, 1.0f),
+    glm::vec3(-0.5f, 0.5f,  0.5f), glm::vec3(0.f, 1.f, 0.f),  glm::vec2(0.f, 1.f),     glm::vec3(0.0f,  0.0f, 1.0f),
+    glm::vec3(-0.5f, -0.5f,  0.5f),glm::vec3(1.f, 0.f, 0.f),  glm::vec2(0.f, 0.f),     glm::vec3(0.0f,  0.0f, 1.0f),
+
+    //left
+    //position                     //color                       //uvcoords              //normals               
+    glm::vec3(-0.5f, -0.5f, -0.5f),    glm::vec3(1.f, 0.f, 0.f), glm::vec2(0.f, 0.f),     glm::vec3(-1.0f,  0.0f, 0.0f),
+    glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.f, 1.f, 0.f),    glm::vec2(1.f, 0.f),       glm::vec3(-1.0f,  0.0f, 0.0f),
+    glm::vec3(-0.5f, 0.5f,  0.5f),  glm::vec3(0.f, 0.f, 1.f),    glm::vec2(1.f, 1.f),     glm::vec3(-1.0f,  0.0f, 0.0f),
+    //position                     //color                       //uvcoords              //normals                 
+    glm::vec3(-0.5f, 0.5f,  0.5f),   glm::vec3(0.f, 0.f, 1.f),   glm::vec2(1.f, 1.f),    glm::vec3(-1.0f,  0.0f, 0.0f),
+    glm::vec3(-0.5f, 0.5f,  -0.5f),   glm::vec3(0.f, 1.f, 0.f),  glm::vec2(0.f, 1.f),     glm::vec3(-1.0f,  0.0f, 0.0f),
+    glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1.f, 0.f, 0.f),   glm::vec2(0.f, 0.f),      glm::vec3(-1.0f,  0.0f, 0.0f),
+
+
+    //right
+    //position                     //color                      //uvcoords              //normals                 
+    glm::vec3(0.5f, -0.5f,  0.5f),   glm::vec3(1.f, 0.f, 0.f),   glm::vec2(0.f, 0.f),    glm::vec3(1.0f,  0.0f, 0.0f),
+    glm::vec3(0.5f, -0.5f, -0.5f),   glm::vec3(0.f, 1.f, 0.f),  glm::vec2(1.f, 0.f),   glm::vec3(1.0f,  0.0f, 0.0f),
+    glm::vec3(0.5f,  0.5f, -0.5f),  glm::vec3(0.f, 0.f, 1.f),   glm::vec2(1.f, 1.f),    glm::vec3(1.0f,  0.0f, 0.0f),
+    //position                     //color                      //uvcoords              //normals              
+    glm::vec3(0.5f,  0.5f, -0.5f),    glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 1.f),  glm::vec3(1.0f,  0.0f, 0.0f),
+    glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.f, 1.f, 0.f),    glm::vec2(0.f, 1.f),     glm::vec3(1.0f,  0.0f, 0.0f),
+    glm::vec3(0.5f, -0.5f,  0.5f),  glm::vec3(1.f, 0.f, 0.f),    glm::vec2(0.f, 0.f),     glm::vec3(1.0f,  0.0f, 0.0f),
+
+    //bottom
+    //position                     //color                        //uvcoords              //normals                 
+    glm::vec3(-0.5f, -0.5f, -0.5f),   glm::vec3(1.f, 0.f, 0.f),  glm::vec2(0.f, 0.f),    glm::vec3(0.0f,  -1.0f, 0.0f),
+    glm::vec3( 0.5f, -0.5f, -0.5f),   glm::vec3(0.f, 1.f, 0.f),   glm::vec2(1.f, 0.f),   glm::vec3(0.0f,  -1.0f, 0.0f),
+    glm::vec3( 0.5f, -0.5f,  0.5f),  glm::vec3(0.f, 0.f, 1.f),      glm::vec2(1.f, 1.f),    glm::vec3(0.0f,  -1.0f, 0.0f),
+    //position                     //color                        //uvcoords              //normals            
+    glm::vec3( 0.5f, -0.5f,  0.5f),    glm::vec3(0.f, 0.f, 1.f),    glm::vec2(1.f, 1.f),  glm::vec3(0.0f,  -1.0f, 0.0f),
+    glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.f, 1.f, 0.f),     glm::vec2(0.f, 1.f),     glm::vec3(0.0f,  -1.0f, 0.0f),
+    glm::vec3(-0.5f, -0.5f, -0.5f),  glm::vec3(1.f, 0.f, 0.f),   glm::vec2(0.f, 0.f),     glm::vec3(0.0f,  -1.0f, 0.0f),
+
+    //top
+    //position                     //color                       //uvcoords              //normals                 
+    glm::vec3(-0.5f, 0.5f,  0.5f),   glm::vec3(1.f, 0.f, 0.f),  glm::vec2(0.f, 0.f),    glm::vec3(0.0f, 1.0f, 0.0f),
+    glm::vec3( 0.5f, 0.5f,  0.5f),   glm::vec3(0.f, 1.f, 0.f),   glm::vec2(1.f, 0.f),     glm::vec3(0.0f, 1.0f, 0.0f),
+    glm::vec3( 0.5f, 0.5f, -0.5f),  glm::vec3(0.f, 0.f, 1.f),      glm::vec2(1.f, 1.f),        glm::vec3(0.0f, 1.0f, 0.0f),
+    //position                     //color                       //uvcoords              //normals          
+    glm::vec3( 0.5f, 0.5f, -0.5f),    glm::vec3(0.f, 0.f, 1.f),    glm::vec2(1.f, 1.f),      glm::vec3(0.0f, 1.0f, 0.0f),
+    glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(0.f, 1.f, 0.f),     glm::vec2(0.f, 1.f),       glm::vec3(0.0f, 1.0f, 0.0f),
+    glm::vec3(-0.5f, 0.5f,  0.5f),  glm::vec3(1.f, 0.f, 1.f),   glm::vec2(0.f, 0.f),     glm::vec3(0.0f, 1.0f, 0.0f)
+  };
+  unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
+
+  unsigned nrOfIndices = 0;
+
+  Set(vertices, nrOfVertices, nullptr, nrOfIndices);
+}

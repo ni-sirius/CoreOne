@@ -12,6 +12,11 @@
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
 
+enum class ShaderPass {
+  LIGHT_PASS,
+  MESH_PASS
+};
+
 class Shader
 {
 public:

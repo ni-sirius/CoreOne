@@ -2,7 +2,8 @@
 #include "Core.h"
 #include "Material.h"
 #include "Mesh.h"
-
+#include "MeshNode.h"
+#include "LightNode.h"
 
 
 Core::Core(std::string title,
@@ -31,7 +32,8 @@ Core::Core(std::string title,
   _mouseOffsetX(0.0),
   _mouseOffsetY(0.0),
   _firstMouse(true),
-  _camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f))
+  _camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)),
+  _rootNode(std::make_shared<CoreNode>())
 {
   if (initGLFW())
     if (initWindow(title, resizable))
@@ -43,7 +45,6 @@ Core::Core(std::string title,
       initTextures();
       initMaterials();
       initMeshes();
-      initLights();
       initUniforms();
     }
 }
@@ -64,14 +65,16 @@ void Core::Update()
   updateMouseInput();
 
   _camera.UpdateInput(_deltaTime, -1, _mouseOffsetX, _mouseOffsetY);
+
+  _rootNode->Update();
 }
 
 void Core::Render()
 {
-  //update move
-  //updateInput(_window, *_meshes[MESH_QUAD]);
-  //update Exit
-  //updateInput(_window);
+  auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNode);
+  auto time = glfwGetTime();
+  lightNode->SetPosition(glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2));
+
 
   //clear
   glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -79,24 +82,24 @@ void Core::Render()
 
   //Uniforms
   updateUniforms();
-  
-  //Update uniforms
-  _materials[Material_enum::STD_MAT]->SendToShader(*_shaders[SHADER_CORE_PROGRAM]);
-  
+ 
   //use a program
   _shaders[SHADER_CORE_PROGRAM]->Use();
   //Activate texture
-  _textures[DIFFUSE_TEX_FLOWER]->Bind(0);
-  _textures[SPECULAR_TEX_FLOWER]->Bind(1);
-  //Draw Mesh
-  _meshes[MESH_QUAD]->Render(_shaders[SHADER_CORE_PROGRAM].get());
+  _textures[CONT]->Bind(0);
+  _textures[CONT_SPEC]->Bind(1);
+
+  //Tree passes
+  _rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::LIGHT_PASS);
+  _rootNode->Render(_shaders[1].get(), ShaderPass::LIGHT_PASS); //TODO test
+
+  _rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::MESH_PASS);
+
+  _shaders[SHADER_CORE_PROGRAM]->Unuse();
 
   //end draw
   glfwSwapBuffers(_window);
   glFlush();
-
-  //free
-  _shaders[SHADER_CORE_PROGRAM]->Unuse();
 }
 
 int Core::GetWindiwShouldClose()
@@ -137,7 +140,7 @@ bool Core::initWindow(std::string title, bool resizable)
     return false;
   }
 
-  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for prrojection matrix
+  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
 
   auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
     glViewport(0, 0, frameBufWidth, frameBufHeight);
@@ -168,7 +171,6 @@ void Core::initOpenGlOptions()
 {
   glEnable(GL_DEPTH_TEST);
 
-  //TODO learn culling and uncomment
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);
@@ -196,6 +198,7 @@ void Core::initMatrices()
 void Core::initShaders()
 {
   _shaders.push_back(std::make_shared<Shader>(_GLVerMajor, _GLVerMinor, "vertex_core.glsl", "fragment_core.glsl"));
+  _shaders.push_back(std::make_shared<Shader>(_GLVerMajor, _GLVerMinor, "vertex_core.glsl", "fragment_light.glsl"));
 }
 
 void Core::initTextures()
@@ -205,32 +208,48 @@ void Core::initTextures()
 
   _textures.push_back(std::make_shared<Texture>("Images/flower.png", GL_TEXTURE_2D));
   _textures.push_back(std::make_shared<Texture>("Images/flower_specular.png", GL_TEXTURE_2D));
+
+  _textures.push_back(std::make_shared<Texture>("Images/container.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<Texture>("Images/container_specular.png", GL_TEXTURE_2D));
 }
 
 void Core::initMaterials()
 {
   _materials.push_back(
     std::make_shared<Material>(
-      glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1));
+      glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 32, 0, 1));
+
+  _materials.push_back(
+    std::make_shared<Material>(
+      glm::vec3(1.0f), glm::vec3(0.f), glm::vec3(0.f), 32, -1, -1));
 }
 
 void Core::initMeshes()
 {
-  _meshes.push_back(std::make_shared<Mesh>(&Pyramid(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
+  auto lightChildId = _rootNode->AddChild(std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f)));
+  _lightNode = _rootNode->GetChildByUid(lightChildId);
+  _rootNode->GetChildByUid(lightChildId)->AddChild(std::make_shared<MeshNode>(
+    std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), _materials[Material_enum::LIGHT_MAT]
+    ));
+
+  _rootNode->AddChild(std::make_shared<MeshNode>(
+    std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT]
+    ));
+
+  auto childId = _rootNode->AddChild(std::make_shared<MeshNode>(
+    std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT]
+    ));
+  _rootNode->GetChildByUid(childId)->AddChild(std::make_shared<MeshNode>(
+    std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT]
+    ));
 }
 
 void Core::initUniforms()
 {
   _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetMat4fv(_viewMat, "ViewMat");
   _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetMat4fv(_projectionMat, "ProjectionMat");
-
-  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(*_lights[0], "LightPos0");
 }
 
-void Core::initLights()
-{
-  _lights.push_back(std::make_shared<glm::vec3>(0.f, 1.5f, 1.5f));
-}
 
 void Core::updateDeltaTime()
 {
@@ -336,10 +355,12 @@ void Core::updateMouseInput()
 
 void Core::updateUniforms()
 {
-  _viewMat = _camera.GetViewMatrix();//glm::lookAt(_cameraPos, _cameraPos + _cameraFront, _worldUp);
+  _viewMat = _camera.GetViewMatrix();
   _shaders[SHADER_CORE_PROGRAM]->SetMat4fv(_viewMat, "ViewMat");
+  _shaders[1]->SetMat4fv(_viewMat, "ViewMat");
 
-  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(_camera.GetCameraPosition()/*_cameraPos*/, "CameraPos");
+  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(_camera.GetCameraPosition(), "CameraPos");
+  _shaders[1]->SetVec3f(_camera.GetCameraPosition(), "CameraPos");
 
   //To handle resizing of the window
   glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
@@ -349,4 +370,5 @@ void Core::updateUniforms()
     _nearPlane,
     _farPlane);
   _shaders[SHADER_CORE_PROGRAM]->SetMat4fv(_projectionMat, "ProjectionMat");
+  _shaders[1]->SetMat4fv(_projectionMat, "ProjectionMat");
 }

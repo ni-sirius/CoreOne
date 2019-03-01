@@ -9,7 +9,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 cameraUp):
   _speed(3.f),
   _sensitivity(5.f),
   _up(cameraUp),
-  _right(glm::vec3(0.f)),//cross upXdirection
+  _right(glm::cross(direction, cameraUp)),//cross upXdirection
   _pitch(0.f),
   _yaw(-90.f),
   _roll(0.f)

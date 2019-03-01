@@ -70,13 +70,11 @@ void Mesh::Upscale(const glm::vec3 upscale)
 
 void Mesh::Update()
 {
-
+  updateModelMatrix();
 }
 
 void Mesh::Render(Shader* shader)
 {
-  updateModelMatrix();
-
   updateUniforms(shader);
 
   shader->Use();

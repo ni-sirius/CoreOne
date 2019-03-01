@@ -42,3 +42,9 @@ class Pyramid : public Primitive
 public:
   Pyramid();
 };
+
+class Cube : public Primitive
+{
+public:
+  Cube();
+};

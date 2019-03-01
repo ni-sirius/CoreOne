@@ -1,10 +1,11 @@
 #pragma once
 #include <memory>
+#include "CoreNode.h"
 
 //Temp enums
 enum Shader_enum {SHADER_CORE_PROGRAM};
-enum Texture_enum {DIFFUSE_TEX_APPLE, SPECULAR_TEX_APPLE, DIFFUSE_TEX_FLOWER, SPECULAR_TEX_FLOWER};
-enum Material_enum {STD_MAT};
+enum Texture_enum {DIFFUSE_TEX_APPLE, SPECULAR_TEX_APPLE, DIFFUSE_TEX_FLOWER, SPECULAR_TEX_FLOWER, CONT, CONT_SPEC};
+enum Material_enum {STD_MAT, LIGHT_MAT};
 enum Mesh_enum { MESH_QUAD };
 
 class Shader;
@@ -51,11 +52,12 @@ private:
   Camera _camera;
 
   //Graphic stuff
+  std::shared_ptr<CoreNode> _rootNode;
+  std::shared_ptr<CoreNode> _lightNode;
+
   std::vector< std::shared_ptr<Shader> > _shaders;
   std::vector< std::shared_ptr<Texture> > _textures;
   std::vector< std::shared_ptr<Material> > _materials;
-  std::vector< std::shared_ptr<Mesh> > _meshes;
-  std::vector< std::shared_ptr<glm::vec3> > _lights;
 
   //delta time
   float _deltaTime;
@@ -84,8 +86,6 @@ private:
   void initMeshes();
 
   void initUniforms();
-
-  void initLights();
 
   //Updaters
   void updateDeltaTime();
