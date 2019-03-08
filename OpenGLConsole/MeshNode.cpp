@@ -9,13 +9,17 @@ MeshNode::MeshNode(Vertex* vertexArray,
                    glm::vec3 position,
                    glm::vec3 rotation,
                    glm::vec3 scale,
-                   std::shared_ptr<Material> material) :
+                   std::shared_ptr<Material> material /*= nullptr*/,
+                   std::shared_ptr<Texture> diffuseTexture /*= nullptr*/,
+                   std::shared_ptr<Texture> specularTexture /*= nullptr*/):
   _position(position),
   _rotation(rotation),
   _scale(scale),
   _numOfVertices(numOfVertices),
   _numOfIndices(numOfIndices),
-  _material(material)
+  _material(material),
+  _diffuseTexture(diffuseTexture),
+  _specularTexture(specularTexture)
 {
   initVAO(vertexArray, numOfVertices, indexArray, numOfIndices);
   updateModelMatrix();
@@ -25,13 +29,17 @@ MeshNode::MeshNode(std::shared_ptr<Primitive> primitive,
                    glm::vec3 position,
                    glm::vec3 rotation,
                    glm::vec3 scale,
-                   std::shared_ptr<Material> material) :
+                   std::shared_ptr<Material> material /*= nullptr*/,
+                   std::shared_ptr<Texture> diffuseTexture /*= nullptr*/,
+                   std::shared_ptr<Texture> specularTexture /*= nullptr*/):
   _position(position),
   _rotation(rotation),
   _scale(scale),
   _numOfVertices(primitive->GetNrOfVertices()),
   _numOfIndices(primitive->GetNrOfIndices()),
-  _material(material)
+  _material(material),
+  _diffuseTexture(diffuseTexture),
+  _specularTexture(specularTexture)
 {
   initVAO(primitive);
   updateModelMatrix();
@@ -52,7 +60,21 @@ void MeshNode::Render(Shader* shader, ShaderPass passType)
 {
   if (passType == ShaderPass::MESH_PASS)
   {
-    _material->SendToShader(*shader);
+    if (_material)
+    {
+      _material->SendToShader(*shader);
+
+      if (_diffuseTexture)
+      {
+        _material->UseColors(false);
+        _diffuseTexture->Bind(_material->GetDiffuseTexUnit());
+      }
+      else
+        _material->UseColors(true);
+
+      if (_specularTexture)
+        _specularTexture->Bind(_material->GetSpecularTexUnit());
+    }
 
     updateUniforms(shader);
 
@@ -70,6 +92,13 @@ void MeshNode::Render(Shader* shader, ShaderPass passType)
       glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
 #pragma warning( pop )
   }
+
+  if (_diffuseTexture)
+    _diffuseTexture->Unbind();
+
+  if (_specularTexture)
+    _specularTexture->Unbind();
+
   CoreNode::Render(shader, passType);
 }
 

@@ -53,8 +53,9 @@ private:
 
   //Graphic stuff
   std::shared_ptr<CoreNode> _rootNode;
-  std::shared_ptr<CoreNode> _lightNode;
+  std::shared_ptr<CoreNode> _lightNode; //Make light vector TODO
 
+  //Resource Manager part TODO
   std::vector< std::shared_ptr<Shader> > _shaders;
   std::vector< std::shared_ptr<Texture> > _textures;
   std::vector< std::shared_ptr<Material> > _materials;

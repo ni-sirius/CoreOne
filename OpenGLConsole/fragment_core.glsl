@@ -9,10 +9,9 @@ struct Light
 struct Material
 {
 	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
   float shiness;
 
+  int useColors;
 	sampler2D diffuseTex;
 	sampler2D specularTex;
 };
@@ -27,6 +26,7 @@ out vec4 fs_color;
 uniform Light light0;
 uniform Material material;
 uniform vec3 CameraPos;
+
 
 vec3 calculateAmbient(Material material)
 {
@@ -45,21 +45,24 @@ vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3
   vec3 reflectDirVec = normalize(reflect(lightToPosDirVec, normalize(vs_normal)));
   vec3 posToViewDirVec = normalize(CameraPos - vs_position);
   float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), material.shiness);
-  return material.specular * specularConstant * texture(material.specularTex, vs_texcoord).rgb;
-
+  return specularConstant * texture(material.specularTex, vs_texcoord).rgb;
 }
 
 void main()
 {
-  vec3 ambientFinal = calculateAmbient(material);
-  vec3 diffuseFinal = calculateDiffuse(material, vs_position, vs_normal, light0.lightPos);
-  vec3 specularFinal = calculateSpecular(material, vs_position, vs_normal, light0.lightPos, CameraPos);
+  vec4 ambientFinal = vec4(calculateAmbient(material), 1.f);// * texture(material.diffuseTex, vs_texcoord);
+  vec4 diffuseFinal = vec4(calculateDiffuse(material, vs_position, vs_normal, light0.lightPos), 1.f);// * texture(material.diffuseTex, vs_texcoord);
+  vec4 specularFinal = vec4(calculateSpecular(material, vs_position, vs_normal, light0.lightPos, CameraPos), 1.f);
 
   //attenuation
 
   //final
-  fs_color = texture(material.diffuseTex, vs_texcoord) *
-             (vec4(ambientFinal, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f));
-  //fs_color = vec4(vs_color, 1.f) *
-  //           (vec4(ambientFinal, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f));
+  vec4 fragFinalColor;
+  if (bool(material.useColors))
+    fragFinalColor= vec4(vs_color, 1.f);
+  else
+    fragFinalColor = texture(material.diffuseTex, vs_texcoord);
+  
+
+  fs_color = fragFinalColor * (ambientFinal + diffuseFinal + specularFinal);
 }

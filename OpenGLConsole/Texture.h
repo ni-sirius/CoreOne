@@ -23,4 +23,6 @@ private:
   int _height;
 
   unsigned int _type;
+
+  GLint _currentTexUnit;
 };

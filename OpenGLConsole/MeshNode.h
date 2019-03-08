@@ -15,13 +15,17 @@ public:
            glm::vec3 position,
            glm::vec3 rotation,
            glm::vec3 scale,
-           std::shared_ptr<Material> material);
+           std::shared_ptr<Material> material = nullptr,
+           std::shared_ptr<Texture> diffuseTexture = nullptr,
+           std::shared_ptr<Texture> specularTexture = nullptr);
 
   MeshNode(std::shared_ptr<Primitive> primitive,
            glm::vec3 position,
            glm::vec3 rotation,
            glm::vec3 scale,
-           std::shared_ptr<Material> material);
+           std::shared_ptr<Material> material = nullptr,
+           std::shared_ptr<Texture> diffuseTexture = nullptr,
+           std::shared_ptr<Texture> specularTexture = nullptr);
   virtual ~MeshNode();
 
   virtual void Update(glm::mat4 modelMatrix = glm::mat4(1.f)) override;
@@ -36,6 +40,10 @@ public:
   inline void Upscale(const glm::vec3 upscale) { _scale += upscale; };
 
   inline void SetMaterial(std::shared_ptr<Material> material) { _material = material; }
+
+  inline void SetDiffuseTexture(std::shared_ptr<Texture> texture) { _diffuseTexture = texture; }
+  inline void SetSpecularTexture(std::shared_ptr<Texture> texture) { _specularTexture = texture; }
+
 protected:
   void initVAO(Vertex* vertexArray,
               const unsigned& numOfVertices,
@@ -59,5 +67,8 @@ protected:
   unsigned int _numOfIndices;
 
   std::shared_ptr<Material> _material;
+
+  std::shared_ptr<Texture> _diffuseTexture;
+  std::shared_ptr<Texture> _specularTexture;
 };
 

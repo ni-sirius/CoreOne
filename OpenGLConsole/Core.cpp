@@ -71,10 +71,10 @@ void Core::Update()
 
 void Core::Render()
 {
+  //Some movement
   auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNode);
   auto time = glfwGetTime();
   lightNode->SetPosition(glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2));
-
 
   //clear
   glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -83,12 +83,6 @@ void Core::Render()
   //Uniforms
   updateUniforms();
  
-  //use a program
-  _shaders[SHADER_CORE_PROGRAM]->Use();
-  //Activate texture
-  _textures[CONT]->Bind(0);
-  _textures[CONT_SPEC]->Bind(1);
-
   //Tree passes
   _rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::LIGHT_PASS);
   _rootNode->Render(_shaders[1].get(), ShaderPass::LIGHT_PASS); //TODO test
@@ -217,30 +211,33 @@ void Core::initMaterials()
 {
   _materials.push_back(
     std::make_shared<Material>(
-      glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 32, 0, 1));
+      glm::vec3(0.1f), 32, 0, 1));
 
   _materials.push_back(
     std::make_shared<Material>(
-      glm::vec3(1.0f), glm::vec3(0.f), glm::vec3(0.f), 32, -1, -1));
+      glm::vec3(1.0f), 32, 0, 1));
 }
 
 void Core::initMeshes()
 {
+  //Lights
   auto lightChildId = _rootNode->AddChild(std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f)));
   _lightNode = _rootNode->GetChildByUid(lightChildId);
   _rootNode->GetChildByUid(lightChildId)->AddChild(std::make_shared<MeshNode>(
     std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), _materials[Material_enum::LIGHT_MAT]
     ));
 
+
+  //Nodes
   _rootNode->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT]
+    std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT], _textures[DIFFUSE_TEX_FLOWER], _textures[SPECULAR_TEX_FLOWER]
     ));
 
   auto childId = _rootNode->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT]
+    std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT], _textures[CONT], _textures[CONT_SPEC]
     ));
   _rootNode->GetChildByUid(childId)->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT]
+    std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT], _textures[CONT], _textures[CONT_SPEC]
     ));
 }
 

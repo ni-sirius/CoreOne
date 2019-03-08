@@ -36,12 +36,12 @@ GLuint* Primitive::GetIndices()
 
 const unsigned Primitive::GetNrOfVertices()
 {
-  return _vertices.size();
+  return static_cast<unsigned>(_vertices.size());
 }
 
 const unsigned Primitive::GetNrOfIndices()
 {
-  return _indices.size();
+  return static_cast<unsigned>(_indices.size());
 }
 
 
