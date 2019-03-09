@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-#include "CoreNode.h"
+#include "LightNode.h"
+#include "MeshNode.h"
 
 //Temp enums
 enum Shader_enum {SHADER_CORE_PROGRAM};
@@ -29,6 +30,9 @@ public:
   int GetWindiwShouldClose();
   void SetWindowShouldClose();
 
+  void AddLightSceneNode(LightNode* light, CoreNode* parent = nullptr);
+  void AddMeshSceneNode(MeshNode* mesh, CoreNode* parent = nullptr);
+
 private:
   //Window parameters
   GLFWwindow* _window;
@@ -53,7 +57,7 @@ private:
 
   //Graphic stuff
   std::shared_ptr<CoreNode> _rootNode;
-  std::shared_ptr<CoreNode> _lightNode; //Make light vector TODO
+  std::vector< std::shared_ptr<LightNode> > _lightNodes;
 
   //Resource Manager part TODO
   std::vector< std::shared_ptr<Shader> > _shaders;
@@ -82,9 +86,6 @@ private:
 
   void initMatrices();
   void initShaders();
-  void initTextures();
-  void initMaterials();
-  void initMeshes();
 
   void initUniforms();
 

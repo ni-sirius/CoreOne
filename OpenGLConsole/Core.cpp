@@ -42,9 +42,6 @@ Core::Core(std::string title,
       initOpenGlOptions();
       initMatrices();
       initShaders();
-      initTextures();
-      initMaterials();
-      initMeshes();
       initUniforms();
     }
 }
@@ -72,7 +69,7 @@ void Core::Update()
 void Core::Render()
 {
   //Some movement
-  auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNode);
+  auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNodes[0]);
   auto time = glfwGetTime();
   lightNode->SetPosition(glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2));
 
@@ -104,6 +101,27 @@ int Core::GetWindiwShouldClose()
 void Core::SetWindowShouldClose()
 {
   glfwSetWindowShouldClose(_window, GLFW_TRUE);
+}
+
+void Core::AddLightSceneNode(LightNode* light, CoreNode* parent /*= nullptr*/)
+{
+  auto lightPtr = std::shared_ptr<LightNode>(light);
+  _lightNodes.push_back(lightPtr);
+
+  if (parent)
+    parent->AddChild(lightPtr);
+  else
+    _rootNode->AddChild(lightPtr);
+}
+
+void Core::AddMeshSceneNode(MeshNode* mesh, CoreNode* parent /*= nullptr*/)
+{
+  auto meshPtr = std::shared_ptr<MeshNode>(mesh);
+
+  if (parent)
+    parent->AddChild(meshPtr);
+  else
+    _rootNode->AddChild(meshPtr);
 }
 
 bool Core::initGLFW()
@@ -193,52 +211,6 @@ void Core::initShaders()
 {
   _shaders.push_back(std::make_shared<Shader>(_GLVerMajor, _GLVerMinor, "vertex_core.glsl", "fragment_core.glsl"));
   _shaders.push_back(std::make_shared<Shader>(_GLVerMajor, _GLVerMinor, "vertex_core.glsl", "fragment_light.glsl"));
-}
-
-void Core::initTextures()
-{
-  _textures.push_back(std::make_shared<Texture>("Images/apple.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/apple_specular.png", GL_TEXTURE_2D));
-
-  _textures.push_back(std::make_shared<Texture>("Images/flower.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/flower_specular.png", GL_TEXTURE_2D));
-
-  _textures.push_back(std::make_shared<Texture>("Images/container.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/container_specular.png", GL_TEXTURE_2D));
-}
-
-void Core::initMaterials()
-{
-  _materials.push_back(
-    std::make_shared<Material>(
-      glm::vec3(0.1f), 32, 0, 1));
-
-  _materials.push_back(
-    std::make_shared<Material>(
-      glm::vec3(1.0f), 32, 0, 1));
-}
-
-void Core::initMeshes()
-{
-  //Lights
-  auto lightChildId = _rootNode->AddChild(std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f)));
-  _lightNode = _rootNode->GetChildByUid(lightChildId);
-  _rootNode->GetChildByUid(lightChildId)->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), _materials[Material_enum::LIGHT_MAT]
-    ));
-
-
-  //Nodes
-  _rootNode->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT], _textures[DIFFUSE_TEX_FLOWER], _textures[SPECULAR_TEX_FLOWER]
-    ));
-
-  auto childId = _rootNode->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT], _textures[CONT], _textures[CONT_SPEC]
-    ));
-  _rootNode->GetChildByUid(childId)->AddChild(std::make_shared<MeshNode>(
-    std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[Material_enum::STD_MAT], _textures[CONT], _textures[CONT_SPEC]
-    ));
 }
 
 void Core::initUniforms()
