@@ -159,6 +159,7 @@
     <ClInclude Include="Core.h" />
     <ClInclude Include="CoreNode.h" />
     <ClInclude Include="LightNode.h" />
+    <ClInclude Include="Lights.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshNode.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CoreNode.cpp" />
     <ClCompile Include="LightNode.cpp" />
+    <ClCompile Include="Lights.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshNode.cpp" />

@@ -32,8 +32,7 @@ Core::Core(std::string title,
   _mouseOffsetX(0.0),
   _mouseOffsetY(0.0),
   _firstMouse(true),
-  _camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)),
-  _rootNode(std::make_shared<CoreNode>())
+  _camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f))
 {
   if (initGLFW())
     if (initWindow(title, resizable))
@@ -63,15 +62,16 @@ void Core::Update()
 
   _camera.UpdateInput(_deltaTime, -1, _mouseOffsetX, _mouseOffsetY);
 
-  _rootNode->Update();
+  for (const auto& rootNode : _sceneNodes)
+    rootNode->Update();
 }
 
 void Core::Render()
 {
   //Some movement
-  auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNodes[0]);
-  auto time = glfwGetTime();
-  lightNode->SetPosition(glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2));
+  //auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNodes[0]);
+  //auto time = glfwGetTime();
+  //lightNode->SetPosition(glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2));
 
   //clear
   glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -81,10 +81,15 @@ void Core::Render()
   updateUniforms();
  
   //Tree passes
-  _rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::LIGHT_PASS);
-  _rootNode->Render(_shaders[1].get(), ShaderPass::LIGHT_PASS); //TODO test
-
-  _rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::MESH_PASS);
+  //Light pass
+  for (const auto& rootNode : _sceneNodes)
+  {
+    rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::LIGHT_PASS);
+    rootNode->Render(_shaders[1].get(), ShaderPass::LIGHT_PASS); //TODO test
+  }
+  //Mesh pass
+  for (const auto& rootNode : _sceneNodes)
+    rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::MESH_PASS);
 
   _shaders[SHADER_CORE_PROGRAM]->Unuse();
 
@@ -106,12 +111,12 @@ void Core::SetWindowShouldClose()
 void Core::AddLightSceneNode(LightNode* light, CoreNode* parent /*= nullptr*/)
 {
   auto lightPtr = std::shared_ptr<LightNode>(light);
-  _lightNodes.push_back(lightPtr);
+  _lightNodes.push_back(lightPtr->GetLight());
 
   if (parent)
     parent->AddChild(lightPtr);
   else
-    _rootNode->AddChild(lightPtr);
+    _sceneNodes.push_back(lightPtr);
 }
 
 void Core::AddMeshSceneNode(MeshNode* mesh, CoreNode* parent /*= nullptr*/)
@@ -121,7 +126,7 @@ void Core::AddMeshSceneNode(MeshNode* mesh, CoreNode* parent /*= nullptr*/)
   if (parent)
     parent->AddChild(meshPtr);
   else
-    _rootNode->AddChild(meshPtr);
+    _sceneNodes.push_back(meshPtr);
 }
 
 bool Core::initGLFW()

@@ -56,8 +56,8 @@ private:
   Camera _camera;
 
   //Graphic stuff
-  std::shared_ptr<CoreNode> _rootNode;
-  std::vector< std::shared_ptr<LightNode> > _lightNodes;
+  std::vector< std::shared_ptr<CoreNode> > _sceneNodes;
+  std::vector< std::shared_ptr<PointLight> > _lightNodes;
 
   //Resource Manager part TODO
   std::vector< std::shared_ptr<Shader> > _shaders;

@@ -57,6 +57,9 @@
     <ClInclude Include="MeshNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Lights.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,6 +99,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MeshNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lights.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
