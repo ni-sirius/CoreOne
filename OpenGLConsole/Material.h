@@ -7,10 +7,13 @@ public:
   Material(glm::vec3 ambient,
            int shiness,
            GLint diffudeTex,
-           GLint specularTex);
+           GLint specularTex,
+           std::shared_ptr<Shader> shader = nullptr);
   ~Material();
 
-  void SendToShader(Shader& program);
+  void Use();
+  inline void SetShader(std::shared_ptr<Shader> shaderProgram) { _shader = shaderProgram; };
+  inline std::shared_ptr<Shader> GetShader() { return _shader; };
 
   inline void UseColors(bool use) { _useColors = use; }
 
@@ -24,4 +27,6 @@ private:
   bool _useColors;
   GLint _diffuseTex;
   GLint _specularTex;
+
+  std::shared_ptr<Shader> _shader;
 };

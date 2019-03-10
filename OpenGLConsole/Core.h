@@ -53,16 +53,11 @@ private:
   float _fov;
   float _nearPlane;
   float _farPlane;
-  Camera _camera;
+  std::shared_ptr<Camera> _camera;
 
   //Graphic stuff
   std::vector< std::shared_ptr<CoreNode> > _sceneNodes;
   std::vector< std::shared_ptr<PointLight> > _lightNodes;
-
-  //Resource Manager part TODO
-  std::vector< std::shared_ptr<Shader> > _shaders;
-  std::vector< std::shared_ptr<Texture> > _textures;
-  std::vector< std::shared_ptr<Material> > _materials;
 
   //delta time
   float _deltaTime;
@@ -85,9 +80,6 @@ private:
   void initOpenGlOptions();
 
   void initMatrices();
-  void initShaders();
-
-  void initUniforms();
 
   //Updaters
   void updateDeltaTime();

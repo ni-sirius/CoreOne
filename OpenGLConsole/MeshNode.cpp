@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MeshNode.h"
-
+#include "Lights.h"
 
 MeshNode::MeshNode(Vertex* vertexArray,
                    const unsigned int& numOfVertices,
@@ -56,42 +56,60 @@ void MeshNode::Update(glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
   CoreNode::Update(modelMatrix);
 }
 
-void MeshNode::Render(Shader* shader, ShaderPass passType)
+void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
+                      std::shared_ptr<Camera> camera,
+                      std::vector<std::shared_ptr<PointLight>> pointLights)
 {
-  if (passType == ShaderPass::MESH_PASS)
+  if (!_material)
+    return; // Change later, maybe use default shader/material
+
+  //MVP Matrix
+  _material->GetShader()->SetMat4fv(_modelMatrix, "ModelMat");
+
+  _material->GetShader()->SetMat4fv(viewMat, "ViewMat");
+
+  _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
+
+  //Camera
+  _material->GetShader()->SetVec3f(camera->GetCameraPosition(), "CameraPos");
+
+  //Lights
+  for (size_t i = 0; i < pointLights.size(); ++i)
   {
-    if (_material)
-    {
-      _material->SendToShader(*shader);
+    auto lightPos = "light" + std::to_string(i) + ".lightPos";
+    _material->GetShader()->SetVec3f(pointLights[i]->GetPosition(), lightPos.c_str());
+    auto lightColor = "light" + std::to_string(i) + ".lightColor";
+    _material->GetShader()->SetVec3f(pointLights[i]->GetColor(), lightColor.c_str());
+  }
 
-      if (_diffuseTexture)
-      {
-        _material->UseColors(false);
-        _diffuseTexture->Bind(_material->GetDiffuseTexUnit());
-      }
-      else
-        _material->UseColors(true);
+  //Material
+  if (_diffuseTexture)
+  {
+    _material->UseColors(false);
+    _diffuseTexture->Bind(_material->GetDiffuseTexUnit());
+  }
+  else
+    _material->UseColors(true);
 
-      if (_specularTexture)
-        _specularTexture->Bind(_material->GetSpecularTexUnit());
-    }
+  if (_specularTexture)
+    _specularTexture->Bind(_material->GetSpecularTexUnit());
 
-    updateUniforms(shader);
+  _material->Use();
 
-    shader->Use();
+  //Render
+  _material->GetShader()->Use();
 
-    //bind VAO
-    glBindVertexArray(_VAO);
+  //bind VAO
+  glBindVertexArray(_VAO);
 
-    //draw
+  //draw
 #pragma warning( push )
 #pragma warning( disable : 4267)
-    if (_numOfIndices)
-      glDrawElements(GL_TRIANGLES, _numOfIndices, GL_UNSIGNED_INT, 0);
-    else
-      glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
+  if (_numOfIndices)
+    glDrawElements(GL_TRIANGLES, _numOfIndices, GL_UNSIGNED_INT, 0);
+  else
+    glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
 #pragma warning( pop )
-  }
 
   if (_diffuseTexture)
     _diffuseTexture->Unbind();
@@ -99,7 +117,14 @@ void MeshNode::Render(Shader* shader, ShaderPass passType)
   if (_specularTexture)
     _specularTexture->Unbind();
 
-  CoreNode::Render(shader, passType);
+  _material->GetShader()->Unuse();
+
+  //Render childs
+  for (const auto& child : _childs)
+  {
+    child->Render(viewMat, projectionMat,
+                  camera, pointLights);
+  }
 }
 
 void MeshNode::initVAO(Vertex* vertexArray,
@@ -158,9 +183,4 @@ void MeshNode::updateModelMatrix()
   _modelMatrix = glm::rotate(_modelMatrix, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
   _modelMatrix = glm::rotate(_modelMatrix, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
   _modelMatrix = glm::scale(_modelMatrix, _scale);
-}
-
-void MeshNode::updateUniforms(Shader* shader)
-{
-  shader->SetMat4fv(_modelMatrix, "ModelMat");
 }

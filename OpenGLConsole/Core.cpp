@@ -32,7 +32,7 @@ Core::Core(std::string title,
   _mouseOffsetX(0.0),
   _mouseOffsetY(0.0),
   _firstMouse(true),
-  _camera(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f))
+  _camera(std::make_shared<Camera>(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)))
 {
   if (initGLFW())
     if (initWindow(title, resizable))
@@ -40,8 +40,6 @@ Core::Core(std::string title,
       initGLEW();
       initOpenGlOptions();
       initMatrices();
-      initShaders();
-      initUniforms();
     }
 }
 
@@ -60,7 +58,7 @@ void Core::Update()
   updateKeyboardInput();
   updateMouseInput();
 
-  _camera.UpdateInput(_deltaTime, -1, _mouseOffsetX, _mouseOffsetY);
+  _camera->UpdateInput(_deltaTime, -1, _mouseOffsetX, _mouseOffsetY);
 
   for (const auto& rootNode : _sceneNodes)
     rootNode->Update();
@@ -80,18 +78,8 @@ void Core::Render()
   //Uniforms
   updateUniforms();
  
-  //Tree passes
-  //Light pass
   for (const auto& rootNode : _sceneNodes)
-  {
-    rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::LIGHT_PASS);
-    rootNode->Render(_shaders[1].get(), ShaderPass::LIGHT_PASS); //TODO test
-  }
-  //Mesh pass
-  for (const auto& rootNode : _sceneNodes)
-    rootNode->Render(_shaders[SHADER_CORE_PROGRAM].get(), ShaderPass::MESH_PASS);
-
-  _shaders[SHADER_CORE_PROGRAM]->Unuse();
+    rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
 
   //end draw
   glfwSwapBuffers(_window);
@@ -203,7 +191,7 @@ void Core::initOpenGlOptions()
 
 void Core::initMatrices()
 {
-  _viewMat = _camera.GetViewMatrix();
+  _viewMat = _camera->GetViewMatrix();
 
   _projectionMat = glm::perspective(
     glm::radians(_fov),
@@ -211,19 +199,6 @@ void Core::initMatrices()
     _nearPlane,
     _farPlane);
 }
-
-void Core::initShaders()
-{
-  _shaders.push_back(std::make_shared<Shader>(_GLVerMajor, _GLVerMinor, "vertex_core.glsl", "fragment_core.glsl"));
-  _shaders.push_back(std::make_shared<Shader>(_GLVerMajor, _GLVerMinor, "vertex_core.glsl", "fragment_light.glsl"));
-}
-
-void Core::initUniforms()
-{
-  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetMat4fv(_viewMat, "ViewMat");
-  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetMat4fv(_projectionMat, "ProjectionMat");
-}
-
 
 void Core::updateDeltaTime()
 {
@@ -285,27 +260,27 @@ void Core::updateKeyboardInput()
 
   if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
   {
-    _camera.UpdateKeyboardInput(_deltaTime, Camera::FORWARD);
+    _camera->UpdateKeyboardInput(_deltaTime, Camera::FORWARD);
   }
   if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
   {
-    _camera.UpdateKeyboardInput(_deltaTime, Camera::BACK);
+    _camera->UpdateKeyboardInput(_deltaTime, Camera::BACK);
   }
   if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
   {
-    _camera.UpdateKeyboardInput(_deltaTime, Camera::LEFT);
+    _camera->UpdateKeyboardInput(_deltaTime, Camera::LEFT);
   }
   if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
   {
-    _camera.UpdateKeyboardInput(_deltaTime, Camera::RIGHT);
+    _camera->UpdateKeyboardInput(_deltaTime, Camera::RIGHT);
   }
   if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
   {
-    _camera.UpdateKeyboardInput(_deltaTime, Camera::UP);
+    _camera->UpdateKeyboardInput(_deltaTime, Camera::UP);
   }
   if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS)
   {
-    _camera.UpdateKeyboardInput(_deltaTime, Camera::DOWN);
+    _camera->UpdateKeyboardInput(_deltaTime, Camera::DOWN);
   }
 }
 
@@ -329,12 +304,7 @@ void Core::updateMouseInput()
 
 void Core::updateUniforms()
 {
-  _viewMat = _camera.GetViewMatrix();
-  _shaders[SHADER_CORE_PROGRAM]->SetMat4fv(_viewMat, "ViewMat");
-  _shaders[1]->SetMat4fv(_viewMat, "ViewMat");
-
-  _shaders[Shader_enum::SHADER_CORE_PROGRAM]->SetVec3f(_camera.GetCameraPosition(), "CameraPos");
-  _shaders[1]->SetVec3f(_camera.GetCameraPosition(), "CameraPos");
+  _viewMat = _camera->GetViewMatrix();
 
   //To handle resizing of the window
   glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
@@ -343,6 +313,4 @@ void Core::updateUniforms()
     static_cast<float>(_framebufferWidth) / _frameBufferHeight,
     _nearPlane,
     _farPlane);
-  _shaders[SHADER_CORE_PROGRAM]->SetMat4fv(_projectionMat, "ProjectionMat");
-  _shaders[1]->SetMat4fv(_projectionMat, "ProjectionMat");
 }

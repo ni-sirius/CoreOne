@@ -3,18 +3,25 @@
 
 #include "Core.h"
 
+std::vector< std::shared_ptr<Shader> > shaders;
 std::vector< std::shared_ptr<Material> > materials;
 std::vector< std::shared_ptr<Texture> > textures;
+
+void initShaders(int GLVerMajor, int GLVerMinor)
+{
+  shaders.push_back(std::make_shared<Shader>(GLVerMajor, GLVerMinor, "vertex_core.glsl", "fragment_core.glsl"));
+  shaders.push_back(std::make_shared<Shader>(GLVerMajor, GLVerMinor, "vertex_core.glsl", "fragment_light.glsl"));
+}
 
 void initMaterials()
 {
   materials.push_back(
     std::make_shared<Material>(
-      glm::vec3(0.1f), 32, 0, 1));
+      glm::vec3(0.1f), 32, 0, 1, shaders[0]));
 
   materials.push_back(
     std::make_shared<Material>(
-      glm::vec3(1.0f), 32, 0, 1));
+      glm::vec3(1.0f), 32, 0, 1, shaders[1]));
 }
 
 void initTextures()
@@ -31,6 +38,7 @@ void initTextures()
 
 void Create(Core& core)
 {
+  initShaders(4, 5);
   initMaterials();
   initTextures();
 

@@ -20,17 +20,15 @@ void LightNode::Update(glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
   CoreNode::Update(modelMatrix);
 }
 
-void LightNode::Render(Shader* shader, ShaderPass passType)
+void LightNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
+                       std::shared_ptr<Camera> camera,
+                       std::vector<std::shared_ptr<PointLight>> pointLights)
 {
-  if (passType == ShaderPass::LIGHT_PASS)
+  for (const auto& child : _childs)
   {
-    auto transfomedLightPos = glm::vec3(_modelMatrix * glm::vec4(0.f, 0.f, 0.f, 1.f));
-
-    shader->SetVec3f(transfomedLightPos, "light0.lightPos");
-    shader->SetVec3f(_color, "light0.lightColor");
+    child->Render(viewMat, projectionMat,
+                  camera, pointLights);
   }
-
-  CoreNode::Render(shader, passType);
 }
 
 void LightNode::updateModelMatrix()

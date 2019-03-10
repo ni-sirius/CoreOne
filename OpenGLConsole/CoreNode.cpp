@@ -61,11 +61,3 @@ void CoreNode::Update(glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
     child->Update(_modelMatrix);
   }
 }
-
-void CoreNode::Render(Shader* shader, ShaderPass passType)
-{
-  for (const auto& child : _childs)
-  {
-    child->Render(shader, passType);
-  }
-}

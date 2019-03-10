@@ -18,11 +18,10 @@ public:
   virtual std::string AddChild(std::shared_ptr<CoreNode> child);
   virtual void RemoveChild(std::string uid);
 
-  virtual void Update(glm::mat4 modelMat, glm::mat4 viewMat, glm::vec4 projectionMat,
+  virtual void Update(glm::mat4 modelMatrix = glm::mat4(1.f));
+  virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
                       std::vector<std::shared_ptr<PointLight>> pointLights) = 0;
-  virtual void Update(glm::mat4 modelMatrix = glm::mat4(1.f));
-  virtual void Render(Shader* shader, ShaderPass passType);
 
 protected:
   inline void setUid(std::string uid) { _uid = uid; }

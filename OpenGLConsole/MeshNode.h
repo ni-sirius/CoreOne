@@ -29,7 +29,9 @@ public:
   virtual ~MeshNode();
 
   virtual void Update(glm::mat4 modelMatrix = glm::mat4(1.f)) override;
-  virtual void Render(Shader* shader, ShaderPass passType) override;
+  virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
+                      std::shared_ptr<Camera> camera,
+                      std::vector<std::shared_ptr<PointLight>> pointLights) override;
 
   inline void SetPosition(const glm::vec3 position) { _position = position; };
   inline void SetRotation(const glm::vec3 rotation) { _rotation = rotation; };
@@ -52,7 +54,6 @@ protected:
   void initVAO(std::shared_ptr<Primitive> primitive);
 
   void updateModelMatrix();
-  void updateUniforms(Shader* shader);
 
 protected:
   glm::vec3 _position;
