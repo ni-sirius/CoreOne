@@ -2,6 +2,8 @@
 #include "Render.h"
 
 #include "Core.h"
+#include <thread>
+#include "CoreCommands.h"
 
 std::vector< std::shared_ptr<Shader> > shaders;
 std::vector< std::shared_ptr<Material> > materials;
@@ -43,22 +45,41 @@ void Create(Core& core)
   initTextures();
 
   //Lights
-  auto lightNode = new LightNode(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f));
+  auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f));
   core.AddLightSceneNode(lightNode);
 
-  auto lightMesh = new MeshNode(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), materials[1]);
+  auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), materials[1]);
   core.AddMeshSceneNode(lightMesh, lightNode);
 
   //Meshes
-  auto flowerBox = new MeshNode(std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[2], textures[3]);
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[2], textures[3]);
   core.AddMeshSceneNode(flowerBox);
 
-  auto container1 = new MeshNode(std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[4], textures[5]);
+  auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[4], textures[5]);
   core.AddMeshSceneNode(container1);
 
-  auto container2 = new MeshNode(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[4], textures[5]);
+  auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[4], textures[5]);
   core.AddMeshSceneNode(container2, container1);
 
+  auto moveligthfunc = [&](std::shared_ptr<LightNode> light) {
+    double oldTime(0);
+    while (true)
+    {
+      auto time = glfwGetTime();
+      if (time != oldTime)
+        oldTime = time;
+      else
+        continue;
+
+      auto newPos = glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2);
+
+      auto command = new SetLightNodePositionCommand(newPos, light);
+      core.AddCommand(command);
+    }
+  };
+
+  auto tstThread = std::thread(moveligthfunc, lightNode);
+  tstThread.detach();//TODO Create normal class
 }
 
 void RenderLoop()

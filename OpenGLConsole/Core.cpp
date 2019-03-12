@@ -4,12 +4,14 @@
 #include "Mesh.h"
 #include "MeshNode.h"
 #include "LightNode.h"
+#include "CoreDevice.h"
 
 
 Core::Core(std::string title,
            const int width, const int height,
            int GLMajorVer, int GLMinorVer,
            bool resizable):
+  _device(std::make_unique<CoreDevice>()),
   _window(nullptr),
   _windowWidth(width),
   _windowHeight(height),
@@ -66,10 +68,7 @@ void Core::Update()
 
 void Core::Render()
 {
-  //Some movement
-  //auto lightNode = std::dynamic_pointer_cast<LightNode>(_lightNodes[0]);
-  //auto time = glfwGetTime();
-  //lightNode->SetPosition(glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2));
+  _device->ProcessAll();
 
   //clear
   glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -96,25 +95,27 @@ void Core::SetWindowShouldClose()
   glfwSetWindowShouldClose(_window, GLFW_TRUE);
 }
 
-void Core::AddLightSceneNode(LightNode* light, CoreNode* parent /*= nullptr*/)
+void Core::AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent /*= nullptr*/)
 {
-  auto lightPtr = std::shared_ptr<LightNode>(light);
-  _lightNodes.push_back(lightPtr->GetLight());
+  _lightNodes.push_back(light->GetLight());
 
   if (parent)
-    parent->AddChild(lightPtr);
+    parent->AddChild(light);
   else
-    _sceneNodes.push_back(lightPtr);
+    _sceneNodes.push_back(light);
 }
 
-void Core::AddMeshSceneNode(MeshNode* mesh, CoreNode* parent /*= nullptr*/)
+void Core::AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent /*= nullptr*/)
 {
-  auto meshPtr = std::shared_ptr<MeshNode>(mesh);
-
   if (parent)
-    parent->AddChild(meshPtr);
+    parent->AddChild(mesh);
   else
-    _sceneNodes.push_back(meshPtr);
+    _sceneNodes.push_back(mesh);
+}
+
+void Core::AddCommand(CoreBaseCommand* command)
+{
+  _device->AddCommand(command);
 }
 
 bool Core::initGLFW()

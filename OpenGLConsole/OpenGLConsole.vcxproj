@@ -157,6 +157,8 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="CoreCommands.h" />
+    <ClInclude Include="CoreDevice.h" />
     <ClInclude Include="CoreNode.h" />
     <ClInclude Include="LightNode.h" />
     <ClInclude Include="Lights.h" />
@@ -174,6 +176,8 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CoreCommands.cpp" />
+    <ClCompile Include="CoreDevice.cpp" />
     <ClCompile Include="CoreNode.cpp" />
     <ClCompile Include="LightNode.cpp" />
     <ClCompile Include="Lights.cpp" />

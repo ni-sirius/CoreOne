@@ -14,6 +14,8 @@ class Texture;
 class Material;
 class Mesh;
 class Camera;
+class CoreDevice;
+class CoreBaseCommand;
 
 class Core
 {
@@ -30,10 +32,15 @@ public:
   int GetWindiwShouldClose();
   void SetWindowShouldClose();
 
-  void AddLightSceneNode(LightNode* light, CoreNode* parent = nullptr);
-  void AddMeshSceneNode(MeshNode* mesh, CoreNode* parent = nullptr);
+  void AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent = nullptr);
+  void AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
+
+  void AddCommand(CoreBaseCommand* command);
 
 private:
+  //Commands engine
+  std::unique_ptr<CoreDevice> _device;
+
   //Window parameters
   GLFWwindow* _window;
   const int _windowWidth;
