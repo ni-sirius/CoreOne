@@ -7,14 +7,16 @@
 class CoreDevice
 {
 public:
-  CoreDevice() = default;
-  ~CoreDevice() = default;
+  CoreDevice();
+  ~CoreDevice();
 
   void AddCommand(CoreBaseCommand* command);
 
   void ProcessAll();
 
 private:
+  bool _isRunning;
+
   std::deque<std::unique_ptr<CoreBaseCommand>> _commandsStack;
   std::mutex _stackMut;
 };
