@@ -6,7 +6,6 @@
 #include "LightNode.h"
 #include "CoreDevice.h"
 
-
 Core::Core(std::string title,
            const int width, const int height,
            int GLMajorVer, int GLMinorVer,
@@ -123,6 +122,14 @@ void Core::AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<Core
 }
 
 void Core::AddWindshieldSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent /*= nullptr*/)
+{
+  if (parent)
+    parent->AddChild(mesh);
+  else
+    _windshieldNodes.push_back(mesh);
+}
+
+void Core::AddTextSceneNode(std::shared_ptr<TextNode> mesh, std::shared_ptr<CoreNode> parent /*= nullptr*/)
 {
   if (parent)
     parent->AddChild(mesh);

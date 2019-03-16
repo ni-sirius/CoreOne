@@ -15,6 +15,8 @@ void initShaders(int GLVerMajor, int GLVerMinor)
   shaders.push_back(std::make_shared<Shader>(GLVerMajor, GLVerMinor, "vertex_core.glsl", "fragment_light.glsl"));
 
   shaders.push_back(std::make_shared<Shader>(GLVerMajor, GLVerMinor, "windshield.vert", "windshield.frag"));
+
+  shaders.push_back(std::make_shared<Shader>(GLVerMajor, GLVerMinor, "text.vert", "text.frag"));
 }
 
 void initMaterials()
@@ -30,6 +32,10 @@ void initMaterials()
   materials.push_back(
     std::make_shared<Material>(
       glm::vec3(1.0f), 32, 0, 1, shaders[2]));
+
+  materials.push_back(
+    std::make_shared<Material>(
+      glm::vec3(1.0f), 32, 0, 1, shaders[3]));
 }
 
 void initTextures()
@@ -67,8 +73,14 @@ void Create(Core& core)
   auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), materials[0], textures[4], textures[5]);
   core.AddMeshSceneNode(container2, container1);
 
-  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f), materials[2], textures[4], textures[5]);
+  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f), materials[2]);
   core.AddWindshieldSceneNode(btn);
+
+  auto txt = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 25.f, 0.f), 1.f, materials[3]);
+  core.AddTextSceneNode(txt);
+
+  auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f, materials[3]);
+  core.AddTextSceneNode(txt1);
 
   auto moveligthfunc = [&](std::shared_ptr<LightNode> light) {
     double oldTime(0);

@@ -66,6 +66,9 @@
     <ClInclude Include="CoreCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -116,6 +119,9 @@
     <ClCompile Include="CoreCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="fragment_core.glsl">
@@ -131,6 +137,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="windshield.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="text.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="text.frag">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

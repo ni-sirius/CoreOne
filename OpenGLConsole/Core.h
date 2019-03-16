@@ -2,6 +2,7 @@
 #include <memory>
 #include "LightNode.h"
 #include "MeshNode.h"
+#include "TextNode.h"
 
 //Temp enums
 enum Shader_enum {SHADER_CORE_PROGRAM};
@@ -37,6 +38,7 @@ public:
   void AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent = nullptr);
   void AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
   void AddWindshieldSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
+  void AddTextSceneNode(std::shared_ptr<TextNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
 
   void AddCommand(CoreBaseCommand* command);
 
