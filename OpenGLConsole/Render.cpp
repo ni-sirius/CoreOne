@@ -78,7 +78,7 @@ void Create(Core& core)
       if (time != oldTime)
         oldTime = time;
       else
-        continue;
+        break;
 
       auto newPos = glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2);
 
