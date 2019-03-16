@@ -62,14 +62,14 @@ void Core::Update()
 
   _camera->UpdateInput(_deltaTime, -1, _mouseOffsetX, _mouseOffsetY);
 
+  _device->ProcessAll();
+
   for (const auto& rootNode : _sceneNodes)
     rootNode->Update();
 }
 
 void Core::Render()
 {
-  _device->ProcessAll();
-
   //clear
   glClearColor(0.f, 0.f, 0.f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
