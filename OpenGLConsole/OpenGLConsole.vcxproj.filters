@@ -127,5 +127,11 @@
     <None Include="fragment_light.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="windshield.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="windshield.frag">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

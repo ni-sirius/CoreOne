@@ -200,6 +200,8 @@
     <None Include="fragment_core.glsl" />
     <None Include="fragment_light.glsl" />
     <None Include="vertex_core.glsl" />
+    <None Include="windshield.frag" />
+    <None Include="windshield.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
