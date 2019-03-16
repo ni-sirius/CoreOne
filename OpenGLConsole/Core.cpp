@@ -66,6 +66,9 @@ void Core::Update()
 
   for (const auto& rootNode : _sceneNodes)
     rootNode->Update(_deltaTime);
+
+  for (const auto& rootNode : _windshieldNodes)
+    rootNode->Update(_deltaTime);
 }
 
 void Core::Render()
@@ -75,9 +78,15 @@ void Core::Render()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   //Uniforms
-  updateUniforms();
+  updateProjection(Projection_type::PERSPECTIVE);
+  updateView();
  
   for (const auto& rootNode : _sceneNodes)
+    rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
+
+  updateProjection(Projection_type::ORTHO);
+
+  for (const auto& rootNode : _windshieldNodes)
     rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
 
   //end draw
@@ -111,6 +120,14 @@ void Core::AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<Core
     parent->AddChild(mesh);
   else
     _sceneNodes.push_back(mesh);
+}
+
+void Core::AddWindshieldSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent /*= nullptr*/)
+{
+  if (parent)
+    parent->AddChild(mesh);
+  else
+    _windshieldNodes.push_back(mesh);
 }
 
 void Core::AddCommand(CoreBaseCommand* command)
@@ -208,49 +225,49 @@ void Core::updateDeltaTime()
   _lastTime = _curTime;
 }
 
-void Core::updateInput(GLFWwindow* window)
-{
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-  {
-    glfwSetWindowShouldClose(window, GLFW_TRUE);
-  }
-}
-
-void Core::updateInput(GLFWwindow* window, Mesh& mesh)
-{
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-  {
-    mesh.Move(glm::vec3(0.f, 0.f, -0.01f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-  {
-    mesh.Move(glm::vec3(0.f, 0.f, 0.01f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-  {
-    mesh.Move(glm::vec3(-0.01f, 0.f, 0.f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-  {
-    mesh.Move(glm::vec3(0.01f, 0.f, 0.f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-  {
-    mesh.Rotate(glm::vec3(0.f, -0.5f, 0.f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-  {
-    mesh.Rotate(glm::vec3(0.f, 0.5f, 0.f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-  {
-    mesh.Upscale(glm::vec3(-0.01f));
-  }
-  else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-  {
-    mesh.Upscale(glm::vec3(0.01f));
-  }
-}
+//void Core::updateInput(GLFWwindow* window)
+//{
+//  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+//  {
+//    glfwSetWindowShouldClose(window, GLFW_TRUE);
+//  }
+//}
+//
+//void Core::updateInput(GLFWwindow* window, Mesh& mesh)
+//{
+//  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+//  {
+//    mesh.Move(glm::vec3(0.f, 0.f, -0.01f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+//  {
+//    mesh.Move(glm::vec3(0.f, 0.f, 0.01f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+//  {
+//    mesh.Move(glm::vec3(-0.01f, 0.f, 0.f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+//  {
+//    mesh.Move(glm::vec3(0.01f, 0.f, 0.f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+//  {
+//    mesh.Rotate(glm::vec3(0.f, -0.5f, 0.f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+//  {
+//    mesh.Rotate(glm::vec3(0.f, 0.5f, 0.f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+//  {
+//    mesh.Upscale(glm::vec3(-0.01f));
+//  }
+//  else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+//  {
+//    mesh.Upscale(glm::vec3(0.01f));
+//  }
+//}
 
 void Core::updateKeyboardInput()
 {
@@ -303,15 +320,33 @@ void Core::updateMouseInput()
   _lastMouseY = _mouseY;
 }
 
-void Core::updateUniforms()
+void Core::updateProjection(Projection_type projection)
 {
-  _viewMat = _camera->GetViewMatrix();
-
   //To handle resizing of the window
   glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
-  _projectionMat = glm::perspective(
-    glm::radians(_fov),
-    static_cast<float>(_framebufferWidth) / _frameBufferHeight,
-    _nearPlane,
-    _farPlane);
+
+  if (projection == Projection_type::PERSPECTIVE)
+  {
+    _projectionMat = glm::perspective(
+      glm::radians(_fov),
+      static_cast<float>(_framebufferWidth) / _frameBufferHeight,
+      _nearPlane,
+      _farPlane);
+  }
+  else if (projection == Projection_type::ORTHO)
+  {
+    _projectionMat = glm::ortho(
+      0.0f,
+      static_cast<float>(_framebufferWidth),
+      0.f,
+      static_cast<float>(_frameBufferHeight),
+      -1.f,
+      1.f
+      );
+  }
+}
+
+void Core::updateView()
+{
+  _viewMat = _camera->GetViewMatrix();
 }

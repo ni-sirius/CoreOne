@@ -9,6 +9,8 @@ enum Texture_enum {DIFFUSE_TEX_APPLE, SPECULAR_TEX_APPLE, DIFFUSE_TEX_FLOWER, SP
 enum Material_enum {STD_MAT, LIGHT_MAT};
 enum Mesh_enum { MESH_QUAD };
 
+enum class Projection_type {ORTHO, PERSPECTIVE};
+
 class Shader;
 class Texture;
 class Material;
@@ -34,6 +36,7 @@ public:
 
   void AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent = nullptr);
   void AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
+  void AddWindshieldSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
 
   void AddCommand(CoreBaseCommand* command);
 
@@ -65,6 +68,7 @@ private:
   //Graphic stuff
   std::vector< std::shared_ptr<CoreNode> > _sceneNodes;
   std::vector< std::shared_ptr<PointLight> > _lightNodes;
+  std::vector< std::shared_ptr<CoreNode> > _windshieldNodes;
 
   //delta time
   float _deltaTime;
@@ -94,10 +98,11 @@ private:
   void updateKeyboardInput();
   void updateMouseInput();
 
-  //Object move(unused)
-  void updateInput(GLFWwindow* window);
-  void updateInput(GLFWwindow* window, Mesh& mesh);
+  void updateProjection(Projection_type projection);
+  void updateView();
 
-  void updateUniforms();
+  //Object move(unused)
+  //void updateInput(GLFWwindow* window);
+  //void updateInput(GLFWwindow* window, Mesh& mesh);
 };
 

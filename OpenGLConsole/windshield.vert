@@ -11,6 +11,7 @@ out vec2 vs_texcoord;
 out vec3 vs_normal;
 
 uniform mat4 ProjectionMat;
+uniform mat4 ModelMat;
 
 void main()
 {
@@ -19,5 +20,5 @@ void main()
 	//vs_texcoord = vec2(vertex_texcoord.x, vertex_texcoord.y * -1.f);
 	//vs_normal = vec3(0.f, 0.f, 1.f);
 
-	gl_Position = ProjectionMat * vec4(vertex_position.xy, -0.9f, 1.f);
+	gl_Position = ProjectionMat * ModelMat * vec4(vertex_position.xy, 1.0, 1.0);
 }
