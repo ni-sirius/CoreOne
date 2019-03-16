@@ -17,7 +17,7 @@ public:
   //inline void SetLight(PointLight* light) { _light = std::shared_ptr<PointLight>(light); };
   inline std::shared_ptr<PointLight> GetLight() { return _light; };
 
-  virtual void Update(glm::mat4 modelMatrix = glm::mat4(1.f)) override;
+  virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f)) override;
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
                       std::vector<std::shared_ptr<PointLight>> pointLights) override;

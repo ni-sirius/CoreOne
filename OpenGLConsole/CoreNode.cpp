@@ -52,12 +52,12 @@ void CoreNode::RemoveChild(std::string uid)
   }
 }
 
-void CoreNode::Update(glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
+void CoreNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
 {
-  _modelMatrix = modelMatrix * _modelMatrix;
+  _modelMatrix = modelMatrix * (deltaTime * _modelMatrix);
 
   for (const auto& child : _childs)
   {
-    child->Update(_modelMatrix);
+    child->Update(deltaTime, _modelMatrix);
   }
 }

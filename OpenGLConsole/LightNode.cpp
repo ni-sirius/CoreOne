@@ -10,14 +10,14 @@ LightNode::LightNode(glm::vec3 position, glm::vec3 color):
   updateModelMatrix();
 }
 
-void LightNode::Update(glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
+void LightNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
 {
   updateModelMatrix();
 
-  _light->SetPosition(glm::vec3(modelMatrix * _modelMatrix * glm::vec4(0.f, 0.f, 0.f, 1.f)));
+  _light->SetPosition(glm::vec3(modelMatrix * (deltaTime * _modelMatrix) * glm::vec4(0.f, 0.f, 0.f, 1.f)));
   _light->SetColor(_color);
 
-  CoreNode::Update(modelMatrix);
+  CoreNode::Update(deltaTime, modelMatrix);
 }
 
 void LightNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,

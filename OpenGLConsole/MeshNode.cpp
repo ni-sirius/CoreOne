@@ -49,11 +49,11 @@ MeshNode::~MeshNode()
 {
 }
 
-void MeshNode::Update(glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
+void MeshNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
 {
   updateModelMatrix();
 
-  CoreNode::Update(modelMatrix);
+  CoreNode::Update(deltaTime, modelMatrix);
 }
 
 void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,

@@ -18,7 +18,7 @@ public:
   virtual std::string AddChild(std::shared_ptr<CoreNode> child);
   virtual void RemoveChild(std::string uid);
 
-  virtual void Update(glm::mat4 modelMatrix = glm::mat4(1.f));
+  virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f));
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
                       std::vector<std::shared_ptr<PointLight>> pointLights) = 0;

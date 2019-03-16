@@ -65,7 +65,7 @@ void Core::Update()
   _device->ProcessAll();
 
   for (const auto& rootNode : _sceneNodes)
-    rootNode->Update();
+    rootNode->Update(_deltaTime);
 }
 
 void Core::Render()
