@@ -69,6 +69,12 @@
     <ClInclude Include="TextNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventReceiver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -120,6 +126,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EventReceiver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
