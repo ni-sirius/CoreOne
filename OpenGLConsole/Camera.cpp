@@ -2,7 +2,7 @@
 #include "Camera.h"
 
 
-Camera::Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 cameraUp):
+Camera::Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 cameraUp, bool isFixed /*= false*/) :
   _viewMat(1.f),
   _position(position),
   _front(direction),
@@ -12,9 +12,9 @@ Camera::Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 cameraUp):
   _right(glm::cross(direction, cameraUp)),//cross upXdirection
   _pitch(0.f),
   _yaw(-90.f),
-  _roll(0.f)
+  _roll(0.f),
+  _isFixed(isFixed)
 {
-  
 }
 
 Camera::~Camera()
@@ -43,45 +43,51 @@ void Camera::UpdateInput(const float& dt, const int direction, const double& off
 
 void Camera::UpdateMouseInput(const float& dt, const double& offsetX, const double& offsetY)
 {
-  _pitch += static_cast<GLfloat>(offsetY * _sensitivity * dt);
-  _yaw += static_cast<GLfloat>(offsetX * _sensitivity * dt);
+  if (!_isFixed)
+  {
+    _pitch += static_cast<GLfloat>(offsetY * _sensitivity * dt);
+    _yaw += static_cast<GLfloat>(offsetX * _sensitivity * dt);
 
-  if (_pitch > 89.f)
-    _pitch = 89.f;
-  else if (_pitch < -89.f)
-    _pitch = -89.f;
+    if (_pitch > 89.f)
+      _pitch = 89.f;
+    else if (_pitch < -89.f)
+      _pitch = -89.f;
 
-  if (_yaw > 360)
-    _yaw = 0.f;
-  if (_yaw < -360)
-    _yaw = 0.f;
+    if (_yaw > 360)
+      _yaw = 0.f;
+    if (_yaw < -360)
+      _yaw = 0.f;
+  }
 }
 
 void Camera::UpdateKeyboardInput(const float& dt, const int direction)
 {
-  switch (direction)
+  if (!_isFixed)
   {
-  case FORWARD:
-    _position += _front * _speed * dt;
-    break;
-  case BACK:
-    _position -= _front * _speed * dt;
-    break;
-  case LEFT:
-    _position -= _right * _speed * dt;
-    break;
-  case RIGHT:
-    _position += _right * _speed * dt;
-    break;
-  case UP:
-    _position += _up * _speed * dt;
-    break;
-  case DOWN:
-    _position -= _up * _speed * dt;
-    break;
+    switch (direction)
+    {
+    case FORWARD:
+      _position += _front * _speed * dt;
+      break;
+    case BACK:
+      _position -= _front * _speed * dt;
+      break;
+    case LEFT:
+      _position -= _right * _speed * dt;
+      break;
+    case RIGHT:
+      _position += _right * _speed * dt;
+      break;
+    case UP:
+      _position += _up * _speed * dt;
+      break;
+    case DOWN:
+      _position -= _up * _speed * dt;
+      break;
 
-  default:
-    break;
+    default:
+      break;
+    }
   }
 }
 

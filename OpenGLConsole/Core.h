@@ -35,6 +35,8 @@ public:
   int GetWindiwShouldClose();
   void SetWindowShouldClose();
 
+  void SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane);
+
   void AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent = nullptr);
   void AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
   void AddWindshieldSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);

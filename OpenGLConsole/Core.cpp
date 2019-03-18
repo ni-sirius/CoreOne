@@ -18,9 +18,9 @@ Core::Core(std::string title,
   _frameBufferHeight(0),
   _GLVerMajor(GLMajorVer),
   _GLVerMinor(GLMinorVer),
-  _fov(90.f),
-  _nearPlane(0.1f),
-  _farPlane(1000.f),
+  _fov(0.f),
+  _nearPlane(0.f),
+  _farPlane(0.f),
   _projectionMat(1.f),
   _viewMat(1.f),
   _deltaTime(0.f),
@@ -33,7 +33,7 @@ Core::Core(std::string title,
   _mouseOffsetX(0.0),
   _mouseOffsetY(0.0),
   _firstMouse(true),
-  _camera(std::make_shared<Camera>(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f)))
+  _camera(nullptr)
 {
   if (initGLFW())
     if (initWindow(title, resizable))
@@ -107,6 +107,14 @@ int Core::GetWindiwShouldClose()
 void Core::SetWindowShouldClose()
 {
   glfwSetWindowShouldClose(_window, GLFW_TRUE);
+}
+
+void Core::SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane)
+{
+  _camera = camera;
+  _fov = fov;
+  _nearPlane = nearPlane;
+  _farPlane = farPlane;
 }
 
 void Core::AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent /*= nullptr*/)
@@ -222,13 +230,13 @@ void Core::initOpenGlOptions()
 
 void Core::initMatrices()
 {
-  _viewMat = _camera->GetViewMatrix();
-
-  _projectionMat = glm::perspective(
-    glm::radians(_fov),
-    static_cast<float>(_framebufferWidth) / _frameBufferHeight,
-    _nearPlane,
-    _farPlane);
+  //_viewMat = _camera->GetViewMatrix();
+  //
+  //_projectionMat = glm::perspective(
+  //  glm::radians(_fov),
+  //  static_cast<float>(_framebufferWidth) / _frameBufferHeight,
+  //  _nearPlane,
+  //  _farPlane);
 }
 
 void Core::updateDeltaTime()

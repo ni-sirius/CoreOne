@@ -56,6 +56,12 @@ void Create(Core& core)
   initMaterials();
   initTextures();
 
+  //Camera
+  auto camera = std::make_shared<Camera>(glm::vec3(0.f, 0.f, 3.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));
+  core.SetCamera(camera, 90.f, 0.1f, 1000.f);
+
+  core.AddCommand(new SetCameraPositionCommand(glm::vec3(2.f, 0.f, 3.f), camera));
+
   //Lights
   auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f));
   core.AddLightSceneNode(lightNode);

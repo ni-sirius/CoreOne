@@ -26,3 +26,16 @@ void SetLightNodePositionCommand::Execute()
 {
   _lightNode->SetPosition(_position);
 }
+
+SetCameraPositionCommand::SetCameraPositionCommand(
+  glm::vec3 position,
+  std::shared_ptr<Camera> camera):
+  _position(position),
+  _camera(camera)
+{
+}
+
+void SetCameraPositionCommand::Execute()
+{
+  _camera->SetCameraPosition(_position);
+}

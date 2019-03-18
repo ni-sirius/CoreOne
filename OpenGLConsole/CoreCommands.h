@@ -57,3 +57,15 @@ private:
   glm::vec3 _position;
   std::shared_ptr<LightNode> _lightNode;
 };
+
+class SetCameraPositionCommand : public CoreSingleCommand
+{
+public:
+  SetCameraPositionCommand(glm::vec3 position, std::shared_ptr<Camera> camera);
+
+  virtual void Execute() override;
+
+private:
+  glm::vec3 _position;
+  std::shared_ptr<Camera> _camera;
+};
