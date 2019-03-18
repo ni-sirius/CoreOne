@@ -72,7 +72,7 @@ void Core::Update()
 
 void Core::Render()
 {
-  //clear
+  //clear (Move to startDraw func?)
   glClearColor(0.f, 0.f, 0.f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -91,6 +91,12 @@ void Core::Render()
   //end draw
   glfwSwapBuffers(_window);
   glFlush();
+
+  //Clear up all (Move to endDraw finc?)
+  glBindVertexArray(0);
+  glUseProgram(0);
+  glActiveTexture(0);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 int Core::GetWindiwShouldClose()
