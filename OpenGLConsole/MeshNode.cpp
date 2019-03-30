@@ -11,7 +11,9 @@ MeshNode::MeshNode(Vertex* vertexArray,
                    glm::vec3 scale,
                    std::shared_ptr<Material> material /*= nullptr*/,
                    std::shared_ptr<Texture> diffuseTexture /*= nullptr*/,
-                   std::shared_ptr<Texture> specularTexture /*= nullptr*/):
+                   std::shared_ptr<Texture> specularTexture /*= nullptr*/,
+                   bool visible /*= true)*/):
+  _visible(visible),
   _position(position),
   _rotation(rotation),
   _scale(scale),
@@ -31,7 +33,9 @@ MeshNode::MeshNode(std::shared_ptr<Primitive> primitive,
                    glm::vec3 scale,
                    std::shared_ptr<Material> material /*= nullptr*/,
                    std::shared_ptr<Texture> diffuseTexture /*= nullptr*/,
-                   std::shared_ptr<Texture> specularTexture /*= nullptr*/):
+                   std::shared_ptr<Texture> specularTexture /*= nullptr*/,
+                   bool visible /*= true*/):
+  _visible(visible),
   _position(position),
   _rotation(rotation),
   _scale(scale),
@@ -63,61 +67,64 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
   if (!_material)
     return; // Change later, maybe use default shader/material
 
-  //MVP Matrix
-  _material->GetShader()->SetMat4fv(_modelMatrix, "ModelMat");
-
-  _material->GetShader()->SetMat4fv(viewMat, "ViewMat");
-
-  _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
-
-  //Camera
-  _material->GetShader()->SetVec3f(camera->GetCameraPosition(), "CameraPos");
-
-  //Lights
-  for (size_t i = 0; i < pointLights.size(); ++i)
+  if (_visible)
   {
-    auto lightPos = "light" + std::to_string(i) + ".lightPos";
-    _material->GetShader()->SetVec3f(pointLights[i]->GetPosition(), lightPos.c_str());
-    auto lightColor = "light" + std::to_string(i) + ".lightColor";
-    _material->GetShader()->SetVec3f(pointLights[i]->GetColor(), lightColor.c_str());
-  }
+    //MVP Matrix
+    _material->GetShader()->SetMat4fv(_modelMatrix, "ModelMat");
 
-  //Material
-  if (_diffuseTexture)
-  {
-    _material->UseColors(false);
-    _diffuseTexture->Bind(_material->GetDiffuseTexUnit());
-  }
-  else
-    _material->UseColors(true);
+    _material->GetShader()->SetMat4fv(viewMat, "ViewMat");
 
-  if (_specularTexture)
-    _specularTexture->Bind(_material->GetSpecularTexUnit());
+    _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
 
-  _material->Use();
+    //Camera
+    _material->GetShader()->SetVec3f(camera->GetCameraPosition(), "CameraPos");
 
-  //Render
-  _material->GetShader()->Use();
+    //Lights
+    for (size_t i = 0; i < pointLights.size(); ++i)
+    {
+      auto lightPos = "light" + std::to_string(i) + ".lightPos";
+      _material->GetShader()->SetVec3f(pointLights[i]->GetPosition(), lightPos.c_str());
+      auto lightColor = "light" + std::to_string(i) + ".lightColor";
+      _material->GetShader()->SetVec3f(pointLights[i]->GetColor(), lightColor.c_str());
+    }
 
-  //bind VAO
-  glBindVertexArray(_VAO);
+    //Material
+    if (_diffuseTexture)
+    {
+      _material->UseColors(false);
+      _diffuseTexture->Bind(_material->GetDiffuseTexUnit());
+    }
+    else
+      _material->UseColors(true);
 
-  //draw
+    if (_specularTexture)
+      _specularTexture->Bind(_material->GetSpecularTexUnit());
+
+    _material->Use();
+
+    //Render
+    _material->GetShader()->Use();
+
+    //bind VAO
+    glBindVertexArray(_VAO);
+
+    //draw
 #pragma warning( push )
 #pragma warning( disable : 4267)
-  if (_numOfIndices)
-    glDrawElements(GL_TRIANGLES, _numOfIndices, GL_UNSIGNED_INT, 0);
-  else
-    glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
+    if (_numOfIndices)
+      glDrawElements(GL_TRIANGLES, _numOfIndices, GL_UNSIGNED_INT, 0);
+    else
+      glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
 #pragma warning( pop )
 
-  if (_diffuseTexture)
-    _diffuseTexture->Unbind();
+    if (_diffuseTexture)
+      _diffuseTexture->Unbind();
 
-  if (_specularTexture)
-    _specularTexture->Unbind();
+    if (_specularTexture)
+      _specularTexture->Unbind();
 
-  _material->GetShader()->Unuse();
+    _material->GetShader()->Unuse();
+  }
 
   //Render childs
   for (const auto& child : _childs)

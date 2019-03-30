@@ -17,7 +17,8 @@ public:
            glm::vec3 scale,
            std::shared_ptr<Material> material = nullptr,
            std::shared_ptr<Texture> diffuseTexture = nullptr,
-           std::shared_ptr<Texture> specularTexture = nullptr);
+           std::shared_ptr<Texture> specularTexture = nullptr,
+           bool visible = true);
 
   MeshNode(std::shared_ptr<Primitive> primitive,
            glm::vec3 position,
@@ -25,13 +26,16 @@ public:
            glm::vec3 scale,
            std::shared_ptr<Material> material = nullptr,
            std::shared_ptr<Texture> diffuseTexture = nullptr,
-           std::shared_ptr<Texture> specularTexture = nullptr);
+           std::shared_ptr<Texture> specularTexture = nullptr,
+           bool visible = true);
   virtual ~MeshNode();
 
   virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f)) override;
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
                       std::vector<std::shared_ptr<PointLight>> pointLights) override;
+
+  inline void SetVisible(bool visible) { _visible = visible; };
 
   inline void SetPosition(const glm::vec3 position) { _position = position; };
   inline void SetRotation(const glm::vec3 rotation) { _rotation = rotation; };
@@ -56,6 +60,8 @@ protected:
   void updateModelMatrix();
 
 protected:
+  bool _visible;
+
   glm::vec3 _position;
   glm::vec3 _rotation;
   glm::vec3 _scale;

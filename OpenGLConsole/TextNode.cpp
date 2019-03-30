@@ -7,7 +7,9 @@
 TextNode::TextNode(std::string text,
                    glm::vec3 position,
                    float scale,
-                   std::shared_ptr<Material> material) :
+                   std::shared_ptr<Material> material /*= nullptr*/,
+                   bool visible /*= true*/) :
+  _visible(visible),
   _text(text),
   _position(position),
   _scale(scale),
@@ -88,55 +90,65 @@ void TextNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat
 
 void TextNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat, std::shared_ptr<Camera> camera, std::vector<std::shared_ptr<PointLight>> pointLights)
 {
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  GLfloat x = _position.x;
-  GLfloat y = _position.y;
-  GLfloat scale = _scale;
-
-  // Activate corresponding render state
-  _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
-  _material->GetShader()->SetVec3f(glm::vec3(1.f, 1.f, 1.f), "textColor");
-  _material->GetShader()->Set1i(5, "text");
-  _material->GetShader()->Use();
-  glActiveTexture(GL_TEXTURE5);
-  glBindVertexArray(_VAO);
-
-  // Iterate through all characters
-  std::string::const_iterator c;
-  for (c = _text.begin(); c != _text.end(); c++)
+  if (_visible)
   {
-    Character ch = _characters[*c];
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    GLfloat xpos = x + ch.Bearing.x * scale;
-    GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+    GLfloat x = _position.x;
+    GLfloat y = _position.y;
+    GLfloat scale = _scale;
 
-    GLfloat w = ch.Size.x * scale;
-    GLfloat h = ch.Size.y * scale;
-    // Update VBO for each character
-    GLfloat vertices[6][4] = {
-      { xpos,     ypos + h,   0.0, 0.0 },
-      { xpos,     ypos,       0.0, 1.0 },
-      { xpos + w, ypos,       1.0, 1.0 },
+    // Activate corresponding render state
+    _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
+    _material->GetShader()->SetVec3f(glm::vec3(1.f, 1.f, 1.f), "textColor");
+    _material->GetShader()->Set1i(5, "text");
+    _material->GetShader()->Use();
+    glActiveTexture(GL_TEXTURE5);
+    glBindVertexArray(_VAO);
 
-      { xpos,     ypos + h,   0.0, 0.0 },
-      { xpos + w, ypos,       1.0, 1.0 },
-      { xpos + w, ypos + h,   1.0, 0.0 }
-    };
-    // Render glyph texture over quad
-    glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-    // Update content of VBO memory
-    glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // Render quad
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-    x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+    // Iterate through all characters
+    std::string::const_iterator c;
+    for (c = _text.begin(); c != _text.end(); c++)
+    {
+      Character ch = _characters[*c];
+
+      GLfloat xpos = x + ch.Bearing.x * scale;
+      GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+
+      GLfloat w = ch.Size.x * scale;
+      GLfloat h = ch.Size.y * scale;
+      // Update VBO for each character
+      GLfloat vertices[6][4] = {
+        { xpos,     ypos + h,   0.0, 0.0 },
+        { xpos,     ypos,       0.0, 1.0 },
+        { xpos + w, ypos,       1.0, 1.0 },
+
+        { xpos,     ypos + h,   0.0, 0.0 },
+        { xpos + w, ypos,       1.0, 1.0 },
+        { xpos + w, ypos + h,   1.0, 0.0 }
+      };
+      // Render glyph texture over quad
+      glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+      // Update content of VBO memory
+      glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+      glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+      glBindBuffer(GL_ARRAY_BUFFER, 0);
+      // Render quad
+      glDrawArrays(GL_TRIANGLES, 0, 6);
+      // Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+      x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64)
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
   }
-  glBindVertexArray(0);
-  glBindTexture(GL_TEXTURE_2D, 0);
+
+  //Render childs
+  for (const auto& child : _childs)
+  {
+    child->Render(viewMat, projectionMat,
+      camera, pointLights);
+  }
 }
 
 void TextNode::initVAO()

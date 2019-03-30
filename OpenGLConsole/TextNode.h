@@ -16,13 +16,16 @@ public:
   TextNode(std::string text,
            glm::vec3 position,
            float scale,
-           std::shared_ptr<Material> material = nullptr);
+           std::shared_ptr<Material> material = nullptr,
+           bool visible = true);
   virtual ~TextNode();
 
   virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f)) override;
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     std::shared_ptr<Camera> camera,
     std::vector<std::shared_ptr<PointLight>> pointLights) override;
+
+  inline void SetVisible(bool visible) { _visible = visible; };
 
   inline void SetText(const std::string text) { _text = text; };
 
@@ -45,6 +48,8 @@ protected:
   void updateModelMatrix();
 
 protected:
+  bool _visible;
+
   std::string _text;
 
   std::map<GLchar, Character> _characters;
