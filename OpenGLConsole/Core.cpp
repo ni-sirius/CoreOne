@@ -11,11 +11,11 @@ Core::Core(std::string title,
            int GLMajorVer, int GLMinorVer,
            bool resizable):
   _device(std::make_unique<CoreDevice>()),
-  _window(nullptr),
-  _windowWidth(width),
-  _windowHeight(height),
-  _framebufferWidth(0),
-  _frameBufferHeight(0),
+  _window(std::make_unique<CoreWindow>(width, height, GLMajorVer, GLMinorVer)),
+  //_windowWidth(width),
+  //_windowHeight(height),
+  //_framebufferWidth(0),
+  //_frameBufferHeight(0),
   _GLVerMajor(GLMajorVer),
   _GLVerMinor(GLMinorVer),
   _fov(0.f),
@@ -35,19 +35,18 @@ Core::Core(std::string title,
   _firstMouse(true),
   _camera(nullptr)
 {
-  if (initGLFW())
-    if (initWindow(title, resizable))
-    {
-      initGLEW();
-      initOpenGlOptions();
-      initMatrices();
-    }
+  if (_window->InitWindow(title, resizable))
+  {
+    initGLEW();
+    initOpenGlOptions();
+    initMatrices();
+  }
 }
 
 Core::~Core()
 {
-  glfwDestroyWindow(_window);
-  glfwTerminate();
+  //glfwDestroyWindow(_window);
+  //glfwTerminate();
 }
 
 
@@ -89,7 +88,7 @@ void Core::Render()
     rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
 
   //end draw
-  glfwSwapBuffers(_window);
+  glfwSwapBuffers(_window->Window());
   glFlush();
 
   //Clear up all (Move to endDraw finc?)
@@ -101,12 +100,23 @@ void Core::Render()
 
 int Core::GetWindiwShouldClose()
 {
-  return glfwWindowShouldClose(_window);
+  return glfwWindowShouldClose(_window->Window());
 }
 
 void Core::SetWindowShouldClose()
 {
-  glfwSetWindowShouldClose(_window, GLFW_TRUE);
+  glfwSetWindowShouldClose(_window->Window(), GLFW_TRUE);
+}
+
+//TODO Create event thread
+void Core::RegisterKeyCallback(int key, std::function<void(void)> callback)
+{
+  _window->AddKeyCallback(key, callback);
+}
+
+void Core::UnregisterKeyCallback(int key)
+{
+  _window->RemoveKeyCallback(key);
 }
 
 void Core::SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane)
@@ -171,28 +181,28 @@ bool Core::initGLFW()
 
 bool Core::initWindow(std::string title, bool resizable)
 {
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _GLVerMajor);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _GLVerMinor);
-  glfwWindowHint(GLFW_RESIZABLE, resizable);
+  //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _GLVerMajor);
+  //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _GLVerMinor);
+  //glfwWindowHint(GLFW_RESIZABLE, resizable);
 
-  _window = glfwCreateWindow(_windowWidth, _windowHeight, title.c_str(), nullptr, nullptr);
-  if (!_window)
-  {
-    std::cout << "WINDOW::ERROR Init failed" << std::endl;
-    glfwTerminate();
-    return false;
-  }
+  //_window = glfwCreateWindow(_windowWidth, _windowHeight, title.c_str(), nullptr, nullptr);
+  //if (!_window)
+  //{
+  //  std::cout << "WINDOW::ERROR Init failed" << std::endl;
+  //  glfwTerminate();
+  //  return false;
+  //}
 
-  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
+  //glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
 
-  auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
-    glViewport(0, 0, frameBufWidth, frameBufHeight);
-  };
-  glfwSetFramebufferSizeCallback(_window, framebufferResizeCallback);
-  //glViewport(0, 0, framebufferWidth, frameBufferHeight); if static size
+  //auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
+  //  glViewport(0, 0, frameBufWidth, frameBufHeight);
+  //};
+  //glfwSetFramebufferSizeCallback(_window, framebufferResizeCallback);
+  ////glViewport(0, 0, framebufferWidth, frameBufferHeight); if static size
 
-  glfwMakeContextCurrent(_window);
+  //glfwMakeContextCurrent(_window);
 
   return true;
 }
@@ -225,7 +235,8 @@ void Core::initOpenGlOptions()
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
   //Input options
-  glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  _window->HideCoursor(true);
+ //TODO glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); HideCoursor
 }
 
 void Core::initMatrices()
@@ -292,32 +303,32 @@ void Core::updateDeltaTime()
 
 void Core::updateKeyboardInput()
 {
-  if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-  {
-    glfwSetWindowShouldClose(_window, GLFW_TRUE);
-  }
+  //if (glfwGetKey(_window->Window(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+  //{
+  //  glfwSetWindowShouldClose(_window->Window(), GLFW_TRUE);
+  //}
 
-  if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_W) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::FORWARD);
   }
-  if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_S) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::BACK);
   }
-  if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_A) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::LEFT);
   }
-  if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_D) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::RIGHT);
   }
-  if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_SPACE) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::UP);
   }
-  if (glfwGetKey(_window, GLFW_KEY_C) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_C) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::DOWN);
   }
@@ -325,7 +336,7 @@ void Core::updateKeyboardInput()
 
 void Core::updateMouseInput()
 {
-  glfwGetCursorPos(_window, &_mouseX, &_mouseY);
+  glfwGetCursorPos(_window->Window(), &_mouseX, &_mouseY);
   static bool firstFlag(true);
   if (firstFlag)
   {
@@ -344,13 +355,16 @@ void Core::updateMouseInput()
 void Core::updateProjection(Projection_type projection)
 {
   //To handle resizing of the window
-  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
+  //glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
+  auto frameBufferSize = _window->GetFramebufferSize();
+  int framebufferWidth(frameBufferSize.first);
+  int frameBufferHeight(frameBufferSize.second);
 
   if (projection == Projection_type::PERSPECTIVE)
   {
     _projectionMat = glm::perspective(
       glm::radians(_fov),
-      static_cast<float>(_framebufferWidth) / _frameBufferHeight,
+      static_cast<float>(framebufferWidth) / frameBufferHeight,
       _nearPlane,
       _farPlane);
   }
@@ -358,9 +372,9 @@ void Core::updateProjection(Projection_type projection)
   {
     _projectionMat = glm::ortho(
       0.0f,
-      static_cast<float>(_framebufferWidth),
+      static_cast<float>(framebufferWidth),
       0.f,
-      static_cast<float>(_frameBufferHeight),
+      static_cast<float>(frameBufferHeight),
       -1.f,
       1.f
       );

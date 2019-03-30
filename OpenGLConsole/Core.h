@@ -1,8 +1,10 @@
 #pragma once
 #include <memory>
+#include <functional>
 #include "LightNode.h"
 #include "MeshNode.h"
 #include "TextNode.h"
+#include "CoreWindow.h"
 
 //Temp enums
 enum Shader_enum {SHADER_CORE_PROGRAM};
@@ -35,6 +37,9 @@ public:
   int GetWindiwShouldClose();
   void SetWindowShouldClose();
 
+  void RegisterKeyCallback(int key, std::function<void(void)> callback);
+  void UnregisterKeyCallback(int key);
+
   void SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane);
 
   void AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent = nullptr);
@@ -49,11 +54,11 @@ private:
   std::unique_ptr<CoreDevice> _device;
 
   //Window parameters
-  GLFWwindow* _window;
-  const int _windowWidth;
-  const int _windowHeight;
-  int _framebufferWidth;
-  int _frameBufferHeight;
+  std::unique_ptr<CoreWindow> _window;
+  //const int _windowWidth;
+  //const int _windowHeight;
+  //int _framebufferWidth;
+  //int _frameBufferHeight;
 
   //OpenGL context
   const int _GLVerMajor;
