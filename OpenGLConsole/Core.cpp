@@ -12,10 +12,6 @@ Core::Core(std::string title,
            bool resizable):
   _device(std::make_unique<CoreDevice>()),
   _window(std::make_unique<CoreWindow>(width, height, GLMajorVer, GLMinorVer)),
-  //_windowWidth(width),
-  //_windowHeight(height),
-  //_framebufferWidth(0),
-  //_frameBufferHeight(0),
   _GLVerMajor(GLMajorVer),
   _GLVerMinor(GLMinorVer),
   _fov(0.f),
@@ -39,14 +35,11 @@ Core::Core(std::string title,
   {
     initGLEW();
     initOpenGlOptions();
-    initMatrices();
   }
 }
 
 Core::~Core()
 {
-  //glfwDestroyWindow(_window);
-  //glfwTerminate();
 }
 
 
@@ -88,7 +81,7 @@ void Core::Render()
     rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
 
   //end draw
-  glfwSwapBuffers(_window->Window());
+  _window->SwapBuffers();
   glFlush();
 
   //Clear up all (Move to endDraw finc?)
@@ -100,12 +93,12 @@ void Core::Render()
 
 int Core::GetWindiwShouldClose()
 {
-  return glfwWindowShouldClose(_window->Window());
+  return _window->GetWindowShouldClose();
 }
 
 void Core::SetWindowShouldClose()
 {
-  glfwSetWindowShouldClose(_window->Window(), GLFW_TRUE);
+  _window->SetWindowShouldClose(true);
 }
 
 //TODO Create event thread
@@ -166,47 +159,6 @@ void Core::AddCommand(CoreBaseCommand* command)
   _device->AddCommand(command);
 }
 
-bool Core::initGLFW()
-{
-  if (glfwInit() == GLFW_FALSE)
-  {
-    std::cout << "CORE::GLFW::ERROR Init failed" << std::endl;
-    glfwTerminate();
-
-    return false;
-  }
-
-  return true;
-}
-
-bool Core::initWindow(std::string title, bool resizable)
-{
-  //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _GLVerMajor);
-  //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _GLVerMinor);
-  //glfwWindowHint(GLFW_RESIZABLE, resizable);
-
-  //_window = glfwCreateWindow(_windowWidth, _windowHeight, title.c_str(), nullptr, nullptr);
-  //if (!_window)
-  //{
-  //  std::cout << "WINDOW::ERROR Init failed" << std::endl;
-  //  glfwTerminate();
-  //  return false;
-  //}
-
-  //glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
-
-  //auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
-  //  glViewport(0, 0, frameBufWidth, frameBufHeight);
-  //};
-  //glfwSetFramebufferSizeCallback(_window, framebufferResizeCallback);
-  ////glViewport(0, 0, framebufferWidth, frameBufferHeight); if static size
-
-  //glfwMakeContextCurrent(_window);
-
-  return true;
-}
-
 bool Core::initGLEW()
 {
   glewExperimental = GL_TRUE;
@@ -236,18 +188,6 @@ void Core::initOpenGlOptions()
 
   //Input options
   _window->HideCoursor(true);
- //TODO glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); HideCoursor
-}
-
-void Core::initMatrices()
-{
-  //_viewMat = _camera->GetViewMatrix();
-  //
-  //_projectionMat = glm::perspective(
-  //  glm::radians(_fov),
-  //  static_cast<float>(_framebufferWidth) / _frameBufferHeight,
-  //  _nearPlane,
-  //  _farPlane);
 }
 
 void Core::updateDeltaTime()
@@ -257,57 +197,8 @@ void Core::updateDeltaTime()
   _lastTime = _curTime;
 }
 
-//void Core::updateInput(GLFWwindow* window)
-//{
-//  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-//  {
-//    glfwSetWindowShouldClose(window, GLFW_TRUE);
-//  }
-//}
-//
-//void Core::updateInput(GLFWwindow* window, Mesh& mesh)
-//{
-//  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-//  {
-//    mesh.Move(glm::vec3(0.f, 0.f, -0.01f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-//  {
-//    mesh.Move(glm::vec3(0.f, 0.f, 0.01f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-//  {
-//    mesh.Move(glm::vec3(-0.01f, 0.f, 0.f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-//  {
-//    mesh.Move(glm::vec3(0.01f, 0.f, 0.f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-//  {
-//    mesh.Rotate(glm::vec3(0.f, -0.5f, 0.f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-//  {
-//    mesh.Rotate(glm::vec3(0.f, 0.5f, 0.f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-//  {
-//    mesh.Upscale(glm::vec3(-0.01f));
-//  }
-//  else if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-//  {
-//    mesh.Upscale(glm::vec3(0.01f));
-//  }
-//}
-
 void Core::updateKeyboardInput()
 {
-  //if (glfwGetKey(_window->Window(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
-  //{
-  //  glfwSetWindowShouldClose(_window->Window(), GLFW_TRUE);
-  //}
-
   if (glfwGetKey(_window->Window(), GLFW_KEY_W) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::FORWARD);

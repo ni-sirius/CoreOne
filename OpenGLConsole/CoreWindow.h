@@ -11,6 +11,9 @@ public:
 
   bool InitWindow(std::string title, bool resizable);
 
+  bool GetWindowShouldClose();
+  void SetWindowShouldClose(bool close);
+
   GLFWwindow* Window();
 
   void AddKeyCallback(int key, std::function<void()> callback);
@@ -20,6 +23,8 @@ public:
   void HideCoursor(bool hide);
 
   std::pair<int, int> GetFramebufferSize();
+
+  void SwapBuffers();
 
 private:
   bool initGLFW();

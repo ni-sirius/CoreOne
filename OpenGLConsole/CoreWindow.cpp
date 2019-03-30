@@ -38,6 +38,16 @@ bool CoreWindow::InitWindow(std::string title, bool resizable)
   return result;
 }
 
+bool CoreWindow::GetWindowShouldClose()
+{
+  return glfwWindowShouldClose(_window);
+}
+
+void CoreWindow::SetWindowShouldClose(bool close)
+{
+  glfwSetWindowShouldClose(_window, close);
+}
+
 GLFWwindow* CoreWindow::Window()
 {
   return _window;
@@ -77,6 +87,11 @@ void CoreWindow::HideCoursor(bool hide)
 std::pair<int, int> CoreWindow::GetFramebufferSize()
 {
   return std::make_pair(_framebufferWidth, _frameBufferHeight);
+}
+
+void CoreWindow::SwapBuffers()
+{
+  glfwSwapBuffers(_window);
 }
 
 bool CoreWindow::initGLFW()

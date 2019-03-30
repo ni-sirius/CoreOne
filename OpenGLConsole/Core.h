@@ -55,10 +55,6 @@ private:
 
   //Window parameters
   std::unique_ptr<CoreWindow> _window;
-  //const int _windowWidth;
-  //const int _windowHeight;
-  //int _framebufferWidth;
-  //int _frameBufferHeight;
 
   //OpenGL context
   const int _GLVerMajor;
@@ -94,12 +90,8 @@ private:
   bool _firstMouse;
 
 private:
-  bool initGLFW();
-  bool initWindow(std::string title, bool resizable);
   bool initGLEW();
   void initOpenGlOptions();
-
-  void initMatrices();
 
   //Updaters
   void updateDeltaTime();
@@ -109,9 +101,5 @@ private:
 
   void updateProjection(Projection_type projection);
   void updateView();
-
-  //Object move(unused)
-  //void updateInput(GLFWwindow* window);
-  //void updateInput(GLFWwindow* window, Mesh& mesh);
 };
 
