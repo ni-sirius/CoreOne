@@ -4,6 +4,7 @@
 
 class MeshNode;
 class LightNode;
+class TextNode;
 
 //================================Base Commands========================================
 class CoreBaseCommand
@@ -46,6 +47,30 @@ private:
   std::shared_ptr<MeshNode> _mesh;
 };
 
+class SetMeshNodeVisibleCommand : public CoreSingleCommand
+{
+public:
+  SetMeshNodeVisibleCommand(bool visible, std::shared_ptr<MeshNode> mesh);
+
+  virtual void Execute() override;
+
+private:
+  bool _visible;
+  std::shared_ptr<MeshNode> _mesh;
+};
+
+class SetTextNodeVisibleCommand : public CoreSingleCommand
+{
+public:
+  SetTextNodeVisibleCommand(bool visible, std::shared_ptr<TextNode> text);
+
+  virtual void Execute() override;
+
+private:
+  bool _visible;
+  std::shared_ptr<TextNode> _text;
+};
+
 class SetLightNodePositionCommand : public CoreSingleCommand
 {
 public:
@@ -68,4 +93,16 @@ public:
 private:
   glm::vec3 _position;
   std::shared_ptr<Camera> _camera;
+};
+
+class SetTextScaleCommand : public CoreSingleCommand
+{
+public:
+  SetTextScaleCommand(float scale, std::shared_ptr<TextNode> text);
+
+  virtual void Execute() override;
+
+private:
+  float _scale;
+  std::shared_ptr<TextNode> _text;
 };
