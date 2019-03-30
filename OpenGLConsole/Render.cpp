@@ -50,6 +50,26 @@ void initTextures()
   textures.push_back(std::make_shared<Texture>("Images/container_specular.png", GL_TEXTURE_2D));
 }
 
+class Foo
+{
+public:
+  Foo(std::shared_ptr<TextNode> text, Core* core) {
+    _text = text;
+    _core = core;
+  };
+
+  void callback() {
+    static float myscale(1.3f);
+    myscale += 0.1;
+    auto command = new SetTextScaleCommand(myscale, _text);
+    _core->AddCommand(command);
+  };
+
+private:
+  std::shared_ptr<TextNode> _text;
+  Core* _core;
+};
+
 void Create(Core& core)
 {
   initShaders(4, 5);
@@ -88,6 +108,19 @@ void Create(Core& core)
   auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f, materials[3]);
   core.AddTextSceneNode(txt1);
 
+  
+  //Var2
+  auto qPressCall = [txt1, &core]() {
+    static float myscale(1.3f);
+    myscale += 0.1;
+    auto command = new SetTextScaleCommand(myscale, txt1);
+    core.AddCommand(command);
+  };
+  core.RegisterKeyCallback(GLFW_KEY_O, qPressCall);
+
+  auto commandv = new SetMeshNodeVisibleCommand(false, btn);
+  core.AddCommand(commandv);
+
   auto moveligthfunc = [&](std::shared_ptr<LightNode> light) {
     double oldTime(0);
     while (true)
@@ -102,6 +135,13 @@ void Create(Core& core)
 
       auto command = new SetLightNodePositionCommand(newPos, light);
       core.AddCommand(command);
+    }
+  };
+
+  auto changeTextFunc = [&](std::shared_ptr<TextNode> text) {
+    while (true)
+    {
+
     }
   };
 
