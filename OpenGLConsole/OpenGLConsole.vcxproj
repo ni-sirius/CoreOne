@@ -163,6 +163,8 @@
     <ClInclude Include="CoreWindow.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="EventReceiver.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameStates.h" />
     <ClInclude Include="LightNode.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Material.h" />
@@ -186,6 +188,8 @@
     <ClCompile Include="CoreWindow.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="EventReceiver.cpp" />
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameStates.cpp" />
     <ClCompile Include="LightNode.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="Material.cpp" />
