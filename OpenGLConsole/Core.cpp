@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Core.h"
 #include "Material.h"
-#include "Mesh.h"
 #include "MeshNode.h"
 #include "LightNode.h"
 #include "CoreDevice.h"

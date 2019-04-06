@@ -166,7 +166,6 @@
     <ClInclude Include="LightNode.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshNode.h" />
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="Render.h" />
@@ -190,7 +189,6 @@
     <ClCompile Include="LightNode.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MeshNode.cpp" />
     <ClCompile Include="OpenGLConsole.cpp" />
     <ClCompile Include="Primitives.cpp" />
