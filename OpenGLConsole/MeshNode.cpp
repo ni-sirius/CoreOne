@@ -84,8 +84,13 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     {
       auto lightPos = "light" + std::to_string(i) + ".lightPos";
       _material->GetShader()->SetVec3f(pointLights[i]->GetPosition(), lightPos.c_str());
-      auto lightColor = "light" + std::to_string(i) + ".lightColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetColor(), lightColor.c_str());
+
+      auto lightAmbientColor = "light" + std::to_string(i) + ".lightAmbientCol";
+      _material->GetShader()->SetVec3f(pointLights[i]->GetAmbientColor(), lightAmbientColor.c_str());
+      auto lightDiffuseColor = "light" + std::to_string(i) + ".lightDiffuseCol";
+      _material->GetShader()->SetVec3f(pointLights[i]->GetDiffuseColor(), lightDiffuseColor.c_str());
+      auto lightSpecularColor = "light" + std::to_string(i) + ".lightSpecularCol";
+      _material->GetShader()->SetVec3f(pointLights[i]->GetSpecularColor(), lightSpecularColor.c_str());
     }
 
     //Material

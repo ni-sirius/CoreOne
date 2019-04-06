@@ -3,7 +3,10 @@
 struct Light
 {
   vec3 lightPos;
-  vec3 lightColor;
+
+  vec3 lightAmbientCol;
+  vec3 lightDiffuseCol; // Main light color
+  vec3 lightSpecularCol;
 };
 
 struct Material
@@ -30,14 +33,14 @@ uniform vec3 CameraPos;
 
 vec3 calculateAmbient(Material material)
 {
-  return material.ambient * light0.lightColor;
+  return material.ambient * light0.lightAmbientCol;
 }
 vec3 calculateDiffuse(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPos)
 {
   vs_normal = normalize(vs_normal);
   vec3 posToLightDirVec = normalize(lightPos - vs_position);
   float diffuse = max(dot(vs_normal, posToLightDirVec), 0.f);
-  return  light0.lightColor * diffuse;
+  return  light0.lightDiffuseCol * diffuse;
 }
 vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3 lightPos, vec3 CameraPos)
 {
@@ -45,7 +48,7 @@ vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3
   vec3 reflectDirVec = normalize(reflect(lightToPosDirVec, normalize(vs_normal)));
   vec3 posToViewDirVec = normalize(CameraPos - vs_position);
   float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), material.shiness);
-  return light0.lightColor * specularConstant * texture(material.specularTex, vs_texcoord).rgb;
+  return light0.lightSpecularCol * specularConstant * texture(material.specularTex, vs_texcoord).rgb;
 }
 
 void main()
