@@ -82,17 +82,21 @@ void Renderer::initCamera()
 void Renderer::initSceneObjects()
 {
   //Meshes
-  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 1.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
   _core.AddMeshSceneNode(flowerBox);
   _meshes.push_back(flowerBox);
 
-  auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
+  auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(2.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
   _core.AddMeshSceneNode(container1);
   _meshes.push_back(container1);
 
-  auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
+  auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.5f), _materials[0], _textures[4], _textures[5]);
   _core.AddMeshSceneNode(container2, container1);
   _meshes.push_back(container2);
+
+  auto container3 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
+  _core.AddMeshSceneNode(container3);
+  _meshes.push_back(container3);
 
   auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f), _materials[2]);
   _core.AddWindshieldSceneNode(btn);
@@ -110,13 +114,12 @@ void Renderer::initSceneObjects()
 void Renderer::initLights()
 {
   //Lights
-  auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f));
+  auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f, 0.5f, 1.f));
   _core.AddLightSceneNode(lightNode);
+  _lights.push_back(lightNode);
 
   auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), _materials[1]);
   _core.AddMeshSceneNode(lightMesh, lightNode);
-
-  _lights.push_back(lightNode);
 }
 
 void Renderer::initKeyCallbacks()

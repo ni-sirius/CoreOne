@@ -25,5 +25,10 @@ private:
   glm::vec3 _ambientColor;
   glm::vec3 _diffuseColor; //Main color
   glm::vec3 _specularColor;
+
+  //coef
+  const float _diffConst = { 0.9f };
+  const float _ambientConst = { 0.3f };
+  const float _specConst = { 1.f };
 };
 
