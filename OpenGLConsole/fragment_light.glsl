@@ -21,5 +21,5 @@ uniform vec3 lightColor;
 
 void main()
 {
-  fs_color = vec4(light0.lightDiffuseCol, 1.f);
+  fs_color = vec4(1.f);
 }

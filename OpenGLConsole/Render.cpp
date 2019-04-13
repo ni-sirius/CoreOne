@@ -114,7 +114,7 @@ void Renderer::initSceneObjects()
 void Renderer::initLights()
 {
   //Lights
-  auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f, 0.5f, 1.f));
+  auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f, 1.f, 1.f));
   _core.AddLightSceneNode(lightNode);
   _lights.push_back(lightNode);
 
