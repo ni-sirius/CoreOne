@@ -14,7 +14,7 @@ void LightNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::ma
 {
   updateModelMatrix();
 
-  _light->SetPosition(glm::vec3(modelMatrix * (deltaTime * _modelMatrix) * glm::vec4(0.f, 0.f, 0.f, 1.f)));
+  _light->SetPosition(glm::vec3(modelMatrix * (/*deltaTime **/ _modelMatrix) * glm::vec4(0.f, 0.f, 0.f, 1.f)));
   _light->SetColor(_color);
 
   CoreNode::Update(deltaTime, modelMatrix);

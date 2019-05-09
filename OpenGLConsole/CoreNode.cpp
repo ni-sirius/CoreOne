@@ -54,7 +54,7 @@ void CoreNode::RemoveChild(std::string uid)
 
 void CoreNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat4(1.f)*/)
 {
-  _modelMatrix = modelMatrix * (deltaTime * _modelMatrix);
+  _modelMatrix = modelMatrix * (/*deltaTime **/ _modelMatrix);
 
   for (const auto& child : _childs)
   {

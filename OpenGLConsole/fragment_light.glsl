@@ -3,7 +3,10 @@
 struct Light
 {
   vec3 lightPos;
-  vec3 lightColor;
+
+  vec3 lightAmbientCol;
+  vec3 lightDiffuseCol; // Main light color
+  vec3 lightSpecularCol;
 };
 
 in vec3 vs_position;
@@ -18,5 +21,5 @@ uniform vec3 lightColor;
 
 void main()
 {
-  fs_color = vec4(light0.lightColor, 1.f);
+  fs_color = vec4(1.f);
 }
