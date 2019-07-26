@@ -37,7 +37,7 @@ private:
   std::vector< std::shared_ptr<Material> > _materials;
   std::vector< std::shared_ptr<Texture> > _textures;
 
-  std::vector<std::shared_ptr<LightNode> > _lights;
+  std::vector<std::shared_ptr<LightNodeBase> > _lights;
   std::vector<std::shared_ptr<MeshNode> > _meshes;
   std::vector<std::shared_ptr<CoreNode> > _windshields;
 };

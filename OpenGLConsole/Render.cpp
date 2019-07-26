@@ -5,6 +5,11 @@
 #include <thread>
 #include "CoreCommands.h"
 
+#include "lights/LightNode.h"
+#include "lights/PointLightNode.h"
+#include "lights/SpotLightNode.h"
+#include "lights/DirectionLightNode.h"
+
 Renderer::Renderer():
   _core("OpenGL Test App", 1024, 768, 4, 5, false),
   _userThreadRunning(true)
@@ -114,9 +119,22 @@ void Renderer::initSceneObjects()
 void Renderer::initLights()
 {
   //Lights
-  auto lightNode = std::make_shared<LightNode>(glm::vec3(2.f, 1.5f, 1.f), glm::vec3(1.f, 1.f, 1.f));
+  auto lightNode = std::make_shared<PointLightNode>();
   _core.AddLightSceneNode(lightNode);
   _lights.push_back(lightNode);
+
+  auto lightNode2 = std::make_shared<PointLightNode>();
+  lightNode2->SetPosition(glm::vec3(0.f, 0.f, -1.f));
+  _core.AddLightSceneNode(lightNode2);
+  _lights.push_back(lightNode2);
+
+  auto lightNode3 = std::make_shared<SpotLightNode>();
+  _core.AddLightSceneNode(lightNode3);
+  _lights.push_back(lightNode3);
+
+  auto lightNode4 = std::make_shared<DirectionLightNode>();
+  _core.AddLightSceneNode(lightNode4);
+  _lights.push_back(lightNode4);
 
   auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), _materials[1]);
   _core.AddMeshSceneNode(lightMesh, lightNode);
@@ -132,7 +150,7 @@ void Renderer::initKeyCallbacks()
   auto textNode = std::static_pointer_cast<TextNode>(_windshields[1]);
   auto oPressCall = [this, textNode]() {
     static float myscale(1.3f);
-    myscale += 0.1;
+    myscale += 0.1f;
     auto command = new SetTextScaleCommand(myscale, textNode);
     _core.AddCommand(command);
   };
@@ -152,7 +170,7 @@ void Renderer::workerThread()
     
     auto newPos = glm::vec3(glm::sin(time) * 2, 1.f, glm::cos(time) * 2);
     
-    auto command = new SetLightNodePositionCommand(newPos, _lights[0]);
+    auto command = new SetLightNodePositionCommand(newPos, std::static_pointer_cast<PointLightNode>(_lights[0]));
     _core.AddCommand(command);
   }
 }

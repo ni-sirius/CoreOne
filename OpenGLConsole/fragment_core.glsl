@@ -55,9 +55,10 @@ in vec3 vs_normal;
 
 out vec4 fs_color;
 
-#define NUM_POINT_LIGHTS 1
+#define NUM_POINT_LIGHTS 2
 uniform PointLight pointLight[NUM_POINT_LIGHTS];
-uniform DirectLight dirLight0;
+#define NUM_DIRECT_LIGHTS 1
+uniform DirectLight dirLight[NUM_DIRECT_LIGHTS];
 #define NUM_SPOT_LIGHTS 1
 uniform SpotLight spotLight[NUM_SPOT_LIGHTS];
 
@@ -75,6 +76,13 @@ vec3 calculateDiffuse(vec3 vs_position, vec3 vs_normal, vec3 lightPos, vec3 ligh
   vs_normal = normalize(vs_normal);
   vec3 posToLightDirVec = normalize(lightPos - vs_position);
   float diffuse = max(dot(vs_normal, posToLightDirVec), 0.f);
+  return  lightDiffuseColor * diffuse;
+}
+
+vec3 calculateDiffuseDirect(vec3 vs_normal, vec3 lightDirection, vec3 lightDiffuseColor)
+{
+  vs_normal = normalize(vs_normal);
+  float diffuse = max(dot(vs_normal, normalize(lightDirection)), 0.f);
   return  lightDiffuseColor * diffuse;
 }
 
@@ -108,50 +116,57 @@ float calculateConeIntensity(vec3 vs_position ,vec3 lightPos, vec3 lightDir, flo
 //Lights Type Calc
 vec4 getPointLights()
 {
-  vec4 result;
+  vec3 result;
 
   for (int i = 0; i < NUM_POINT_LIGHTS; ++i)
   {
     float attenuation = calculateAttenuation(vs_position, pointLight[i].position, pointLight[i].constant, pointLight[i].linear, pointLight[i].quadratic);
 
-    vec4 ambientFinal = attenuation * vec4(calculateAmbient(pointLight[i].ambientColor), 1.f);
-    vec4 diffuseFinal = attenuation * vec4(calculateDiffuse(vs_position, vs_normal, pointLight[i].position, pointLight[i].diffuseColor), 1.f);
-    vec4 specularFinal = attenuation * vec4(calculateSpecular(material, vs_position, vs_normal, pointLight[i].position, pointLight[i].specularColor, CameraPos), 1.f);
+    vec3 ambientFinal = attenuation * calculateAmbient(pointLight[i].ambientColor);
+    vec3 diffuseFinal = attenuation * calculateDiffuse(vs_position, vs_normal, pointLight[i].position, pointLight[i].diffuseColor);
+    vec3 specularFinal = attenuation * calculateSpecular(material, vs_position, vs_normal, pointLight[i].position, pointLight[i].specularColor, CameraPos);
 
-    result = ambientFinal + diffuseFinal + specularFinal;
+    result += ambientFinal + diffuseFinal + specularFinal;
+  }
+
+  return vec4(result, 1.f);
+}
+
+vec4 getDirectLight()
+{
+  vec4 result;
+
+  for (int i = 0; i < NUM_DIRECT_LIGHTS; ++i)
+  {
+    vec3 lightDirection = normalize(-dirLight[i].direction);
+
+    vec4 ambientFinal = vec4(calculateAmbient(dirLight[i].ambientColor), 1.f);
+    vec4 diffuseFinal = vec4(calculateDiffuseDirect(vs_normal, lightDirection, dirLight[i].diffuseColor), 1.f);
+    vec4 specularFinal = vec4(calculateSpecular(material, vs_position, vs_normal, lightDirection, dirLight[i].specularColor, CameraPos), 1.f);
+
+    result += ambientFinal + diffuseFinal + specularFinal;
   }
 
   return result;
 }
 
-vec4 getDirectLight()
-{
-  vec3 lightDirection = normalize(-dirLight0.direction);
-
-  vec4 ambientFinal = vec4(calculateAmbient(dirLight0.ambientColor), 1.f);
-  vec4 diffuseFinal = vec4(calculateDiffuse(vs_position, vs_normal, lightDirection, dirLight0.diffuseColor), 1.f);
-  vec4 specularFinal = vec4(calculateSpecular(material, vs_position, vs_normal, lightDirection, dirLight0.specularColor, CameraPos), 1.f);
-
-  return ambientFinal + diffuseFinal + specularFinal;
-}
-
 vec4 getSpotLights()
 {
-  vec4 result;
+  vec3 result;
 
   for (int i = 0; i < NUM_SPOT_LIGHTS; ++i)
   {
     float attenuation = calculateAttenuation(vs_position, spotLight[i].position, spotLight[i].constant, spotLight[i].linear, spotLight[i].quadratic);
     float intensity = calculateConeIntensity(vs_position, spotLight[i].position, spotLight[i].direction, spotLight[i].cutoffAngle, spotLight[i].cutoffOuterAngle);
 
-    vec4 ambientFinal = attenuation * vec4(spotLight[i].ambientColor, 1.f);
-    vec4 diffuseFinal = attenuation * intensity * vec4(calculateDiffuse(vs_position, vs_normal, spotLight[i].position, spotLight[i].diffuseColor), 1.f);
-    vec4 specularFinal = attenuation * intensity * vec4(calculateSpecular(material, vs_position, vs_normal, spotLight[i].position, spotLight[i].specularColor, CameraPos), 1.f);
+    vec3 ambientFinal = attenuation * spotLight[i].ambientColor;
+    vec3 diffuseFinal = attenuation * intensity * calculateDiffuse(vs_position, vs_normal, spotLight[i].position, spotLight[i].diffuseColor);
+    vec3 specularFinal = attenuation * intensity * calculateSpecular(material, vs_position, vs_normal, spotLight[i].position, spotLight[i].specularColor, CameraPos);
 
-    result = ambientFinal + diffuseFinal + specularFinal;
+    result += ambientFinal + diffuseFinal + specularFinal;
   }
 
-  return result;
+  return vec4(result, 1.f);
 }
 
 

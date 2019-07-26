@@ -27,6 +27,21 @@ public:
   void Use();
   void Unuse();
 
+  //Temp new version,TODO create a uniform class later
+  //Change order name first - value - if not scalar index
+  //TODO Add array uniforms
+  void SetUniform(const GLchar* name, GLfloat value);
+
+  void SetUniform(const GLchar* name, GLint value);
+
+  void SetUniform(const GLchar* name, glm::fvec2 value);
+  void SetUniform(const GLchar* name, glm::fvec3 value);
+  void SetUniform(const GLchar* name, glm::fvec4 value);
+
+  void SetUniform(const GLchar* name, glm::mat3 value, GLboolean transpose = GL_FALSE);
+  void SetUniform(const GLchar* name, glm::mat4 value, GLboolean transpose = GL_FALSE);
+
+  //Old Version of uniform adding; Stand for compatibility
   void Set1f(GLfloat value, const GLchar* name);
 
   void Set1i(GLint value, const GLchar* name);

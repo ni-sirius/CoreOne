@@ -3,7 +3,7 @@
 
 
 class MeshNode;
-class LightNode;
+class PointLightNode;
 class TextNode;
 
 //================================Base Commands========================================
@@ -74,13 +74,13 @@ private:
 class SetLightNodePositionCommand : public CoreSingleCommand
 {
 public:
-  SetLightNodePositionCommand(glm::vec3 position, std::shared_ptr<LightNode> lightNode);
+  SetLightNodePositionCommand(glm::vec3 position, std::shared_ptr<PointLightNode> lightNode);
 
   virtual void Execute() override;
 
 private:
   glm::vec3 _position;
-  std::shared_ptr<LightNode> _lightNode;
+  std::shared_ptr<PointLightNode> _lightNode;
 };
 
 class SetCameraPositionCommand : public CoreSingleCommand

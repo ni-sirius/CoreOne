@@ -2,8 +2,9 @@
 #include "Core.h"
 #include "Material.h"
 #include "MeshNode.h"
-#include "LightNode.h"
+#include "lights/LightNode.h"
 #include "CoreDevice.h"
+#include "lights/LightManager.h"
 
 Core::Core(std::string title,
            const int width, const int height,
@@ -28,7 +29,8 @@ Core::Core(std::string title,
   _mouseOffsetX(0.0),
   _mouseOffsetY(0.0),
   _firstMouse(true),
-  _camera(nullptr)
+  _camera(nullptr),
+  _lightManager(std::make_shared<LightManager>())
 {
   if (_window->InitWindow(title, resizable))
   {
@@ -72,12 +74,12 @@ void Core::Render()
   updateView();
  
   for (const auto& rootNode : _sceneNodes)
-    rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
+    rootNode->Render(_viewMat, _projectionMat, _camera, _lightManager);
 
   updateProjection(Projection_type::ORTHO);
 
   for (const auto& rootNode : _windshieldNodes)
-    rootNode->Render(_viewMat, _projectionMat, _camera, _lightNodes);
+    rootNode->Render(_viewMat, _projectionMat, _camera, _lightManager);
 
   //end draw
   _window->SwapBuffers();
@@ -119,9 +121,9 @@ void Core::SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane,
   _farPlane = farPlane;
 }
 
-void Core::AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent /*= nullptr*/)
+void Core::AddLightSceneNode(std::shared_ptr<LightNodeBase> light, std::shared_ptr<CoreNode> parent /*= nullptr*/)
 {
-  _lightNodes.push_back(light->GetLight());
+  _lightManager->RegisterLight(light->GetLightData());
 
   if (parent)
     parent->AddChild(light);
@@ -218,7 +220,7 @@ void Core::updateKeyboardInput()
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::UP);
   }
-  if (glfwGetKey(_window->Window(), GLFW_KEY_C) == GLFW_PRESS)
+  if (glfwGetKey(_window->Window(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::DOWN);
   }

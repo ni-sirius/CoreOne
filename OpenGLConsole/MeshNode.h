@@ -33,7 +33,7 @@ public:
   virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f)) override;
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
-                      std::vector<std::shared_ptr<PointLight>> pointLights) override;
+                      std::shared_ptr<LightManager> lightManager) override;
 
   inline void SetVisible(bool visible) { _visible = visible; };
 

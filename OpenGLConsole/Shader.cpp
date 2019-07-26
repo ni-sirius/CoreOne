@@ -34,6 +34,71 @@ void Shader::Unuse()
   glUseProgram(0);
 }
 
+void Shader::SetUniform(const GLchar* name, GLfloat value)
+{
+  this->Use();
+
+  glUniform1f(glGetUniformLocation(this->_id, name), value);
+
+  this->Unuse();
+}
+
+void Shader::SetUniform(const GLchar* name, GLint value)
+{
+  this->Use();
+
+  glUniform1i(glGetUniformLocation(this->_id, name), value);
+
+  this->Unuse();
+}
+
+void Shader::SetUniform(const GLchar* name, glm::fvec2 value)
+{
+  this->Use();
+
+  glUniform2fv(glGetUniformLocation(this->_id, name), 1, glm::value_ptr(value));
+
+  this->Unuse();
+}
+
+void Shader::SetUniform(const GLchar* name, glm::fvec3 value)
+{
+  this->Use();
+
+  glUniform3fv(glGetUniformLocation(this->_id, name), 1, glm::value_ptr(value));
+
+  this->Unuse();
+}
+
+void Shader::SetUniform(const GLchar* name, glm::fvec4 value)
+{
+  this->Use();
+
+  glUniform4fv(glGetUniformLocation(this->_id, name), 1, glm::value_ptr(value));
+
+  this->Unuse();
+}
+
+void Shader::SetUniform(const GLchar* name, glm::mat3 value, GLboolean transpose /*= GL_FALSE*/)
+{
+  this->Use();
+
+  glUniformMatrix3fv(glGetUniformLocation(this->_id, name), 1, transpose, glm::value_ptr(value));
+
+  this->Unuse();
+}
+
+void Shader::SetUniform(const GLchar* name, glm::mat4 value, GLboolean transpose /*= GL_FALSE*/)
+{
+  this->Use();
+
+  glUniformMatrix4fv(glGetUniformLocation(this->_id, name), 1, transpose, glm::value_ptr(value));
+
+  this->Unuse();
+}
+
+
+//OLD(Don't use)
 void Shader::Set1f(GLfloat value, const GLchar* name)
 {
   this->Use();

@@ -1,20 +1,48 @@
 #include "stdafx.h"
-#include "Lights.h"
+#include "lights/Lights.h"
 
-PointLight::PointLight(glm::vec3 position /*= glm::vec3(0.f)*/, glm::vec3 color /*= glm::vec3(1.f)*/) :
-  _position(position)
+
+using namespace light;
+
+LightContainer::LightContainer(std::string id):
+  _lightID(id),
+  _containerNumber(-1)
 {
-  SetColor(color);
 }
 
-void PointLight::SetColor(glm::vec3 color)
+std::string LightContainer::GetId()
 {
-  _diffuseColor = color * _diffConst;
-  _ambientColor = _diffuseColor * _ambientConst;
-  _specularColor = glm::vec3(_specConst);
+  return _lightID;
 }
 
-glm::vec3 PointLight::GetColor()
+int LightContainer::GetContainerNum()
 {
-  return _diffuseColor * _diffConst * 4.f;
+  return _containerNumber;
+}
+
+void LightContainer::SetContainerNum(int num)
+{
+  _containerNumber = num;
+}
+
+LightContainer::LightProp& LightContainer::GetPropByName(std::string name)
+{
+  return _lightProperties[name];
+}
+
+std::unordered_map<std::string, LightContainer::LightProp> LightContainer::Properties()
+{
+  return _lightProperties;
+}
+
+void light::LightContainer::AddProperty(std::string id, LightProp prop)
+{
+  auto propPair = std::make_pair( id, prop );
+
+  _lightProperties.insert(propPair);
+}
+
+void light::LightContainer::RemoveProperty(std::string id)
+{
+  _lightProperties.erase(id);
 }

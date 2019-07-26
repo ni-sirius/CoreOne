@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MeshNode.h"
-#include "Lights.h"
+#include "lights/Lights.h"
 
 MeshNode::MeshNode(Vertex* vertexArray,
                    const unsigned int& numOfVertices,
@@ -62,7 +62,7 @@ void MeshNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat
 
 void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
-                      std::vector<std::shared_ptr<PointLight>> pointLights)
+                      std::shared_ptr<LightManager> lightManager)
 {
   if (!_material)
     return; // Change later, maybe use default shader/material
@@ -80,67 +80,7 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     _material->GetShader()->SetVec3f(camera->GetCameraPosition(), "CameraPos");
 
     //Lights
-    //PointLight
-    for (size_t i = 0; i < pointLights.size(); ++i)
-    {
-      auto lightPos = "pointLight[" + std::to_string(i) + "].position";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetPosition(), lightPos.c_str());
-
-      auto lightAmbientColor = "pointLight[" + std::to_string(i) + "].ambientColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetAmbientColor(), lightAmbientColor.c_str());
-      auto lightDiffuseColor = "pointLight[" + std::to_string(i) + "].diffuseColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetDiffuseColor(), lightDiffuseColor.c_str());
-      auto lightSpecularColor = "pointLight[" + std::to_string(i) + "].specularColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetSpecularColor(), lightSpecularColor.c_str());
-
-      auto lightAttenConstant = "pointLight[" + std::to_string(i) + "].constant";
-      _material->GetShader()->Set1f(1.f, lightAttenConstant.c_str());
-      auto lightAttenLinear = "pointLight[" + std::to_string(i) + "].linear";
-      _material->GetShader()->Set1f(0.09f, lightAttenLinear.c_str());
-      auto lightAttenQuadratic = "pointLight[" + std::to_string(i) + "].quadratic";
-      _material->GetShader()->Set1f(0.032f, lightAttenQuadratic.c_str());
-    }
-    //Direction light
-    {
-      const int i = 0;
-
-      auto lightDir = "dirLight" + std::to_string(i) + ".direction";
-      _material->GetShader()->SetVec3f(glm::vec3(-0.2f, -1.0f, -0.3f), lightDir.c_str());
-
-      auto lightAmbientColor = "dirLight" + std::to_string(i) + ".ambientColor";
-      _material->GetShader()->SetVec3f(glm::vec3(.1f, .1f, .1f), lightAmbientColor.c_str());
-      auto lightDiffuseColor = "dirLight" + std::to_string(i) + ".diffuseColor";
-      _material->GetShader()->SetVec3f(glm::vec3(.2f, .2f, .2f), lightDiffuseColor.c_str());
-      auto lightSpecularColor = "dirLight" + std::to_string(i) + ".specularColor";
-      _material->GetShader()->SetVec3f(glm::vec3(1.f, 1.f, 1.f), lightSpecularColor.c_str());
-    }
-    //Spot light
-    {
-      const int i = 0;
-
-      auto lightPos = "spotLight[" + std::to_string(i) + "].position";
-      _material->GetShader()->SetVec3f(glm::vec3(0.f, 2.0f, 0.f), lightPos.c_str());
-      auto lightDir = "spotLight[" + std::to_string(i) + "].direction";
-      _material->GetShader()->SetVec3f(glm::vec3(1.f, -1.0f, 0.f), lightDir.c_str());
-      auto lightCut = "spotLight[" + std::to_string(i) + "].cutoffAngle";
-      _material->GetShader()->Set1f(glm::cos(glm::radians(12.5f)), lightCut.c_str());
-      auto lightCutOuter = "spotLight[" + std::to_string(i) + "].cutoffOuterAngle";
-      _material->GetShader()->Set1f(glm::cos(glm::radians(17.5f)), lightCutOuter.c_str());
-
-      auto lightAmbientColor = "spotLight[" + std::to_string(i) + "].ambientColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetAmbientColor(), lightAmbientColor.c_str());
-      auto lightDiffuseColor = "spotLight[" + std::to_string(i) + "].diffuseColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetDiffuseColor(), lightDiffuseColor.c_str());
-      auto lightSpecularColor = "spotLight[" + std::to_string(i) + "].specularColor";
-      _material->GetShader()->SetVec3f(pointLights[i]->GetSpecularColor(), lightSpecularColor.c_str());
-
-      auto lightAttenConstant = "spotLight[" + std::to_string(i) + "].constant";
-      _material->GetShader()->Set1f(1.f, lightAttenConstant.c_str());
-      auto lightAttenLinear = "spotLight[" + std::to_string(i) + "].linear";
-      _material->GetShader()->Set1f(0.09f, lightAttenLinear.c_str());
-      auto lightAttenQuadratic = "spotLight[" + std::to_string(i) + "].quadratic";
-      _material->GetShader()->Set1f(0.032f, lightAttenQuadratic.c_str());
-    }
+    lightManager->LoadLightsToShader(_material->GetShader());
 
     //Material
     if (_diffuseTexture)
@@ -184,7 +124,7 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
   for (const auto& child : _childs)
   {
     child->Render(viewMat, projectionMat,
-                  camera, pointLights);
+                  camera, lightManager);
   }
 }
 

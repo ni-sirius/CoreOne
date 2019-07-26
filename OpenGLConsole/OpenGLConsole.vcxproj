@@ -107,7 +107,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glm\include;$(SolutionDir)3rdparty\glew\include\GL;$(SolutionDir)3rdparty\GLFW\include;$(SolutionDir)3rdparty\SOIL2\include;$(SolutionDir)3rdparty\freetype\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glm\include;$(SolutionDir)3rdparty\glew\include\GL;$(SolutionDir)3rdparty\GLFW\include;$(SolutionDir)3rdparty\SOIL2\include;$(SolutionDir)3rdparty\freetype\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,8 +164,12 @@
     <ClInclude Include="CoreWindow.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="EventReceiver.h" />
-    <ClInclude Include="LightNode.h" />
-    <ClInclude Include="Lights.h" />
+    <ClInclude Include="include\lights\DirectionLightNode.h" />
+    <ClInclude Include="include\lights\LightManager.h" />
+    <ClInclude Include="include\lights\LightNode.h" />
+    <ClInclude Include="include\lights\Lights.h" />
+    <ClInclude Include="include\lights\PointLightNode.h" />
+    <ClInclude Include="include\lights\SpotLightNode.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshNode.h" />
     <ClInclude Include="Primitives.h" />
@@ -184,17 +189,21 @@
     <ClCompile Include="CoreDevice.cpp" />
     <ClCompile Include="CoreNode.cpp" />
     <ClCompile Include="CoreWindow.cpp" />
+    <ClCompile Include="DirectionLightNode.cpp" />
     <ClCompile Include="EventManager.cpp" />
     <ClCompile Include="EventReceiver.cpp" />
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="LightNode.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MeshNode.cpp" />
     <ClCompile Include="OpenGLConsole.cpp" />
+    <ClCompile Include="PointLightNode.cpp" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SpotLightNode.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

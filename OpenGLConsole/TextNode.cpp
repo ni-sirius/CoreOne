@@ -88,7 +88,10 @@ void TextNode::Update(const float& deltaTime, glm::mat4 modelMatrix /*= glm::mat
   CoreNode::Update(deltaTime, modelMatrix);
 }
 
-void TextNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat, std::shared_ptr<Camera> camera, std::vector<std::shared_ptr<PointLight>> pointLights)
+void TextNode::Render(glm::mat4 viewMat,
+                      glm::mat4 projectionMat,
+                      std::shared_ptr<Camera> camera,
+                      std::shared_ptr<LightManager> lightManager)
 {
   if (_visible)
   {
@@ -147,7 +150,7 @@ void TextNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat, std::shared_pt
   for (const auto& child : _childs)
   {
     child->Render(viewMat, projectionMat,
-      camera, pointLights);
+      camera, lightManager);
   }
 }
 

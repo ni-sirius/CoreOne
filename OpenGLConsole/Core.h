@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <functional>
-#include "LightNode.h"
 #include "MeshNode.h"
 #include "TextNode.h"
 #include "CoreWindow.h"
@@ -21,6 +20,8 @@ class Mesh;
 class Camera;
 class CoreDevice;
 class CoreBaseCommand;
+class LightManager;
+class LightNodeBase;
 
 class Core
 {
@@ -42,7 +43,7 @@ public:
 
   void SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane);
 
-  void AddLightSceneNode(std::shared_ptr<LightNode> light, std::shared_ptr<CoreNode> parent = nullptr);
+  void AddLightSceneNode(std::shared_ptr<LightNodeBase> light, std::shared_ptr<CoreNode> parent = nullptr);
   void AddMeshSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
   void AddWindshieldSceneNode(std::shared_ptr<MeshNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
   void AddTextSceneNode(std::shared_ptr<TextNode> mesh, std::shared_ptr<CoreNode> parent = nullptr);
@@ -74,6 +75,7 @@ private:
   std::vector< std::shared_ptr<CoreNode> > _sceneNodes;
   std::vector< std::shared_ptr<PointLight> > _lightNodes;
   std::vector< std::shared_ptr<CoreNode> > _windshieldNodes;
+  std::shared_ptr<LightManager> _lightManager;
 
   //delta time
   float _deltaTime;

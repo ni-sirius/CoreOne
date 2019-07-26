@@ -1,9 +1,11 @@
 #pragma once
 #include <list>
 #include "mat4x4.hpp"
+#include "lights/LightManager.h"
 
 class Shader;
 enum class ShaderPass;
+class LightManager;
 class PointLight;
 
 class CoreNode
@@ -21,7 +23,7 @@ public:
   virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f));
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
-                      std::vector<std::shared_ptr<PointLight>> pointLights) = 0;
+                      std::shared_ptr<LightManager> lightManager) = 0;
 
 protected:
   inline void setUid(std::string uid) { _uid = uid; }

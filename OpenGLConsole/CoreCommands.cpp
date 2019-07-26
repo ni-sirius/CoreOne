@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "CoreCommands.h"
 #include "MeshNode.h"
-#include "LightNode.h"
+#include "lights/LightNode.h"
+#include "lights/PointLightNode.h"
 #include "TextNode.h"
 
 SetMeshNodePositionCommand::SetMeshNodePositionCommand(glm::vec3 position,
@@ -17,7 +18,7 @@ void SetMeshNodePositionCommand::Execute()
 }
 
 SetLightNodePositionCommand::SetLightNodePositionCommand(glm::vec3 position,
-                                                         std::shared_ptr<LightNode> lightNode):
+                                                         std::shared_ptr<PointLightNode> lightNode):
   _position(position),
   _lightNode(lightNode)
 {
