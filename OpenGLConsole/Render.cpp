@@ -86,6 +86,16 @@ void Renderer::initCamera()
 
 void Renderer::initSceneObjects()
 {
+  auto floor = std::make_shared<MeshNode>(
+    std::make_shared<Quad>(),
+    glm::vec3(0.f, -0.5f, 0.f),
+    glm::vec3(-90.f, 0.f, 0.f),
+    glm::vec3(10.f, 10.f, 1.f),
+    _materials[0], _textures[2]
+    );
+  _core.AddMeshSceneNode(floor);
+  _meshes.push_back(floor);
+
   //Meshes
   auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
   _core.AddMeshSceneNode(flowerBox);

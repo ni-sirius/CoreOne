@@ -178,6 +178,8 @@ void Core::initOpenGlOptions()
 {
   glEnable(GL_DEPTH_TEST);
 
+  //glDepthFunc(GL_LESS); // Test of depth variant
+
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);

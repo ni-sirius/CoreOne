@@ -170,6 +170,16 @@ vec4 getSpotLights()
 }
 
 
+float LinearizeDepth(float depth)
+{
+  float zNear = 0.1f;
+  float zFar  = 100.0f;
+
+  // преобразуем обратно в NDC
+  float z = depth * 2.0 - 1.0;
+  return (2.0 * zNear * zFar) / (zFar + zNear - z * (zFar - zNear));
+}
+
 void main()
 {
   vec4 lighting = getPointLights() + getDirectLight() + getSpotLights();
@@ -182,4 +192,9 @@ void main()
     fragFinalColor = texture(material.diffuseTex, vs_texcoord);
 
   fs_color = fragFinalColor * lighting;
+
+
+  //Depth visualization
+  //float depth = LinearizeDepth(gl_FragCoord.z) / zFar;
+  //fs_color = vec4(vec3(depth), 1.0);
 }
