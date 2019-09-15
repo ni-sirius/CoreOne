@@ -4,6 +4,7 @@
 struct Vertex;
 class Shader;
 class Primitive;
+class CoreState;
 
 class MeshNode : public CoreNode
 {
@@ -34,6 +35,8 @@ public:
   virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
                       std::shared_ptr<Camera> camera,
                       std::shared_ptr<LightManager> lightManager) override;
+
+  CoreState* GetOrCreateCoreState();
 
   inline void SetVisible(bool visible) { _visible = visible; };
 
@@ -77,5 +80,8 @@ protected:
 
   std::shared_ptr<Texture> _diffuseTexture;
   std::shared_ptr<Texture> _specularTexture;
+
+private:
+  std::shared_ptr<CoreState> _coreState;
 };
 

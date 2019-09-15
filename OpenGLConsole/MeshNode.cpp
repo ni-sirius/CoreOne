@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "MeshNode.h"
 #include "lights/Lights.h"
+#include "states/CoreState.h"
 
 MeshNode::MeshNode(Vertex* vertexArray,
                    const unsigned int& numOfVertices,
@@ -99,6 +100,10 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     //Render
     _material->GetShader()->Use();
 
+    //Using of State Set
+    if (_coreState)
+      _coreState->setState();
+
     //bind VAO
     glBindVertexArray(_VAO);
 
@@ -118,6 +123,10 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
       _specularTexture->Unbind();
 
     _material->GetShader()->Unuse();
+
+    //Using of State Set
+    if (_coreState)
+      _coreState->restoreState();
   }
 
   //Render childs
@@ -126,6 +135,14 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     child->Render(viewMat, projectionMat,
                   camera, lightManager);
   }
+}
+
+CoreState* MeshNode::GetOrCreateCoreState()
+{
+  if (!_coreState)
+    _coreState = std::make_shared<CoreState>();
+
+  return _coreState.get();
 }
 
 void MeshNode::initVAO(Vertex* vertexArray,

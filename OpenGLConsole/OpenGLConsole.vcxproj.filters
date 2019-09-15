@@ -16,6 +16,12 @@
     <Filter Include="Header Files\lights">
       <UniqueIdentifier>{548eb45f-69ea-4aa2-87cd-81920872d88a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\states">
+      <UniqueIdentifier>{c6dcfffc-5d4b-4eb3-acf7-72d62693b4bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\states">
+      <UniqueIdentifier>{8dd0c92a-efc6-48b9-9c28-fc092f4d66d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -93,6 +99,9 @@
     <ClInclude Include="include\lights\LightManager.h">
       <Filter>Header Files\lights</Filter>
     </ClInclude>
+    <ClInclude Include="include\states\CoreState.h">
+      <Filter>Header Files\states</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -166,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="DirectionLightNode.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CoreState.cpp">
+      <Filter>Source Files\states</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

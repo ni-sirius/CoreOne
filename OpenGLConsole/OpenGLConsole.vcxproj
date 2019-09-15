@@ -170,6 +170,7 @@
     <ClInclude Include="include\lights\Lights.h" />
     <ClInclude Include="include\lights\PointLightNode.h" />
     <ClInclude Include="include\lights\SpotLightNode.h" />
+    <ClInclude Include="include\states\CoreState.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshNode.h" />
     <ClInclude Include="Primitives.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="CoreCommands.cpp" />
     <ClCompile Include="CoreDevice.cpp" />
     <ClCompile Include="CoreNode.cpp" />
+    <ClCompile Include="CoreState.cpp" />
     <ClCompile Include="CoreWindow.cpp" />
     <ClCompile Include="DirectionLightNode.cpp" />
     <ClCompile Include="EventManager.cpp" />
