@@ -4,10 +4,12 @@
 
 void CoreState::setState()
 {
-  _preExecuteCallback();
+  if (_preExecuteCallback)
+    _preExecuteCallback();
 }
 
 void CoreState::restoreState()
 {
-  _postExecuteCallback();
+  if (_postExecuteCallback)
+    _postExecuteCallback();
 }

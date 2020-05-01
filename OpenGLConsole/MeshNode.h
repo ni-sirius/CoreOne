@@ -36,7 +36,8 @@ public:
                       std::shared_ptr<Camera> camera,
                       std::shared_ptr<LightManager> lightManager) override;
 
-  CoreState* GetOrCreateCoreState();
+  CoreState* const GetOrCreateCoreState();
+  void SetCoreState(std::shared_ptr<CoreState> state);
 
   inline void SetVisible(bool visible) { _visible = visible; };
 
@@ -61,6 +62,9 @@ protected:
   void initVAO(std::shared_ptr<Primitive> primitive);
 
   void updateModelMatrix();
+
+private:
+  void draw();
 
 protected:
   bool _visible;

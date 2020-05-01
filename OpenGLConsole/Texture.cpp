@@ -28,8 +28,8 @@ void Texture::LoadFromFile(std::string path)
 
   glTexParameteri(_type, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(_type, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_REPEAT);
+  glTexParameteri(_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(_type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   if (image)
   {

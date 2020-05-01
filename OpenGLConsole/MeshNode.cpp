@@ -107,14 +107,8 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     //bind VAO
     glBindVertexArray(_VAO);
 
-    //draw
-#pragma warning( push )
-#pragma warning( disable : 4267)
-    if (_numOfIndices)
-      glDrawElements(GL_TRIANGLES, _numOfIndices, GL_UNSIGNED_INT, 0);
-    else
-      glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
-#pragma warning( pop )
+    //Main draw call
+    draw();
 
     if (_diffuseTexture)
       _diffuseTexture->Unbind();
@@ -137,12 +131,17 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
   }
 }
 
-CoreState* MeshNode::GetOrCreateCoreState()
+CoreState* const MeshNode::GetOrCreateCoreState()
 {
   if (!_coreState)
     _coreState = std::make_shared<CoreState>();
 
   return _coreState.get();
+}
+
+void MeshNode::SetCoreState(std::shared_ptr<CoreState> state)
+{
+  _coreState = state;
 }
 
 void MeshNode::initVAO(Vertex* vertexArray,
@@ -201,4 +200,16 @@ void MeshNode::updateModelMatrix()
   _modelMatrix = glm::rotate(_modelMatrix, glm::radians(_rotation.y), glm::vec3(0.f, 1.f, 0.f));
   _modelMatrix = glm::rotate(_modelMatrix, glm::radians(_rotation.z), glm::vec3(0.f, 0.f, 1.f));
   _modelMatrix = glm::scale(_modelMatrix, _scale);
+}
+
+void MeshNode::draw()
+{
+  //draw
+#pragma warning( push )
+#pragma warning( disable : 4267)
+  if (_numOfIndices)
+    glDrawElements(GL_TRIANGLES, _numOfIndices, GL_UNSIGNED_INT, 0);
+  else
+    glDrawArrays(GL_TRIANGLES, 0, _numOfVertices);
+#pragma warning( pop )
 }

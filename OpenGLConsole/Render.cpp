@@ -10,6 +10,8 @@
 #include "lights/SpotLightNode.h"
 #include "lights/DirectionLightNode.h"
 
+#include "states/CoreState.h"
+
 Renderer::Renderer():
   _core("OpenGL Test App", 1024, 768, 4, 5, false),
   _userThreadRunning(true)
@@ -98,6 +100,10 @@ void Renderer::initSceneObjects()
 
   //Meshes
   auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
+  auto state = flowerBox->GetOrCreateCoreState();
+  state->SetType(CoreState::OVERRIDE);
+  state->SetPreExecCallback([]() { glDisable(GL_CULL_FACE); });
+  state->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
   _core.AddMeshSceneNode(flowerBox);
   _meshes.push_back(flowerBox);
 
