@@ -12,6 +12,7 @@ public:
 
   void Run();
 
+
 private:
   void initShaders();
   void initMaterials();
@@ -24,6 +25,10 @@ private:
 
   void workerThread();
   void render();
+
+  void runExamples();
+  void stencilExample();
+  void textsExample();
 
 private:
   const std::pair<int, int> _glVersion{ 4,5 };

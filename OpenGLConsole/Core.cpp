@@ -66,7 +66,7 @@ void Core::Update()
 void Core::Render()
 {
   //clear (Move to startDraw func?)
-  glClearColor(0.f, 0.f, 0.f, 1.f);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
   //Uniforms
@@ -177,9 +177,12 @@ bool Core::initGLEW()
 void Core::initOpenGlOptions()
 {
   glEnable(GL_DEPTH_TEST);
-
   //glDepthFunc(GL_LESS); // Test of depth variant
 
+  glEnable(GL_STENCIL_TEST);
+ // glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+ // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+ 
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
   glFrontFace(GL_CCW);

@@ -98,15 +98,6 @@ void Renderer::initSceneObjects()
   _core.AddMeshSceneNode(floor);
   _meshes.push_back(floor);
 
-  //Meshes
-  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
-  auto state = flowerBox->GetOrCreateCoreState();
-  state->SetType(CoreState::OVERRIDE);
-  state->SetPreExecCallback([]() { glDisable(GL_CULL_FACE); });
-  state->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
-  _core.AddMeshSceneNode(flowerBox);
-  _meshes.push_back(flowerBox);
-
   auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(2.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
   _core.AddMeshSceneNode(container1);
   _meshes.push_back(container1);
@@ -123,13 +114,15 @@ void Renderer::initSceneObjects()
   _core.AddWindshieldSceneNode(btn);
   _windshields.push_back(btn);
 
-  auto txt = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 25.f, 0.f), 1.f, _materials[3]);
-  _core.AddTextSceneNode(txt);
-  _windshields.push_back(txt);
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
+  auto state = flowerBox->GetOrCreateCoreState();
+  state->SetType(CoreState::OVERRIDE);
+  state->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
+  state->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
+  _core.AddMeshSceneNode(flowerBox);
+  _meshes.push_back(flowerBox);
 
-  auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f, _materials[3]);
-  _core.AddTextSceneNode(txt1);
-  _windshields.push_back(txt1);
+  runExamples();
 }
 
 void Renderer::initLights()
@@ -198,4 +191,39 @@ void Renderer::render()
     _core.Update();
     _core.Render();
   }
+}
+
+void Renderer::runExamples()
+{
+ //stencilExample();
+ textsExample();
+}
+
+void Renderer::stencilExample()
+{
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[2], _textures[3]);
+  auto state = flowerBox->GetOrCreateCoreState();
+  state->SetType(CoreState::OVERRIDE);
+  state->SetPreExecCallback([]() {
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilMask(0xFF);
+    });
+  state->SetPostExecCallback([]() {
+    glStencilFunc(GL_EQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+    });
+  _core.AddMeshSceneNode(flowerBox);
+  _meshes.push_back(flowerBox);
+}
+
+void Renderer::textsExample()
+{
+  auto txt = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 25.f, 0.f), 1.f, _materials[3]);
+  _core.AddTextSceneNode(txt);
+  _windshields.push_back(txt);
+
+  auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f, _materials[3]);
+  _core.AddTextSceneNode(txt1);
+  _windshields.push_back(txt1);
 }
