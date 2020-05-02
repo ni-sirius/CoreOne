@@ -29,6 +29,7 @@ private:
   void runExamples();
   void stencilExample();
   void textsExample();
+  void blendingExample();
 
 private:
   const std::pair<int, int> _glVersion{ 4,5 };

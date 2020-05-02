@@ -78,6 +78,9 @@ void Renderer::initTextures()
 
   _textures.push_back(std::make_shared<Texture>("Images/container.png", GL_TEXTURE_2D));
   _textures.push_back(std::make_shared<Texture>("Images/container_specular.png", GL_TEXTURE_2D));
+
+  _textures.push_back(std::make_shared<Texture>("Images/window.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<Texture>("Images/grass.png", GL_TEXTURE_2D));
 }
 
 void Renderer::initCamera()
@@ -197,6 +200,7 @@ void Renderer::runExamples()
 {
  //stencilExample();
  textsExample();
+ blendingExample();
 }
 
 void Renderer::stencilExample()
@@ -226,4 +230,21 @@ void Renderer::textsExample()
   auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f, _materials[3]);
   _core.AddTextSceneNode(txt1);
   _windshields.push_back(txt1);
+}
+
+void Renderer::blendingExample()
+{
+  auto gr1 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.1f, 0.f, 1.5f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[6]);
+  auto stategr1 = gr1->GetOrCreateCoreState();
+  stategr1->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
+  stategr1->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
+  _core.AddMeshSceneNode(gr1);
+  _meshes.push_back(gr1);
+
+  auto gr11 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.f, 0.f, 2.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[6]);
+  auto stategr11 = gr11->GetOrCreateCoreState();
+  stategr11->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
+  stategr11->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
+  _core.AddMeshSceneNode(gr11);
+  _meshes.push_back(gr11);
 }

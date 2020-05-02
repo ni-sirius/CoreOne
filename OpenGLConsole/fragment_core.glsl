@@ -134,20 +134,20 @@ vec4 getPointLights()
 
 vec4 getDirectLight()
 {
-  vec4 result;
+  vec3 result;
 
   for (int i = 0; i < NUM_DIRECT_LIGHTS; ++i)
   {
     vec3 lightDirection = normalize(-dirLight[i].direction);
 
-    vec4 ambientFinal = vec4(calculateAmbient(dirLight[i].ambientColor), 1.f);
-    vec4 diffuseFinal = vec4(calculateDiffuseDirect(vs_normal, lightDirection, dirLight[i].diffuseColor), 1.f);
-    vec4 specularFinal = vec4(calculateSpecular(material, vs_position, vs_normal, lightDirection, dirLight[i].specularColor, CameraPos), 1.f);
+    vec3 ambientFinal = calculateAmbient(dirLight[i].ambientColor);
+    vec3 diffuseFinal = calculateDiffuseDirect(vs_normal, lightDirection, dirLight[i].diffuseColor);
+    vec3 specularFinal = calculateSpecular(material, vs_position, vs_normal, lightDirection, dirLight[i].specularColor, CameraPos);
 
     result += ambientFinal + diffuseFinal + specularFinal;
   }
 
-  return result;
+  return  vec4(result, 1.f);
 }
 
 vec4 getSpotLights()
@@ -182,7 +182,7 @@ float LinearizeDepth(float depth)
 
 void main()
 {
-  vec4 lighting = getPointLights() + getDirectLight() + getSpotLights();
+  vec4 lighting = getPointLights() + getSpotLights() + getDirectLight();
 
   //final
   vec4 fragFinalColor;
