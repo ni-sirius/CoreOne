@@ -204,7 +204,8 @@ GLuint Shader::loadShader(GLenum type, std::string filename)
   if (!success)
   {
     glGetShaderInfoLog(shader, 512, NULL, infoLog);
-    std::cout << "ERROR::SHADER could not compile shader file"<< filename << std::endl;
+
+    std::cout << "ERROR::SHADER could not compile shader file "<< filename << std::endl;
     std::cout << infoLog << std::endl;
   }
 

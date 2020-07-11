@@ -91,6 +91,13 @@ private:
   double _mouseOffsetY;
   bool _firstMouse;
 
+  unsigned int _tmpFramebuffer;
+  unsigned int _tmpColorbuffer;
+  unsigned int _tmpRBO;
+  unsigned int _tmpQuadVAO;
+  unsigned int _tmpQuadVBO;
+  std::shared_ptr<Shader> _tmpShader;
+
 private:
   bool initGLEW();
   void initOpenGlOptions();

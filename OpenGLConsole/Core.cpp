@@ -36,6 +36,58 @@ Core::Core(std::string title,
   {
     initGLEW();
     initOpenGlOptions();
+
+
+    //Addition frame buffer test
+    glGenFramebuffers(1, &_tmpFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, _tmpFramebuffer);
+    //
+    glActiveTexture(GL_TEXTURE0);
+    glGenTextures(1, &_tmpColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, _tmpColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 768, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tmpColorbuffer, 0);
+    //
+    glGenRenderbuffers(1, &_tmpRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, _tmpRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1024, 768);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _tmpRBO);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+      std::cout << "TMP framebuffer init error" << std::endl;
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glActiveTexture(0);
+
+    //Quad
+    float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    // positions   // texCoords
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+    1.0f, -1.0f,  1.0f, 0.0f,
+
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    1.0f, -1.0f,  1.0f, 0.0f,
+    1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+    glGenVertexArrays(1, &_tmpQuadVAO);
+    glGenBuffers(1, &_tmpQuadVBO);
+    glBindVertexArray(_tmpQuadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _tmpQuadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+    //Shader
+    _tmpShader = std::make_shared<Shader>(4, 5, "screen_quad.vert", "screen_quad.frag");
+    //~Addition frame buffer test
   }
 }
 
@@ -65,14 +117,17 @@ void Core::Update()
 
 void Core::Render()
 {
-  //clear (Move to startDraw func?)
+  //Second Pass prepare - render main pass to tmp framebuffer
+  glBindFramebuffer(GL_FRAMEBUFFER, _tmpFramebuffer);
+
+  //Original
+  updateProjection(Projection_type::PERSPECTIVE);
+  updateView();
+
+    //clear (Move to startDraw func?)
   glClearColor(0.1f, 0.1f, 0.1f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-  //Uniforms
-  updateProjection(Projection_type::PERSPECTIVE);
-  updateView();
- 
   for (const auto& rootNode : _sceneNodes)
     rootNode->Render(_viewMat, _projectionMat, _camera, _lightManager);
 
@@ -81,11 +136,30 @@ void Core::Render()
   for (const auto& rootNode : _windshieldNodes)
     rootNode->Render(_viewMat, _projectionMat, _camera, _lightManager);
 
-  //end draw
+  //Second Pass
+ // auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f), _materials[2]);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDisable(GL_DEPTH_TEST);
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+  _tmpShader->Set1i(0, "screenTexture");
+  _tmpShader->Use();
+
+  glBindVertexArray(_tmpQuadVAO);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, _tmpColorbuffer);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  //draw here a second quad
+
+  glEnable(GL_DEPTH_TEST); //return depth test
+
+  //End draw
   _window->SwapBuffers();
   glFlush();
 
-  //Clear up all (Move to endDraw finc?)
+  //Clear up all (Move to endDraw func?)
   glBindVertexArray(0);
   glUseProgram(0);
   glActiveTexture(0);
@@ -179,7 +253,7 @@ void Core::initOpenGlOptions()
   glEnable(GL_DEPTH_TEST);
   //glDepthFunc(GL_LESS); // Test of depth variant
 
-  glEnable(GL_STENCIL_TEST);
+  //glEnable(GL_STENCIL_TEST);
  // glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
  // glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
  
