@@ -171,13 +171,13 @@
     <ClInclude Include="include\lights\PointLightNode.h" />
     <ClInclude Include="include\lights\SpotLightNode.h" />
     <ClInclude Include="include\states\CoreState.h" />
+    <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshNode.h" />
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="Render.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextNode.h" />
     <ClInclude Include="Texture.h" />

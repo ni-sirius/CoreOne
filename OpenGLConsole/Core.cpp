@@ -93,6 +93,7 @@ Core::Core(std::string title,
 
 Core::~Core()
 {
+  glDeleteFramebuffers(1, &_tmpFramebuffer);
 }
 
 

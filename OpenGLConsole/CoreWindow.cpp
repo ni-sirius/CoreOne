@@ -86,6 +86,7 @@ void CoreWindow::HideCoursor(bool hide)
 
 std::pair<int, int> CoreWindow::GetFramebufferSize()
 {
+  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
   return std::make_pair(_framebufferWidth, _frameBufferHeight);
 }
 
@@ -122,13 +123,11 @@ bool CoreWindow::initWindow(std::string title, bool resizable)
     return false;
   }
 
-  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
-
   auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
     glViewport(0, 0, frameBufWidth, frameBufHeight);
   };
   glfwSetFramebufferSizeCallback(_window, framebufferResizeCallback);
-  //glViewport(0, 0, framebufferWidth, frameBufferHeight); if static size
+  //glViewport(0, 0, framebufferWidth, frameBufferHeight); //set up framebuffer size once if static size
 
   glfwMakeContextCurrent(_window);
 
