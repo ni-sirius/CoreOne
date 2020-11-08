@@ -22,6 +22,18 @@
     <Filter Include="Source Files\states">
       <UniqueIdentifier>{8dd0c92a-efc6-48b9-9c28-fc092f4d66d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\manipulators">
+      <UniqueIdentifier>{ffa5ab74-dd51-4088-96c1-601ad02751fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nodes">
+      <UniqueIdentifier>{7e6194d9-955c-482e-a8fb-11cf0dc5b07c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nodes">
+      <UniqueIdentifier>{5541d5b6-b85c-424a-b07b-f6c6b45420f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\manipulators">
+      <UniqueIdentifier>{252ea10b-c108-4b60-9b6d-c61ef0a1329f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -98,6 +110,12 @@
     </ClInclude>
     <ClInclude Include="include\states\CoreState.h">
       <Filter>Header Files\states</Filter>
+    </ClInclude>
+    <ClInclude Include="include\manipulators\CameraManipulator.h">
+      <Filter>Header Files\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="include\nodes\CameraNode.h">
+      <Filter>Header Files\nodes</Filter>
     </ClInclude>
     <ClInclude Include="include\stdafx.h">
       <Filter>Header Files</Filter>
@@ -178,6 +196,12 @@
     </ClCompile>
     <ClCompile Include="CoreState.cpp">
       <Filter>Source Files\states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\nodes\CameraNode.cpp">
+      <Filter>Source Files\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\manipulators\CameraManipulator.cpp">
+      <Filter>Source Files\manipulators</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
