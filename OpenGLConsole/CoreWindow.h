@@ -3,44 +3,48 @@
 #include <functional>
 #include <map>
 
-class CoreWindow
+namespace coreone::corewindow
 {
-public:
-  CoreWindow(int windowWidth, int windowHeight, int glMajorVer, int glMinorVer);
-  virtual ~CoreWindow();
+  class CoreWindow final
+  {
+  public:
+    CoreWindow();
+    virtual ~CoreWindow();
 
-  bool InitWindow(std::string title, bool resizable);
+    bool Init(int windowWidth, int windowHeight,
+      int glMajorVer, int glMinorVer,
+      std::string title, bool resizable);
 
-  bool GetWindowShouldClose();
-  void SetWindowShouldClose(bool close);
+    bool Initialized() const;
 
-  GLFWwindow* Window();
+    std::pair<int, int> GetGlVersiion() const;
 
-  void AddKeyCallback(int key, std::function<void()> callback);
-  void RemoveKeyCallback(int key);
-  void RunKeyboardCallbacks(GLFWwindow* window, int key, int scancode, int action, int mode);
+    bool GetWindowShouldClose() const;
+    void SetWindowShouldClose(bool close = true) const;
 
-  void HideCoursor(bool hide);
+    GLFWwindow* Window() const;
 
-  std::pair<int, int> GetFramebufferSize();
+    void AddKeyCallback(int key, std::function<void()> callback);
+    void RemoveKeyCallback(int key);
+    void RunKeyboardCallbacks(GLFWwindow* window, int key, int scancode, int action, int mode) const;
 
-  void SwapBuffers();
+    void HideCoursor(bool hide) const;
 
-private:
-  bool initGLFW();
-  bool initWindow(std::string title, bool resizable);
+    std::pair<int, int> GetFramebufferSize() const;
 
-private:
-  GLFWwindow * _window;
-  const int _windowWidth;
-  const int _windowHeight;
-  int _framebufferWidth;
-  int _frameBufferHeight;
+    void SwapBuffers() const;
 
-  //OpenGL context
-  int _glMajorVer;
-  int _glMinorVer;
+  private:
+    bool initGLFW() const;
+    bool initWindow(int windowWidth, int windowHeight,
+      int glMajorVer, int glMinorVer, 
+      std::string title, bool resizable);
 
-  std::map<int, std::function<void()>> _keyMap;
-};
+  private:
+    GLFWwindow * _window;
+    bool _initialized = false;
 
+    std::map<int, std::function<void()>> _keyMap;
+  };
+
+} //namespace coreone::corewindow

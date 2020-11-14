@@ -1,19 +1,17 @@
 #include "stdafx.h"
 #include "Core.h"
+#include "CoreWindow.h"
 #include "Material.h"
 #include "MeshNode.h"
 #include "lights/LightNode.h"
+#include "TextNode.h"
 #include "CoreDevice.h"
 #include "lights/LightManager.h"
 
-Core::Core(std::string title,
-           const int width, const int height,
-           int GLMajorVer, int GLMinorVer,
-           bool resizable):
+using namespace coreone;
+
+Core::Core():
   _device(std::make_unique<CoreDevice>()),
-  _window(std::make_unique<CoreWindow>(width, height, GLMajorVer, GLMinorVer)),
-  _GLVerMajor(GLMajorVer),
-  _GLVerMinor(GLMinorVer),
   _fov(0.f),
   _nearPlane(0.f),
   _farPlane(0.f),
@@ -32,10 +30,23 @@ Core::Core(std::string title,
   _camera(nullptr),
   _lightManager(std::make_shared<LightManager>())
 {
-  if (_window->InitWindow(title, resizable))
+}
+
+Core::~Core()
+{
+  glDeleteFramebuffers(1, &_tmpFramebuffer);
+}
+
+void Core::SetWindow(corewindow::CoreWindow* window)
+{
+  if (window)
   {
+    _window = window;
+
     initGLEW();
     initOpenGlOptions();
+
+    //TODO Create Default camera
 
 
     //Addition frame buffer test
@@ -101,12 +112,6 @@ Core::Core(std::string title,
   }
 }
 
-Core::~Core()
-{
-  glDeleteFramebuffers(1, &_tmpFramebuffer);
-}
-
-
 void Core::Update()
 {
   updateDeltaTime();
@@ -128,6 +133,11 @@ void Core::Update()
 
 void Core::Render()
 {
+  if (_window == nullptr || !_window->Initialized())
+  {
+    return;
+  }
+
   //Second Pass prepare - render main pass to tmp framebuffer
   glBindFramebuffer(GL_FRAMEBUFFER, _tmpFramebuffer);
 
@@ -175,27 +185,6 @@ void Core::Render()
   glUseProgram(0);
   glActiveTexture(0);
   glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-int Core::GetWindiwShouldClose()
-{
-  return _window->GetWindowShouldClose();
-}
-
-void Core::SetWindowShouldClose()
-{
-  _window->SetWindowShouldClose(true);
-}
-
-//TODO Create event thread
-void Core::RegisterKeyCallback(int key, std::function<void(void)> callback)
-{
-  _window->AddKeyCallback(key, callback);
-}
-
-void Core::UnregisterKeyCallback(int key)
-{
-  _window->RemoveKeyCallback(key);
 }
 
 void Core::SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane)
@@ -276,9 +265,6 @@ void Core::initOpenGlOptions()
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-  //Input options
-  _window->HideCoursor(false);
 }
 
 void Core::updateDeltaTime()
@@ -290,6 +276,11 @@ void Core::updateDeltaTime()
 
 void Core::updateKeyboardInput()
 {
+  if (_window == nullptr || !_window->Initialized())
+  {
+    return;
+  }
+
   if (glfwGetKey(_window->Window(), GLFW_KEY_W) == GLFW_PRESS)
   {
     _camera->UpdateKeyboardInput(_deltaTime, Camera::FORWARD);
@@ -318,6 +309,11 @@ void Core::updateKeyboardInput()
 
 void Core::updateMouseInput()
 {
+  if (_window == nullptr || !_window->Initialized())
+  {
+    return;
+  }
+
   glfwGetCursorPos(_window->Window(), &_mouseX, &_mouseY);
   static bool firstFlag(true);
   if (firstFlag)
@@ -336,6 +332,11 @@ void Core::updateMouseInput()
 
 void Core::updateProjection(Projection_type projection)
 {
+  if (_window == nullptr || !_window->Initialized())
+  {
+    return;
+  }
+
   //To handle resizing of the window
   //glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight);
   auto frameBufferSize = _window->GetFramebufferSize();

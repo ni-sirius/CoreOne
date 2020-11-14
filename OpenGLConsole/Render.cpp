@@ -5,6 +5,9 @@
 #include <thread>
 #include "CoreCommands.h"
 
+#include "MeshNode.h"
+#include "TextNode.h"
+
 #include "lights/LightNode.h"
 #include "lights/PointLightNode.h"
 #include "lights/SpotLightNode.h"
@@ -13,9 +16,13 @@
 #include "states/CoreState.h"
 
 Renderer::Renderer():
-  _core("OpenGL Test App", 1024, 768, 4, 5, true),
+  _core(),
   _userThreadRunning(true)
 {
+  _oglWindow.Init(1024, 768, 4, 5, "CoreOne Test App", true);
+  _oglWindow.HideCoursor(false);
+  _core.SetWindow(&_oglWindow);
+
   initShaders();
   initMaterials();
   initTextures();
@@ -155,9 +162,9 @@ void Renderer::initLights()
 void Renderer::initKeyCallbacks()
 {
   auto escCallback = [this]() {
-    _core.SetWindowShouldClose();
+    _oglWindow.SetWindowShouldClose();
     };
-  _core.RegisterKeyCallback(GLFW_KEY_ESCAPE, escCallback);
+  _oglWindow.AddKeyCallback(GLFW_KEY_ESCAPE, escCallback);
 
   auto textNode = std::static_pointer_cast<TextNode>(_windshields[1]);
   auto oPressCall = [this, textNode]() {
@@ -166,7 +173,7 @@ void Renderer::initKeyCallbacks()
     auto command = new SetTextScaleCommand(myscale, textNode);
     _core.AddCommand(command);
   };
-  _core.RegisterKeyCallback(GLFW_KEY_O, oPressCall);
+  _oglWindow.AddKeyCallback(GLFW_KEY_O, oPressCall);
 }
 
 void Renderer::workerThread()
@@ -189,7 +196,7 @@ void Renderer::workerThread()
 
 void Renderer::render()
 {
-  while (!_core.GetWindiwShouldClose())
+  while (!_oglWindow.GetWindowShouldClose())
   {
     _core.Update();
     _core.Render();

@@ -1,14 +1,9 @@
 #include "stdafx.h"
 #include "CoreWindow.h"
 
+using namespace coreone::corewindow;
 
-CoreWindow::CoreWindow(int windowWidth, int windowHeight, int glMajorVer, int glMinorVer):
-  _windowWidth(windowWidth),
-  _windowHeight(windowHeight),
-  _framebufferWidth(0),
-  _frameBufferHeight(0),
-  _glMajorVer(glMajorVer),
-  _glMinorVer(glMinorVer)
+CoreWindow::CoreWindow()
 {
 }
 
@@ -18,37 +13,47 @@ CoreWindow::~CoreWindow()
   glfwTerminate();
 }
 
-bool CoreWindow::InitWindow(std::string title, bool resizable)
+bool CoreWindow::Init(int windowWidth, int windowHeight,
+  int glMajorVer, int glMinorVer, std::string title, bool resizable)
 {
-  bool result(false);
+  if (initGLFW() && initWindow(windowWidth, windowHeight, glMajorVer, glMinorVer, title, resizable))
+  {
+    glfwSetWindowUserPointer(_window, this);
 
-  if (initGLFW())
-    if (initWindow(title, resizable))
-    {
-      glfwSetWindowUserPointer(_window, this);
-
-      glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
-        CoreWindow* coreWnd = static_cast<CoreWindow*>(glfwGetWindowUserPointer(window));
-        coreWnd->RunKeyboardCallbacks(window, key, scancode, action, mode);
+    glfwSetKeyCallback(_window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
+      CoreWindow* coreWnd = static_cast<CoreWindow*>(glfwGetWindowUserPointer(window));
+      coreWnd->RunKeyboardCallbacks(window, key, scancode, action, mode);
       });
 
-      result = true;
-    }
+    _initialized = true;
+  }
 
-  return result;
+  return _initialized;
 }
 
-bool CoreWindow::GetWindowShouldClose()
+bool CoreWindow::Initialized() const
+{
+  return _initialized;
+}
+
+std::pair<int, int>CoreWindow::GetGlVersiion() const
+{
+  int glMajor = glfwGetWindowAttrib(_window, GLFW_CONTEXT_VERSION_MAJOR);
+  int glMinor = glfwGetWindowAttrib(_window, GLFW_CONTEXT_VERSION_MINOR);
+  return std::make_pair(glMajor, glMinor);
+}
+
+bool CoreWindow::GetWindowShouldClose() const
 {
   return glfwWindowShouldClose(_window);
 }
 
-void CoreWindow::SetWindowShouldClose(bool close)
+void CoreWindow::SetWindowShouldClose(bool close/* = true*/) const
 {
   glfwSetWindowShouldClose(_window, close);
 }
 
-GLFWwindow* CoreWindow::Window()
+GLFWwindow* CoreWindow::Window() const
 {
   return _window;
 }
@@ -63,39 +68,41 @@ void CoreWindow::RemoveKeyCallback(int key)
   _keyMap.erase(key);
 }
 
-void CoreWindow::RunKeyboardCallbacks(GLFWwindow* window, int key, int scancode, int action, int mode)
+void CoreWindow::RunKeyboardCallbacks(GLFWwindow* window, int key, int scancode, int action, int mode) const
 {
   if (_keyMap.count(key) == 0)
     return;
 
   if (action == GLFW_PRESS)
-    _keyMap[key]();
-
-  //test
-  //static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  //  if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-  //    glfwSetWindowShouldClose(window, GL_TRUE);
-  //}
+  {
+    auto it = _keyMap.find(key);
+    if (it != _keyMap.end())
+    {
+      const auto& callback = it->second;
+      callback();
+    }
+  }
 }
 
-void CoreWindow::HideCoursor(bool hide)
+void CoreWindow::HideCoursor(bool hide) const
 {
   auto hideState = hide ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL;
   glfwSetInputMode(_window, GLFW_CURSOR, hideState);
 }
 
-std::pair<int, int> CoreWindow::GetFramebufferSize()
+std::pair<int, int> CoreWindow::GetFramebufferSize() const
 {
-  glfwGetFramebufferSize(_window, &_framebufferWidth, &_frameBufferHeight); //for projection matrix
-  return std::make_pair(_framebufferWidth, _frameBufferHeight);
+  int framebufferWidth, frameBufferHeight;
+  glfwGetFramebufferSize(_window, &framebufferWidth, &frameBufferHeight); //for projection matrix
+  return std::make_pair(framebufferWidth, frameBufferHeight);
 }
 
-void CoreWindow::SwapBuffers()
+void CoreWindow::SwapBuffers() const
 {
   glfwSwapBuffers(_window);
 }
 
-bool CoreWindow::initGLFW()
+bool CoreWindow::initGLFW() const
 {
   if (glfwInit() == GLFW_FALSE)
   {
@@ -108,14 +115,15 @@ bool CoreWindow::initGLFW()
   return true;
 }
 
-bool CoreWindow::initWindow(std::string title, bool resizable)
+bool CoreWindow::initWindow(int windowWidth, int windowHeight,
+  int glMajorVer, int glMinorVer, std::string title, bool resizable)
 {
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, _glMajorVer);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, _glMinorVer);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glMajorVer);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glMinorVer);
   glfwWindowHint(GLFW_RESIZABLE, resizable);
 
-  _window = glfwCreateWindow(_windowWidth, _windowHeight, title.c_str(), nullptr, nullptr);
+  _window = glfwCreateWindow(windowWidth, windowHeight, title.c_str(), nullptr, nullptr);
   if (!_window)
   {
     std::cout << "WINDOW::ERROR Init failed" << std::endl;
@@ -123,11 +131,18 @@ bool CoreWindow::initWindow(std::string title, bool resizable)
     return false;
   }
 
-  auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
-    glViewport(0, 0, frameBufWidth, frameBufHeight);
-  };
-  glfwSetFramebufferSizeCallback(_window, framebufferResizeCallback);
-  //glViewport(0, 0, framebufferWidth, frameBufferHeight); //set up framebuffer size once if static size
+  if (resizable)
+  {
+    auto framebufferResizeCallback = [](GLFWwindow* window, int frameBufWidth, int frameBufHeight) {
+      glViewport(0, 0, frameBufWidth, frameBufHeight);
+    };
+    glfwSetFramebufferSizeCallback(_window, framebufferResizeCallback);
+  }
+  else
+  {
+    //set up framebuffer size once if static size
+    glViewport(0, 0, windowWidth, windowHeight);
+  }
 
   glfwMakeContextCurrent(_window);
 

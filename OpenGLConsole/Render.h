@@ -1,8 +1,10 @@
 #pragma once
 #include <thread>
 #include "Core.h"
+#include "CoreWindow.h"
 #include "CoreCommands.h"
 
+using namespace coreone;
 
 class Renderer final
 {
@@ -33,6 +35,7 @@ private:
 
 private:
   const std::pair<int, int> _glVersion{ 4,5 };
+  corewindow::CoreWindow _oglWindow;
 
   Core _core;
 
