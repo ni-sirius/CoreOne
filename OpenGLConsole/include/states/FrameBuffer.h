@@ -1,5 +1,10 @@
 
-class Texture;
+namespace coreone::graphics
+{
+  class Texture;
+}
+
+using namespace coreone::graphics;
 
 namespace core
 {

@@ -53,22 +53,15 @@ void Core::SetWindow(corewindow::CoreWindow* window)
     glGenFramebuffers(1, &_tmpFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _tmpFramebuffer);
     //
-    glActiveTexture(GL_TEXTURE0);
-    glGenTextures(1, &_tmpColorbuffer);
-    glBindTexture(GL_TEXTURE_2D, _tmpColorbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 768, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tmpColorbuffer, 0);
+    _tmpClrBuffer.CreateTexture(GL_TEXTURE_2D, Texture::COLOR, 1024, 768);
+    _tmpClrBuffer.Bind(0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tmpClrBuffer.GetID(), 0);
+    _tmpClrBuffer.Unbind();
     //TMP
-    glActiveTexture(GL_TEXTURE1);
-    glGenTextures(1, &_tmpDepthStencilTexbuffer);
-    glBindTexture(GL_TEXTURE_2D, _tmpDepthStencilTexbuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 1024, 768, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _tmpDepthStencilTexbuffer, 0);
+    _tmpDSTex.CreateTexture(GL_TEXTURE_2D, Texture::DEPTH_STENCIL, 1024, 768);
+    _tmpDSTex.Bind(0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _tmpDSTex.GetID(), 0);
+    _tmpDSTex.Unbind();
     //TMP
     //
     glGenRenderbuffers(1, &_tmpRBO);
@@ -168,9 +161,10 @@ void Core::Render()
   _tmpShader->Use();
 
   glBindVertexArray(_tmpQuadVAO);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _tmpColorbuffer);
+
+  _tmpClrBuffer.Bind(0);
   glDrawArrays(GL_TRIANGLES, 0, 6);
+  _tmpClrBuffer.Unbind();
 
   //draw here a second quad
 

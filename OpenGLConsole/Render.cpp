@@ -77,17 +77,17 @@ void Renderer::initMaterials()
 
 void Renderer::initTextures()
 {
-  _textures.push_back(std::make_shared<Texture>("Images/apple.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/apple_specular.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/apple.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/apple_specular.png", GL_TEXTURE_2D));
 
-  _textures.push_back(std::make_shared<Texture>("Images/flower.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/flower_specular.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/flower.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/flower_specular.png", GL_TEXTURE_2D));
 
-  _textures.push_back(std::make_shared<Texture>("Images/container.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/container_specular.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/container.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/container_specular.png", GL_TEXTURE_2D));
 
-  _textures.push_back(std::make_shared<Texture>("Images/window.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<Texture>("Images/grass.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/window.png", GL_TEXTURE_2D));
+  _textures.push_back(std::make_shared<graphics::Texture>("Images/grass.png", GL_TEXTURE_2D));
 }
 
 void Renderer::initCamera()

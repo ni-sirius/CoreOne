@@ -6,6 +6,13 @@ class Shader;
 class Primitive;
 class CoreState;
 
+namespace coreone::graphics
+{
+  class Texture;
+}
+
+using namespace coreone::graphics;
+
 class MeshNode : public CoreNode
 {
 public:

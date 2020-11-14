@@ -12,7 +12,6 @@ enum Mesh_enum { MESH_QUAD };
 enum class Projection_type {ORTHO, PERSPECTIVE};
 
 class Shader;
-class Texture;
 class Material;
 class Mesh;
 class Camera;
@@ -89,8 +88,8 @@ namespace coreone
 
     //DEPRECATED
     unsigned int _tmpFramebuffer;
-    unsigned int _tmpColorbuffer;
-    unsigned int _tmpDepthStencilTexbuffer;
+    graphics::Texture _tmpClrBuffer;
+    graphics::Texture _tmpDSTex;
     unsigned int _tmpRBO;
     unsigned int _tmpQuadVAO;
     unsigned int _tmpQuadVBO;
