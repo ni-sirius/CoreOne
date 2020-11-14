@@ -61,11 +61,11 @@ private:
   const int _GLVerMajor;
   const int _GLVerMinor;
 
-  //Matrices
+  //Matrices //DEPRECATED
   glm::mat4 _viewMat;
   glm::mat4 _projectionMat;
 
-  //Camera
+  //Camera //DEPRECATED
   float _fov;
   float _nearPlane;
   float _farPlane;
@@ -73,7 +73,6 @@ private:
 
   //Graphic stuff
   std::vector< std::shared_ptr<CoreNode> > _sceneNodes;
-  std::vector< std::shared_ptr<PointLight> > _lightNodes;
   std::vector< std::shared_ptr<CoreNode> > _windshieldNodes;
   std::shared_ptr<LightManager> _lightManager;
 
@@ -82,7 +81,7 @@ private:
   float _curTime;
   float _lastTime;
 
-  //Mouse input
+  //Mouse input //DEPRECATED
   double _lastMouseX;
   double _lastMouseY;
   double _mouseX;
@@ -91,8 +90,10 @@ private:
   double _mouseOffsetY;
   bool _firstMouse;
 
+  //DEPRECATED
   unsigned int _tmpFramebuffer;
   unsigned int _tmpColorbuffer;
+  unsigned int _tmpDepthStencilTexbuffer;
   unsigned int _tmpRBO;
   unsigned int _tmpQuadVAO;
   unsigned int _tmpQuadVBO;
@@ -105,10 +106,10 @@ private:
   //Updaters
   void updateDeltaTime();
 
-  void updateKeyboardInput();
-  void updateMouseInput();
+  void updateKeyboardInput();//DEPRECATED
+  void updateMouseInput();//DEPRECATED
 
-  void updateProjection(Projection_type projection);
-  void updateView();
+  void updateProjection(Projection_type projection);//DEPRECATED
+  void updateView();//DEPRECATED
 };
 

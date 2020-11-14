@@ -13,7 +13,7 @@
 #include "states/CoreState.h"
 
 Renderer::Renderer():
-  _core("OpenGL Test App", 1024, 768, 4, 5, false),
+  _core("OpenGL Test App", 1024, 768, 4, 5, true),
   _userThreadRunning(true)
 {
   initShaders();

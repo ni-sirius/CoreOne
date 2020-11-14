@@ -173,6 +173,7 @@
     <ClInclude Include="include\manipulators\CameraManipulator.h" />
     <ClInclude Include="include\nodes\CameraNode.h" />
     <ClInclude Include="include\states\CoreState.h" />
+    <ClInclude Include="include\states\FrameBuffer.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MeshNode.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="SpotLightNode.cpp" />
     <ClCompile Include="src\manipulators\CameraManipulator.cpp" />
     <ClCompile Include="src\nodes\CameraNode.cpp" />
+    <ClCompile Include="src\states\FrameBuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
