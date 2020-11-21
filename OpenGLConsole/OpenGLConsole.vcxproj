@@ -164,6 +164,7 @@
     <ClInclude Include="CoreWindow.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="EventReceiver.h" />
+    <ClInclude Include="include\graphics\RenderBuffer.h" />
     <ClInclude Include="include\graphics\Texture.h" />
     <ClInclude Include="include\lights\DirectionLightNode.h" />
     <ClInclude Include="include\lights\LightManager.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpotLightNode.cpp" />
+    <ClCompile Include="src\graphics\RenderBuffer.cpp" />
     <ClCompile Include="src\graphics\Texture.cpp" />
     <ClCompile Include="src\manipulators\CameraManipulator.cpp" />
     <ClCompile Include="src\nodes\CameraNode.cpp" />

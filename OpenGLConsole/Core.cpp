@@ -60,15 +60,14 @@ void Core::SetWindow(corewindow::CoreWindow* window)
     //TMP
     _tmpDSTex.CreateTexture(GL_TEXTURE_2D, Texture::DEPTH_STENCIL, 1024, 768);
     _tmpDSTex.Bind(0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _tmpDSTex.GetID(), 0);
+    //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _tmpDSTex.GetID(), 0);
     _tmpDSTex.Unbind();
     //TMP
     //
-    glGenRenderbuffers(1, &_tmpRBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, _tmpRBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 1024, 768);
-    glBindRenderbuffer(GL_RENDERBUFFER, 0);
-    //glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _tmpRBO);
+    _tmpStenDepthRB.CreateRenderBuffer(RenderBuffer::DEPTH_STENCIL, 1024, 768);
+    _tmpStenDepthRB.Bind();
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _tmpStenDepthRB.GetID());
+    _tmpStenDepthRB.Unbind();
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
       std::cout << "TMP framebuffer init error" << std::endl;

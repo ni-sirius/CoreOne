@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <functional>
+#include <graphics/RenderBuffer.h>
 
 
 //Temp enums
@@ -90,7 +91,7 @@ namespace coreone
     unsigned int _tmpFramebuffer;
     graphics::Texture _tmpClrBuffer;
     graphics::Texture _tmpDSTex;
-    unsigned int _tmpRBO;
+    graphics::RenderBuffer _tmpStenDepthRB;
     unsigned int _tmpQuadVAO;
     unsigned int _tmpQuadVBO;
     std::shared_ptr<Shader> _tmpShader;

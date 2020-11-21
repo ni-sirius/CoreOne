@@ -15,7 +15,10 @@ Texture::Texture(std::string path, GLenum type)
 
 Texture::~Texture()
 {
-  glDeleteTextures(1, &_id);
+  if (_valid)
+  {
+    glDeleteTextures(1, &_id);
+  }
 }
 
 void Texture::CreateTexture(GLenum type, Format format, unsigned int width, unsigned int height)
