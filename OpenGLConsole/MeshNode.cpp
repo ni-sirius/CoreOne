@@ -71,39 +71,11 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
 
   if (_visible)
   {
-    //MVP Matrix
-    _material->GetShader()->SetMat4fv(_modelMatrix, "ModelMat");
-
-    _material->GetShader()->SetMat4fv(viewMat, "ViewMat");
-
-    _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
-
-    //Camera
-    _material->GetShader()->SetVec3f(camera->GetCameraPosition(), "CameraPos");
-
-    //Lights
-    lightManager->LoadLightsToShader(_material->GetShader());
-
-    //Material
-    if (_diffuseTexture)
-    {
-      _material->UseColors(false);
-      _diffuseTexture->Bind(_material->GetDiffuseTexUnit());
-    }
-    else
-      _material->UseColors(true);
-
-    if (_specularTexture)
-      _specularTexture->Bind(_material->GetSpecularTexUnit());
-
-    _material->Use();
-
-    //Render
-    _material->GetShader()->Use();
-
     //Using of State Set
     if (_coreState)
       _coreState->setState();
+
+    _material->SetMaterialState(_modelMatrix, viewMat, projectionMat, camera->GetCameraPosition(), *lightManager);
 
     //bind VAO
     glBindVertexArray(_VAO);
@@ -111,13 +83,7 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     //Main draw call
     draw();
 
-    if (_diffuseTexture)
-      _diffuseTexture->Unbind();
-
-    if (_specularTexture)
-      _specularTexture->Unbind();
-
-    _material->GetShader()->Unuse();
+    _material->UnsetMaterialState();
 
     //Using of State Set
     if (_coreState)

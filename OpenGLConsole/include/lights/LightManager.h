@@ -11,7 +11,7 @@ public:
 
   void RegisterLight(std::shared_ptr<light::LightContainer> light);
 
-  void LoadLightsToShader(std::shared_ptr<Shader> shader);
+  void LoadLightsToShader(std::shared_ptr<Shader> shader) const;
 
 private:
   std::unordered_map<std::string, std::list<std::shared_ptr<light::LightContainer>>> _lights;

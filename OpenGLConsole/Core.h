@@ -5,15 +5,8 @@
 
 
 //Temp enums
-enum Shader_enum {SHADER_CORE_PROGRAM};
-enum Texture_enum {DIFFUSE_TEX_APPLE, SPECULAR_TEX_APPLE, DIFFUSE_TEX_FLOWER, SPECULAR_TEX_FLOWER, CONT, CONT_SPEC};
-enum Material_enum {STD_MAT, LIGHT_MAT};
-enum Mesh_enum { MESH_QUAD };
-
 enum class Projection_type {ORTHO, PERSPECTIVE};
 
-class Shader;
-class Material;
 class Mesh;
 class Camera;
 class CoreDevice;
@@ -95,6 +88,7 @@ namespace coreone
     unsigned int _tmpQuadVAO;
     unsigned int _tmpQuadVBO;
     std::shared_ptr<Shader> _tmpShader;
+    //MeshNode _tmpQuad;
 
   private:
     bool initGLEW();

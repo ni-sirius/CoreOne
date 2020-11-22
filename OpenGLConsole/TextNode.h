@@ -9,6 +9,7 @@ struct Character {
   GLuint     Advance;    // Offset to advance to next glyph
 };
 
+using namespace coreone;
 
 class TextNode : public CoreNode
 {
@@ -16,7 +17,7 @@ public:
   TextNode(std::string text,
            glm::vec3 position,
            float scale,
-           std::shared_ptr<Material> material = nullptr,
+           std::shared_ptr<graphics::Material> material = nullptr,
            bool visible = true);
   virtual ~TextNode();
 
@@ -37,7 +38,7 @@ public:
   //inline void Rotate(const glm::vec3 rotation) { _rotation += rotation; };
   inline void Upscale(const float upscale) { _scale += upscale; };
 
-  inline void SetMaterial(std::shared_ptr<Material> material) { _material = material; }
+  inline void SetMaterial(std::shared_ptr<graphics::Material> material) { _material = material; }
 
   //inline void SetDiffuseTexture(std::shared_ptr<Texture> texture) { _diffuseTexture = texture; }
   //inline void SetSpecularTexture(std::shared_ptr<Texture> texture) { _specularTexture = texture; }
@@ -60,6 +61,6 @@ protected:
   glm::vec3 _position;
   float _scale;
 
-  std::shared_ptr<Material> _material;
+  std::shared_ptr<graphics::Material> _material;
 };
 

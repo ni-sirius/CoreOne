@@ -7,7 +7,7 @@
 TextNode::TextNode(std::string text,
                    glm::vec3 position,
                    float scale,
-                   std::shared_ptr<Material> material /*= nullptr*/,
+                   std::shared_ptr<graphics::Material> material /*= nullptr*/,
                    bool visible /*= true*/) :
   _visible(visible),
   _text(text),

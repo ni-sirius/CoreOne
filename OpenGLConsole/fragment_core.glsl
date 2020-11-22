@@ -41,6 +41,8 @@ struct SpotLight
 
 struct Material
 {
+  int lightSensitive;
+
   float shiness;
 
   int useColors;
@@ -182,7 +184,10 @@ float LinearizeDepth(float depth)
 
 void main()
 {
-  vec4 lighting = getPointLights() + getSpotLights() + getDirectLight();
+  vec4 lighting = vec4(1.f);
+
+  if (bool(material.lightSensitive))
+    lighting = getPointLights() + getSpotLights() + getDirectLight();
 
   //final
   vec4 fragFinalColor;

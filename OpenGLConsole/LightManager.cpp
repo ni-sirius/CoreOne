@@ -19,7 +19,7 @@ void LightManager::RegisterLight(std::shared_ptr<LightContainer> light)
   _lights[name].push_back(light);
 }
 
-void LightManager::LoadLightsToShader(std::shared_ptr<Shader> shader)
+void LightManager::LoadLightsToShader(std::shared_ptr<Shader> shader) const
 {
   for (const auto& lightType : _lights)
   {

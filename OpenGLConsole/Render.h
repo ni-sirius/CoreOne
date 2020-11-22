@@ -43,7 +43,7 @@ private:
   bool _userThreadRunning;
 
   std::vector< std::shared_ptr<Shader> > _shaders;
-  std::vector< std::shared_ptr<Material> > _materials;
+  std::vector< std::shared_ptr<graphics::Material> > _materials;
   std::vector< std::shared_ptr<graphics::Texture> > _textures;
 
   std::vector<std::shared_ptr<LightNodeBase> > _lights;

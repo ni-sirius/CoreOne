@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Core.h"
 #include "CoreWindow.h"
-#include "Material.h"
 #include "MeshNode.h"
 #include "lights/LightNode.h"
 #include "TextNode.h"
@@ -73,8 +72,6 @@ void Core::SetWindow(corewindow::CoreWindow* window)
       std::cout << "TMP framebuffer init error" << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glActiveTexture(0);
 
     //Quad
     float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
