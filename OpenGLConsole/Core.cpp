@@ -343,6 +343,12 @@ void Core::updateProjection(Projection_type projection)
   }
   else if (projection == Projection_type::ORTHO)
   {
+    //float ratio = atan(glm::radians(_fov / 2.f)) * 2.f;
+    //float sizex = ratio * 1;
+    //float sizey = ratio * static_cast<float>(framebufferWidth) / frameBufferHeight;
+    //auto distance = glm::length(mTarget - mEye);
+    //glm::mat4 orthProject = glm::ortho(-sizex, sizex, -sizey, sizey, 0.0f, 2.0f*distance);
+
     _projectionMat = glm::ortho(
       0.0f,
       static_cast<float>(framebufferWidth),
