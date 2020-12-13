@@ -3,8 +3,6 @@
 #include "mat4x4.hpp"
 #include "lights/LightManager.h"
 
-class Shader;
-enum class ShaderPass;
 class LightManager;
 class PointLight;
 

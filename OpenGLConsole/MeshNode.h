@@ -2,7 +2,6 @@
 #include "CoreNode.h"
 
 struct Vertex;
-class Shader;
 class Primitive;
 class CoreState;
 

@@ -1,5 +1,6 @@
 #include <stdafx.h>
 #include <graphics/Material.h>
+#include <graphics/Shader.h>
 #include <lights/LightManager.h>
 
 using namespace coreone::graphics;
@@ -46,18 +47,18 @@ void Material::SetMaterialState(glm::mat4 modelMat, glm::mat4 viewMat, glm::mat4
     lightMan.LoadLightsToShader(_shader);
 
     // TODO Rewrite uniform-set system
-    _shader->SetMat4fv(modelMat, "ModelMat");
-    _shader->SetMat4fv(viewMat, "ViewMat");
-    _shader->SetMat4fv(projMat, "ProjectionMat");
-    _shader->SetVec3f(cameraPos, "CameraPos");
+    _shader->SetUniform("ModelMat", modelMat);
+    _shader->SetUniform("ViewMat", viewMat);
+    _shader->SetUniform("ProjectionMat", projMat);
+    _shader->SetUniform("CameraPos", cameraPos);
 
-    _shader->SetVec3f(_ambient, "material.ambient");
-    _shader->Set1f(static_cast<float>(_shiness), "material.shiness");
+    _shader->SetUniform("material.ambient", _ambient);
+    _shader->SetUniform("material.shiness", static_cast<float>(_shiness));
 
-    _shader->Set1i(_lightSensitive, "material.lightSensitive");
-    _shader->Set1i(useColorFill, "material.useColors");
-    _shader->Set1i(_diffuseTexUnit, "material.diffuseTex");
-    _shader->Set1i(_specularTexUnit, "material.specularTex");
+    _shader->SetUniform("material.lightSensitive", _lightSensitive);
+    _shader->SetUniform("material.useColors", useColorFill);
+    _shader->SetUniform("material.diffuseTex", _diffuseTexUnit);
+    _shader->SetUniform("material.specularTex", _specularTexUnit);
 
     _binded = true;
     _shader->Use();

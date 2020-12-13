@@ -2,6 +2,7 @@
 #include <memory>
 #include <functional>
 #include <graphics/RenderBuffer.h>
+#include "MeshNode.h"
 
 
 //Temp enums
@@ -22,6 +23,11 @@ namespace coreone
   namespace corewindow
   {
     class CoreWindow;
+  }
+
+  namespace graphics
+  {
+    class Shader;
   }
 
   class Core
@@ -87,7 +93,7 @@ namespace coreone
     graphics::RenderBuffer _tmpStenDepthRB;
     unsigned int _tmpQuadVAO;
     unsigned int _tmpQuadVBO;
-    std::shared_ptr<Shader> _tmpShader;
+    std::shared_ptr<graphics::Shader> _tmpShader;
     //MeshNode _tmpQuad;
 
   private:

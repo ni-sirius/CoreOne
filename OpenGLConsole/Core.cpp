@@ -6,6 +6,8 @@
 #include "TextNode.h"
 #include "CoreDevice.h"
 #include "lights/LightManager.h"
+#include <input/ResourceManager.h>
+#include <graphics/Shader.h>
 
 using namespace coreone;
 
@@ -73,6 +75,8 @@ void Core::SetWindow(corewindow::CoreWindow* window)
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    //_tmpQuad = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.1f, 0.f, 1.5f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[6]);
+
     //Quad
     float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
     // positions   // texCoords
@@ -96,7 +100,7 @@ void Core::SetWindow(corewindow::CoreWindow* window)
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
     //Shader
-    _tmpShader = std::make_shared<Shader>(4, 5, "screen_quad.vert", "screen_quad.frag");
+    _tmpShader = ResourceManager::Instance().LoadShaderProgram("screen_quad", 4, 5, "screen_quad.vert", "screen_quad.frag");
     //~Addition frame buffer test
   }
 }
@@ -153,7 +157,7 @@ void Core::Render()
   glDisable(GL_DEPTH_TEST);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  _tmpShader->Set1i(0, "screenTexture");
+  _tmpShader->SetUniform("screenTexture", 0);
   _tmpShader->Use();
 
   glBindVertexArray(_tmpQuadVAO);
@@ -356,7 +360,7 @@ void Core::updateProjection(Projection_type projection)
       static_cast<float>(frameBufferHeight),
       -1.f,
       1.f
-      );
+    );
   }
 }
 

@@ -15,6 +15,7 @@
 
 #include "states/CoreState.h"
 #include <graphics/Material.h>
+#include <input/ResourceManager.h>
 
 Renderer::Renderer():
   _core(),
@@ -49,25 +50,23 @@ void Renderer::Run()
 
 void Renderer::initShaders()
 {
-  _shaders.push_back(std::make_shared<Shader>(_glVersion.first, _glVersion.second, "vertex_core.glsl", "fragment_core.glsl"));
-  _shaders.push_back(std::make_shared<Shader>(_glVersion.first, _glVersion.second, "vertex_core.glsl", "fragment_light.glsl"));
-
-  _shaders.push_back(std::make_shared<Shader>(_glVersion.first, _glVersion.second, "windshield.vert", "windshield.frag"));
-
-  _shaders.push_back(std::make_shared<Shader>(_glVersion.first, _glVersion.second, "text.vert", "text.frag"));
+  ResourceManager::Instance().LoadShaderProgram("mesh_node", _glVersion.first, _glVersion.second, "vertex_core.glsl", "fragment_core.glsl");
+  ResourceManager::Instance().LoadShaderProgram("light_node", _glVersion.first, _glVersion.second, "vertex_core.glsl", "fragment_light.glsl");
+  ResourceManager::Instance().LoadShaderProgram("windshield_node", _glVersion.first, _glVersion.second, "windshield.vert", "windshield.frag");
+  ResourceManager::Instance().LoadShaderProgram("text_node", _glVersion.first, _glVersion.second, "text.vert", "text.frag");
 }
 
 void Renderer::initMaterials()
 {
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(_shaders[0], _textures[4], _textures[5])); //container
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(_shaders[0], _textures[2], _textures[3])); //flower
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(_shaders[0], _textures[6])); //window
+  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("mesh_node"), _textures[4], _textures[5])); //container
+  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("mesh_node"), _textures[2], _textures[3])); //flower
+  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("mesh_node"), _textures[6])); //window
 
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(_shaders[1])); //light
+  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("light_node"))); //light
 
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(_shaders[2])); // windshield button
+  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("windshield_node"))); // windshield button
 
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(_shaders[3])); // text /5
+  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("text_node"))); // text /5
 }
 
 void Renderer::initTextures()

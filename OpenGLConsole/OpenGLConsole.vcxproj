@@ -107,7 +107,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glm\include;$(SolutionDir)3rdparty\glew\include\GL;$(SolutionDir)3rdparty\GLFW\include;$(SolutionDir)3rdparty\SOIL2\include;$(SolutionDir)3rdparty\freetype\include;$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glm\include;$(SolutionDir)3rdparty\glew\include\GL;$(SolutionDir)3rdparty\GLFW\include;$(SolutionDir)3rdparty\SOIL2\include;$(SolutionDir)3rdparty\freetype\include;$(ProjectDir)include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -166,7 +166,10 @@
     <ClInclude Include="EventReceiver.h" />
     <ClInclude Include="include\graphics\Material.h" />
     <ClInclude Include="include\graphics\RenderBuffer.h" />
+    <ClInclude Include="include\graphics\Shader.h" />
     <ClInclude Include="include\graphics\Texture.h" />
+    <ClInclude Include="include\input\ResourceManager.h" />
+    <ClInclude Include="include\input\ResourceUploaders.h" />
     <ClInclude Include="include\lights\DirectionLightNode.h" />
     <ClInclude Include="include\lights\LightManager.h" />
     <ClInclude Include="include\lights\LightNode.h" />
@@ -181,8 +184,6 @@
     <ClInclude Include="MeshNode.h" />
     <ClInclude Include="Primitives.h" />
     <ClInclude Include="Render.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Shader.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextNode.h" />
     <ClInclude Include="Vertex.h" />
@@ -206,12 +207,12 @@
     <ClCompile Include="PointLightNode.cpp" />
     <ClCompile Include="Primitives.cpp" />
     <ClCompile Include="Render.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpotLightNode.cpp" />
     <ClCompile Include="src\graphics\Material.cpp" />
     <ClCompile Include="src\graphics\RenderBuffer.cpp" />
+    <ClCompile Include="src\graphics\Shader.cpp" />
     <ClCompile Include="src\graphics\Texture.cpp" />
+    <ClCompile Include="src\input\ResourceManager.cpp" />
     <ClCompile Include="src\manipulators\CameraManipulator.cpp" />
     <ClCompile Include="src\nodes\CameraNode.cpp" />
     <ClCompile Include="src\states\FrameBuffer.cpp" />

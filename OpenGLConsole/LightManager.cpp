@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "lights/LightManager.h"
+#include <graphics/Shader.h>
 
-
+using namespace coreone::graphics;
 using namespace light;
 
 LightManager::LightManager()

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TextNode.h"
+#include <graphics/Shader.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -64,7 +65,7 @@ TextNode::TextNode(std::string text,
       texture,
       glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
       glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-      face->glyph->advance.x
+      static_cast<GLuint>(face->glyph->advance.x)
     };
     _characters.insert(std::pair<GLchar, Character>(c, character));
   }
@@ -103,9 +104,9 @@ void TextNode::Render(glm::mat4 viewMat,
     GLfloat scale = _scale;
 
     // Activate corresponding render state
-    _material->GetShader()->SetMat4fv(projectionMat, "ProjectionMat");
-    _material->GetShader()->SetVec3f(glm::vec3(1.f, 1.f, 1.f), "textColor");
-    _material->GetShader()->Set1i(5, "text");
+    _material->GetShader()->SetUniform("ProjectionMat", projectionMat);
+    _material->GetShader()->SetUniform("textColor", glm::vec3(1.f, 1.f, 1.f));
+    _material->GetShader()->SetUniform("text", 5);
     _material->GetShader()->Use();
     glActiveTexture(GL_TEXTURE5);
     glBindVertexArray(_VAO);

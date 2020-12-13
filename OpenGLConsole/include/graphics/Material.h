@@ -1,10 +1,10 @@
 #pragma once
-class Shader;
 class LightManager;
 
 namespace coreone::graphics
 {
   class Texture;
+  class Shader;
 
   class Material
   {
