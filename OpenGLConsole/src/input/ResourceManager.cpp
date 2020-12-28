@@ -37,7 +37,7 @@ std::shared_ptr<Shader> ResourceManager::LoadShaderProgram(std::string tag, cons
   return nullptr;
 }
 
-std::shared_ptr<Shader> coreone::ResourceManager::GetShaderProgram(std::string tag)
+std::shared_ptr<Shader> ResourceManager::GetShaderProgram(std::string tag)
 {
   auto it = _shaders.find(tag);
   if (it != _shaders.end())
@@ -50,3 +50,73 @@ std::shared_ptr<Shader> coreone::ResourceManager::GetShaderProgram(std::string t
   }
 }
 
+std::shared_ptr<Texture> ResourceManager::LoadTexture2D(std::string tag, std::string path)
+{
+  auto it = _textures.find(tag);
+  if (it != _textures.end())
+  {
+    return it->second;
+  }
+
+  auto texture = std::make_shared<Texture>(path, GL_TEXTURE_2D);
+  if (texture->Valid())
+  {
+    _textures.insert({ tag, texture });
+    return texture;
+  }
+
+  return nullptr;
+}
+
+std::shared_ptr<Texture> ResourceManager::GetTexture(std::string tag)
+{
+  auto it = _textures.find(tag);
+  if (it != _textures.end())
+  {
+    return it->second;
+  }
+  else
+  {
+    return nullptr;
+  }
+}
+
+std::shared_ptr<graphics::Material> ResourceManager::CreateSimpleMaterial(std::string tag,
+  std::string shaderTag, std::string diffuseTexTag, std::string specularTexTag, bool lightSensitive)
+{
+  auto it = _materials.find(tag);
+  if (it != _materials.end())
+  {
+    return it->second;
+  }
+
+  auto shader = GetShaderProgram(shaderTag);
+  if (shader)
+  {
+    auto diffTex = GetTexture(diffuseTexTag);
+    auto specTex = GetTexture(specularTexTag);
+
+    auto material = std::make_shared<Material>(glm::vec3(1.0f), 32, lightSensitive);
+    material->SetShader(shader);
+    material->SetDiffuseTexture(diffTex, 0);
+    material->SetSpecularTexture(specTex, 1);
+
+    _materials.insert({ tag, material });
+    return material;
+  }
+
+  return nullptr;
+}
+
+std::shared_ptr<graphics::Material> ResourceManager::GetMaterial(std::string tag)
+{
+  auto it = _materials.find(tag);
+  if (it != _materials.end())
+  {
+    return it->second;
+  }
+  else
+  {
+    return nullptr;
+  }
+}

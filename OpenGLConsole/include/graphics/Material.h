@@ -9,14 +9,7 @@ namespace coreone::graphics
   class Material
   {
   public:
-    static std::shared_ptr<Material> CreateSimpleMaterial(
-      std::shared_ptr<Shader> shader,
-      std::shared_ptr<Texture> diffTex = nullptr,
-      std::shared_ptr<Texture> specTex = nullptr,
-      bool lightSensitive = true);
-
-    Material(std::shared_ptr<Shader> shader, glm::vec3 ambient,
-      int shiness, bool lightSensitive);
+    Material(glm::vec3 ambient, int shiness, bool lightSensitive);
     ~Material() = default;
 
     void SetMaterialState(glm::mat4 modelMat, glm::mat4 viewMat, glm::mat4 projMat, glm::vec3 cameraPos,

@@ -5,23 +5,9 @@
 
 using namespace coreone::graphics;
 
-std::shared_ptr<Material> Material::CreateSimpleMaterial(
-  std::shared_ptr<Shader> shader,
-  std::shared_ptr<Texture> diffTex /*= nullptr*/,
-  std::shared_ptr<Texture> specTex /*= nullptr*/,
-  bool lightSensitive /*= true*/)
-{
-  auto material = std::make_shared<Material>(shader, glm::vec3(1.0f), 32, lightSensitive);
-  material->SetDiffuseTexture(diffTex, 0);
-  material->SetSpecularTexture(specTex, 1);
-
-  return material;
-}
-
-Material::Material(std::shared_ptr<Shader> shader, glm::vec3 ambient,
+Material::Material(glm::vec3 ambient,
   int shiness, bool lightSensitive)
-  : _shader(shader)
-  , _ambient(ambient)
+  : _ambient(ambient)
   , _shiness(shiness)
   , _lightSensitive(lightSensitive)
 {

@@ -58,31 +58,31 @@ void Renderer::initShaders()
 
 void Renderer::initMaterials()
 {
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("mesh_node"), _textures[4], _textures[5])); //container
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("mesh_node"), _textures[2], _textures[3])); //flower
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("mesh_node"), _textures[6])); //window
+  ResourceManager::Instance().CreateSimpleMaterial("container", "mesh_node", "container_diff", "container_spec");
+  ResourceManager::Instance().CreateSimpleMaterial("flower", "mesh_node", "flower_diff", "flower_spec");
+  ResourceManager::Instance().CreateSimpleMaterial("window", "mesh_node", "window_diff");
 
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("light_node"))); //light
+  ResourceManager::Instance().CreateSimpleMaterial("light", "light_node");
 
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("windshield_node"))); // windshield button
+  ResourceManager::Instance().CreateSimpleMaterial("windshield_btn", "windshield_node");
 
-  _materials.push_back(graphics::Material::CreateSimpleMaterial(ResourceManager::Instance().GetShaderProgram("text_node"))); // text /5
+  ResourceManager::Instance().CreateSimpleMaterial("text", "text_node");
 }
 
 void Renderer::initTextures()
 {
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/apple.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/apple_specular.png", GL_TEXTURE_2D));
+  ResourceManager::Instance().LoadTexture2D("apple_diff", "Images/apple.png");
+  ResourceManager::Instance().LoadTexture2D("apple_spec", "Images/apple_specular.png");
 
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/flower.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/flower_specular.png", GL_TEXTURE_2D));
+  ResourceManager::Instance().LoadTexture2D("flower_diff", "Images/flower.png");
+  ResourceManager::Instance().LoadTexture2D("flower_spec", "Images/flower_specular.png");
 
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/container.png", GL_TEXTURE_2D));
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/container_specular.png", GL_TEXTURE_2D));
+  ResourceManager::Instance().LoadTexture2D("container_diff", "Images/container.png");
+  ResourceManager::Instance().LoadTexture2D("container_spec", "Images/container_specular.png");
 
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/window.png", GL_TEXTURE_2D));
+  ResourceManager::Instance().LoadTexture2D("window_diff", "Images/window.png");
 
-  _textures.push_back(std::make_shared<graphics::Texture>("Images/grass.png", GL_TEXTURE_2D));
+  ResourceManager::Instance().LoadTexture2D("grass_diff", "Images/grass.png");
 }
 
 void Renderer::initCamera()
@@ -97,29 +97,34 @@ void Renderer::initSceneObjects()
     std::make_shared<Quad>(),
     glm::vec3(0.f, -0.5f, 0.f),
     glm::vec3(-90.f, 0.f, 0.f),
-    glm::vec3(10.f, 10.f, 1.f),
-    _materials[0], _textures[2]
+    glm::vec3(10.f, 10.f, 1.f)
     );
+  floor->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   _core.AddMeshSceneNode(floor);
   _meshes.push_back(floor);
 
-  auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(2.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
+  auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(2.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+  container1->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   _core.AddMeshSceneNode(container1);
   _meshes.push_back(container1);
 
-  auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.5f), _materials[0], _textures[4], _textures[5]);
+  auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.5f));
+  container2->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   _core.AddMeshSceneNode(container2, container1);
   _meshes.push_back(container2);
 
-  auto container3 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[4], _textures[5]);
+  auto container3 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.f));
+  container3->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   _core.AddMeshSceneNode(container3);
   _meshes.push_back(container3);
 
-  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f), _materials[4]);
+  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f));
+  btn->SetMaterial(ResourceManager::Instance().GetMaterial("windshield_btn"));
   _core.AddWindshieldSceneNode(btn);
   _windshields.push_back(btn);
 
-  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[1], _textures[2], _textures[3]);
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+  flowerBox->SetMaterial(ResourceManager::Instance().GetMaterial("flower"));
   auto state = flowerBox->GetOrCreateCoreState();
   state->SetType(CoreState::OVERRIDE);
   state->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
@@ -150,7 +155,8 @@ void Renderer::initLights()
   _core.AddLightSceneNode(lightNode4);
   _lights.push_back(lightNode4);
 
-  auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f), _materials[3]);
+  auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f));
+  lightMesh->SetMaterial(ResourceManager::Instance().GetMaterial("light"));
   _core.AddMeshSceneNode(lightMesh, lightNode);
 }
 
@@ -207,7 +213,8 @@ void Renderer::runExamples()
 
 void Renderer::stencilExample()
 {
-  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f), _materials[1], _textures[2], _textures[3]);
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+  flowerBox->SetMaterial(ResourceManager::Instance().GetMaterial("flower"));
   auto state = flowerBox->GetOrCreateCoreState();
   state->SetType(CoreState::OVERRIDE);
   state->SetPreExecCallback([]() {
@@ -225,25 +232,29 @@ void Renderer::stencilExample()
 
 void Renderer::textsExample()
 {
-  auto txt = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 25.f, 0.f), 1.f, _materials[5]);
+  auto txt = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 25.f, 0.f), 1.f);
+  txt->SetMaterial(ResourceManager::Instance().GetMaterial("text"));
   _core.AddTextSceneNode(txt);
   _windshields.push_back(txt);
 
-  auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f, _materials[5]);
+  auto txt1 = std::make_shared<TextNode>("Text Node", glm::vec3(25.f, 125.f, 0.f), 1.3f);
+  txt1->SetMaterial(ResourceManager::Instance().GetMaterial("text"));
   _core.AddTextSceneNode(txt1);
   _windshields.push_back(txt1);
 }
 
 void Renderer::blendingExample()
 {
-  auto gr1 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.1f, 0.f, 1.5f), glm::vec3(0.f), glm::vec3(1.f), _materials[2], _textures[6]);
+  auto gr1 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.1f, 0.f, 1.5f), glm::vec3(0.f), glm::vec3(1.f));
+  gr1->SetMaterial(ResourceManager::Instance().GetMaterial("window"));
   auto stategr1 = gr1->GetOrCreateCoreState();
   stategr1->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
   stategr1->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
   _core.AddMeshSceneNode(gr1);
   _meshes.push_back(gr1);
 
-  auto gr11 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.f, 0.f, 2.f), glm::vec3(0.f), glm::vec3(1.f), _materials[2], _textures[6]);
+  auto gr11 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.f, 0.f, 2.f), glm::vec3(0.f), glm::vec3(1.f));
+  gr11->SetMaterial(ResourceManager::Instance().GetMaterial("window"));
   auto stategr11 = gr11->GetOrCreateCoreState();
   stategr11->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
   stategr11->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
