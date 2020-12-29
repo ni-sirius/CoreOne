@@ -1,15 +1,29 @@
-#include "stdafx.h"
-#include "Primitives.h"
+#include <stdafx.h>
+#include <nodes/Primitive.h>
 
 
-Primitive::Primitive()
+using namespace coreone;
+
+void Primitive::Set(const std::vector<Vertex>& vertices, const std::vector<GLuint>& indices)
 {
-
+  _vertices = vertices;
+  _indices = indices;
 }
 
-Primitive::~Primitive()
+void Primitive::Set(std::vector<Vertex>&& vertices, std::vector<GLuint>&& indices)
 {
+  _vertices = std::move(vertices);
+  _indices = std::move(indices);
+}
 
+const std::vector<Vertex>& Primitive::GetVerticesVec() const
+{
+  return _vertices;
+}
+
+const std::vector<GLuint>& Primitive::GetIndicesVec() const
+{
+  return _indices;
 }
 
 void Primitive::Set(const Vertex* verices, const unsigned nrOfVertices, const GLuint* indices, const unsigned nrOfIndices)

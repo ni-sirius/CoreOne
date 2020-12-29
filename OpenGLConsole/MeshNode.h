@@ -2,14 +2,19 @@
 #include "CoreNode.h"
 
 struct Vertex;
-class Primitive;
 class CoreState;
 
-namespace coreone::graphics
+namespace coreone
 {
-  class Texture;
+  class Primitive;
+
+  namespace graphics
+  {
+    class Texture;
+  }
 }
 
+using namespace coreone;
 using namespace coreone::graphics;
 
 class MeshNode : public CoreNode

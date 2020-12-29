@@ -3,6 +3,7 @@
 #include "lights/Lights.h"
 #include "states/CoreState.h"
 #include "graphics/Texture.h"
+#include "nodes/Primitive.h"
 
 MeshNode::MeshNode(Vertex* vertexArray,
                    const unsigned int& numOfVertices,

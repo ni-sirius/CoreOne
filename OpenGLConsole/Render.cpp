@@ -16,6 +16,7 @@
 #include "states/CoreState.h"
 #include <graphics/Material.h>
 #include <input/ResourceManager.h>
+#include <nodes/Primitive.h>
 
 Renderer::Renderer():
   _core(),
