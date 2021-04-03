@@ -7,6 +7,7 @@ class CoreNode;
 namespace coreone
 {
   class MeshNode;
+  class Primitive;
 
   namespace graphics
   {
@@ -42,15 +43,40 @@ namespace coreone
       std::string shaderTag, std::string diffuseTexTag = "", std::string specularTexTag = "", bool lightSensitive = true);
     std::shared_ptr<graphics::Material> GetMaterial(std::string tag);
 
+    template <typename T = Quad>
+    std::shared_ptr<MeshNode> CreateMeshWithPrimitive(std::string mesh_tag, std::string primitive_tag) {
+      auto it = _meshNodes.find(mesh_tag);
+      if (it != _meshNodes.end())
+      {
+        return it->second;
+      }
+
+      std::shared_ptr<Primitive> item;
+      auto primitiveIt = _primitives.find(primitive_tag);
+      if (primitiveIt == _primitives.end())
+      {
+        item = std::make_shared<T>();
+        _primitives.insert({ primitive_tag, item });
+      }
+      else
+      {
+        item = primitiveIt->second;
+      }
+
+      auto meshNode = std::make_shared<MeshNode>(item);
+      _meshNodes.insert({ mesh_tag, meshNode });
+
+      return meshNode;
+    };
+    std::shared_ptr<Primitive> GetPrimitive(std::string tag);
+    std::shared_ptr<MeshNode> GetMeshNode(std::string tag);
 
   private:
     std::unordered_map< std::string, std::shared_ptr<graphics::Shader> > _shaders;
     std::unordered_map< std::string, std::shared_ptr<graphics::Material> > _materials;
     std::unordered_map< std::string, std::shared_ptr<graphics::Texture> > _textures;
 
-    //TODO
-    //std::unordered_map<std::string, std::shared_ptr<LightNodeBase> > _lights;
-    //std::unordered_map<std::string, std::shared_ptr<MeshNode> > _meshes;
-    //std::unordered_map<std::string, std::shared_ptr<CoreNode> > _windshields;
+    std::unordered_map< std::string, std::shared_ptr<Primitive> > _primitives;
+    std::unordered_map< std::string, std::shared_ptr<MeshNode> > _meshNodes;
   };
 }

@@ -120,3 +120,29 @@ std::shared_ptr<graphics::Material> ResourceManager::GetMaterial(std::string tag
     return nullptr;
   }
 }
+
+std::shared_ptr<coreone::Primitive> coreone::ResourceManager::GetPrimitive(std::string tag)
+{
+  auto it = _primitives.find(tag);
+  if (it != _primitives.end())
+  {
+    return it->second;
+  }
+  else
+  {
+    return nullptr;
+  }
+}
+
+std::shared_ptr<coreone::MeshNode> coreone::ResourceManager::GetMeshNode(std::string tag)
+{
+  auto it = _meshNodes.find(tag);
+  if (it != _meshNodes.end())
+  {
+    return it->second;
+  }
+  else
+  {
+    return nullptr;
+  }
+}

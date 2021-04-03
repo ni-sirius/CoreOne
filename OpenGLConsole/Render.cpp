@@ -94,7 +94,7 @@ void Renderer::initCamera()
 
 void Renderer::initSceneObjects()
 {
-  auto floor = std::make_shared<MeshNode>(std::make_shared<Quad>());
+  auto floor = ResourceManager::Instance().CreateMeshWithPrimitive<Quad>("floor", "quad");
   floor->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   floor->SetPosition(glm::vec3(0.f, -0.5f, 0.f));
   floor->SetRotation(glm::vec3(-90.f, 0.f, 0.f));
@@ -102,35 +102,33 @@ void Renderer::initSceneObjects()
   _core.AddMeshSceneNode(floor);
   _meshes.push_back(floor);
 
-  std::shared_ptr<Primitive> qubePrimitive = std::make_shared<Cube>();
-
-  auto container1 = std::make_shared<MeshNode>(qubePrimitive);
+  auto container1 = ResourceManager::Instance().CreateMeshWithPrimitive<Cube>("cont1", "cube");
   container1->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   container1->SetPosition(glm::vec3(2.f, 0.f, 0.f));
   _core.AddMeshSceneNode(container1);
   _meshes.push_back(container1);
 
-  auto container2 = std::make_shared<MeshNode>(qubePrimitive);
+  auto container2 = ResourceManager::Instance().CreateMeshWithPrimitive("cont2", "cube");
   container2->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   container2->SetPosition(glm::vec3(0.f, 0.f, -1.f));
   container2->SetScale(glm::vec3(1.5f));
   _core.AddMeshSceneNode(container2, container1);
   _meshes.push_back(container2);
 
-  auto container3 = std::make_shared<MeshNode>(qubePrimitive);
+  auto container3 = ResourceManager::Instance().CreateMeshWithPrimitive("cont3", "cube");
   container3->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
   container3->SetPosition(glm::vec3(-1.f, 0.f, -1.f));
   _core.AddMeshSceneNode(container3);
   _meshes.push_back(container3);
 
-  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>());
+  auto btn = ResourceManager::Instance().CreateMeshWithPrimitive("cont2", "quad");
   btn->SetMaterial(ResourceManager::Instance().GetMaterial("windshield_btn"));
   btn->SetPosition(glm::vec3(100.f, 718.f, 0.f));
   btn->SetScale(glm::vec3(200.f, 100.f, 1.f));
   _core.AddWindshieldSceneNode(btn);
   _windshields.push_back(btn);
 
-  auto flowerBox = std::make_shared<MeshNode>(qubePrimitive);
+  auto flowerBox = ResourceManager::Instance().CreateMeshWithPrimitive("flower_box", "cube");
   flowerBox->SetMaterial(ResourceManager::Instance().GetMaterial("flower"));
   auto state = flowerBox->GetOrCreateCoreState();
   state->SetType(CoreState::OVERRIDE);
