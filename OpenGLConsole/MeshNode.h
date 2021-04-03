@@ -8,95 +8,48 @@ namespace coreone
 {
   class Primitive;
 
-  namespace graphics
+  class MeshNode : public CoreNode
   {
-    class Texture;
-  }
+  public:
+    MeshNode(std::shared_ptr<Primitive> primitive,
+      std::shared_ptr<graphics::Material> material = nullptr);
+    virtual ~MeshNode();
+
+    virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f)) override;
+    virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
+      std::shared_ptr<Camera> camera,
+      std::shared_ptr<LightManager> lightManager) override;
+
+    CoreState* const GetOrCreateCoreState();
+    void SetCoreState(std::shared_ptr<CoreState> state);
+
+    inline void SetVisible(bool visible) { _visible = visible; };
+
+    inline void SetPosition(const glm::vec3 position) { _position = position; };
+    inline void SetRotation(const glm::vec3 rotation) { _rotation = rotation; };
+    inline void SetScale(const glm::vec3 scale) { _scale = scale; };
+
+    inline void Move(const glm::vec3 position) { _position += position; };
+    inline void Rotate(const glm::vec3 rotation) { _rotation += rotation; };
+    inline void Upscale(const glm::vec3 upscale) { _scale += upscale; };
+
+    inline void SetMaterial(std::shared_ptr<graphics::Material> material) { _material = material; }
+
+  protected:
+    void updateModelMatrix();
+
+  protected:
+    bool _visible;
+
+    glm::vec3 _position = glm::vec3(0.f);
+    glm::vec3 _rotation = glm::vec3(0.f);
+    glm::vec3 _scale = glm::vec3(1.f);
+
+    std::shared_ptr<graphics::Material> _material;
+    std::shared_ptr<Primitive> _primitive;
+
+  private:
+    std::shared_ptr<CoreState> _coreState;
+  };
+
 }
-
-using namespace coreone;
-using namespace coreone::graphics;
-
-class MeshNode : public CoreNode
-{
-public:
-  MeshNode(Vertex* vertexArray,
-           const unsigned int& numOfVertices,
-           GLuint* indexArray,
-           const unsigned int& numOfIndices,
-           glm::vec3 position,
-           glm::vec3 rotation,
-           glm::vec3 scale,
-           std::shared_ptr<Material> material = nullptr,
-           std::shared_ptr<Texture> diffuseTexture = nullptr,
-           std::shared_ptr<Texture> specularTexture = nullptr,
-           bool visible = true);
-
-  MeshNode(std::shared_ptr<Primitive> primitive,
-           glm::vec3 position,
-           glm::vec3 rotation,
-           glm::vec3 scale,
-           std::shared_ptr<Material> material = nullptr,
-           std::shared_ptr<Texture> diffuseTexture = nullptr,
-           std::shared_ptr<Texture> specularTexture = nullptr,
-           bool visible = true);
-  virtual ~MeshNode();
-
-  virtual void Update(const float& deltaTime, glm::mat4 modelMatrix = glm::mat4(1.f)) override;
-  virtual void Render(glm::mat4 viewMat, glm::mat4 projectionMat,
-                      std::shared_ptr<Camera> camera,
-                      std::shared_ptr<LightManager> lightManager) override;
-
-  CoreState* const GetOrCreateCoreState();
-  void SetCoreState(std::shared_ptr<CoreState> state);
-
-  inline void SetVisible(bool visible) { _visible = visible; };
-
-  inline void SetPosition(const glm::vec3 position) { _position = position; };
-  inline void SetRotation(const glm::vec3 rotation) { _rotation = rotation; };
-  inline void SetScale(const glm::vec3 scale) { _scale = scale; };
-
-  inline void Move(const glm::vec3 position) { _position += position; };
-  inline void Rotate(const glm::vec3 rotation) { _rotation += rotation; };
-  inline void Upscale(const glm::vec3 upscale) { _scale += upscale; };
-
-  inline void SetMaterial(std::shared_ptr<Material> material) { _material = material; }
-
-  inline void SetDiffuseTexture(std::shared_ptr<Texture> texture) { _diffuseTexture = texture; }
-  inline void SetSpecularTexture(std::shared_ptr<Texture> texture) { _specularTexture = texture; }
-
-protected:
-  void initVAO(Vertex* vertexArray,
-              const unsigned& numOfVertices,
-              GLuint* indexArray,
-              const unsigned& numOfIndices);
-  void initVAO(std::shared_ptr<Primitive> primitive);
-
-  void updateModelMatrix();
-
-private:
-  void draw();
-
-protected:
-  bool _visible;
-
-  glm::vec3 _position;
-  glm::vec3 _rotation;
-  glm::vec3 _scale;
-
-  GLuint _VAO;
-  GLuint _VBO;
-  GLuint _EBO;
-
-  unsigned int _numOfVertices;
-  unsigned int _numOfIndices;
-
-  std::shared_ptr<Material> _material;
-
-  std::shared_ptr<Texture> _diffuseTexture;
-  std::shared_ptr<Texture> _specularTexture;
-
-private:
-  std::shared_ptr<CoreState> _coreState;
-};
-

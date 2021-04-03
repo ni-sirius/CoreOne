@@ -1,10 +1,15 @@
 #pragma once
 #include <vec3.hpp>
 
+namespace coreone
+{
+  class MeshNode;
+}
 
-class MeshNode;
 class PointLightNode;
 class TextNode;
+
+using namespace coreone;
 
 //================================Base Commands========================================
 class CoreBaseCommand

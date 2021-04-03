@@ -1,7 +1,10 @@
 #pragma once
 //#include <functional>
 
-class MeshNode;
+namespace coreone
+{
+  class MeshNode;
+}
 
 class CoreAttribute
 {
@@ -35,7 +38,7 @@ private:
   void restoreState();
 
 private:
-  friend MeshNode;
+  friend coreone::MeshNode;
 
  // std::weak_ptr<MeshNode> _parent;
 

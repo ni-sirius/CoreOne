@@ -8,6 +8,7 @@
 #include "lights/LightManager.h"
 #include <input/ResourceManager.h>
 #include <graphics/Shader.h>
+#include <graphics/Texture.h>
 
 using namespace coreone;
 
@@ -54,18 +55,18 @@ void Core::SetWindow(corewindow::CoreWindow* window)
     glGenFramebuffers(1, &_tmpFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _tmpFramebuffer);
     //
-    _tmpClrBuffer.CreateTexture(GL_TEXTURE_2D, Texture::COLOR, 1024, 768);
+    _tmpClrBuffer.CreateTexture(GL_TEXTURE_2D, graphics::Texture::COLOR, 1024, 768);
     _tmpClrBuffer.Bind(0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tmpClrBuffer.GetID(), 0);
     _tmpClrBuffer.Unbind();
     //TMP
-    _tmpDSTex.CreateTexture(GL_TEXTURE_2D, Texture::DEPTH_STENCIL, 1024, 768);
+    _tmpDSTex.CreateTexture(GL_TEXTURE_2D, graphics::Texture::DEPTH_STENCIL, 1024, 768);
     _tmpDSTex.Bind(0);
     //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _tmpDSTex.GetID(), 0);
     _tmpDSTex.Unbind();
     //TMP
     //
-    _tmpStenDepthRB.CreateRenderBuffer(RenderBuffer::DEPTH_STENCIL, 1024, 768);
+    _tmpStenDepthRB.CreateRenderBuffer(graphics::RenderBuffer::DEPTH_STENCIL, 1024, 768);
     _tmpStenDepthRB.Bind();
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _tmpStenDepthRB.GetID());
     _tmpStenDepthRB.Unbind();

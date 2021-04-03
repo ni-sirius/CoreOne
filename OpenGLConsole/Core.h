@@ -14,12 +14,13 @@ class CoreDevice;
 class CoreBaseCommand;
 class LightManager;
 class LightNodeBase;
-class MeshNode;
 class TextNode;
 class CoreNode;
 
 namespace coreone
 {
+  class MeshNode;
+
   namespace corewindow
   {
     class CoreWindow;

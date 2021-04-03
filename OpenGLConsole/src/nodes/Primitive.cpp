@@ -8,12 +8,24 @@ void Primitive::Set(const std::vector<Vertex>& vertices, const std::vector<GLuin
 {
   _vertices = vertices;
   _indices = indices;
+
+  if (!Empty())
+  {
+    clearGlData();
+  }
+  initGlData();
 }
 
 void Primitive::Set(std::vector<Vertex>&& vertices, std::vector<GLuint>&& indices)
 {
   _vertices = std::move(vertices);
   _indices = std::move(indices);
+
+  if (!Empty())
+  {
+    clearGlData();
+  }
+  initGlData();
 }
 
 const std::vector<Vertex>& Primitive::GetVerticesVec() const
@@ -36,28 +48,108 @@ void Primitive::Set(const Vertex* verices, const unsigned nrOfVertices, const GL
   {
     _indices.push_back(indices[i]);
   }
+
+  if (!Empty())
+  {
+    clearGlData();
+  }
+  initGlData();
 }
 
-Vertex* Primitive::GetVertices()
+const Vertex* Primitive::GetVertices() const
 {
   return _vertices.data();
 }
 
-GLuint* Primitive::GetIndices()
+const GLuint* Primitive::GetIndices() const
 {
   return _indices.data();
 }
 
-const unsigned Primitive::GetNrOfVertices()
+const unsigned Primitive::GetNrOfVertices() const
 {
   return static_cast<unsigned>(_vertices.size());
 }
 
-const unsigned Primitive::GetNrOfIndices()
+const unsigned Primitive::GetNrOfIndices() const
 {
   return static_cast<unsigned>(_indices.size());
 }
 
+void Primitive::DrawPrimitive() const
+{
+  glBindVertexArray(_VAO);
+
+#pragma warning( push )
+#pragma warning( disable : 4267)
+  if (GetNrOfIndices())
+    glDrawElements(GL_TRIANGLES, GetNrOfIndices(), GL_UNSIGNED_INT, 0);
+  else
+    glDrawArrays(GL_TRIANGLES, 0, GetNrOfVertices());
+#pragma warning( pop )
+
+  glBindVertexArray(0);
+}
+
+const bool Primitive::Empty() const
+{
+  return _vertices.size() == 0;
+}
+
+void Primitive::initGlData()
+{
+  //VAO VBO EBO, Generation of
+  glGenVertexArrays(1, &_VAO);
+  glBindVertexArray(_VAO);
+
+  glGenBuffers(1, &_VBO);
+  glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+  glBufferData(GL_ARRAY_BUFFER, GetNrOfVertices() * sizeof(Vertex), GetVertices(), GL_STATIC_DRAW);
+
+  if (GetNrOfIndices() > 0)
+  {
+    glGenBuffers(1, &_EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetNrOfIndices() * sizeof(GLuint), GetIndices(), GL_STATIC_DRAW);
+  }
+
+  //SET vertex attribute pointers and enable(input assembly)
+  //Example if there is no known descriptor
+  //GLuint attribLoc = glGetAttribLocation(coreProgram, "vertex_position");
+  //glVertexAttribPointer(attribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+  //glEnableVertexAttribArray(attribLoc);
+
+  //Position
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+  glEnableVertexAttribArray(0);
+  //Color
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+  glEnableVertexAttribArray(1);
+  //Texture
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texture));
+  glEnableVertexAttribArray(2);
+  //Normal
+  glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+  glEnableVertexAttribArray(3);
+
+  //bind vao 0(unbind enything)
+  glBindVertexArray(0);
+}
+
+void Primitive::clearGlData()
+{
+  glDeleteBuffers(1, &_VBO);
+  glDeleteBuffers(1, &_EBO);
+  glDeleteVertexArrays(1, &_VAO);
+}
+
+coreone::Primitive::~Primitive()
+{
+  if (!Empty())
+  {
+    clearGlData();
+  }
+}
 
 //QUAD
 Quad::Quad():

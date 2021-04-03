@@ -2,11 +2,12 @@
 #include <unordered_map>
 
 class LightNodeBase;
-class MeshNode;
 class CoreNode;
 
 namespace coreone
 {
+  class MeshNode;
+
   namespace graphics
   {
     class Shader;

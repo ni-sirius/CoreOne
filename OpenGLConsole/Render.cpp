@@ -94,37 +94,43 @@ void Renderer::initCamera()
 
 void Renderer::initSceneObjects()
 {
-  auto floor = std::make_shared<MeshNode>(
-    std::make_shared<Quad>(),
-    glm::vec3(0.f, -0.5f, 0.f),
-    glm::vec3(-90.f, 0.f, 0.f),
-    glm::vec3(10.f, 10.f, 1.f)
-    );
+  auto floor = std::make_shared<MeshNode>(std::make_shared<Quad>());
   floor->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
+  floor->SetPosition(glm::vec3(0.f, -0.5f, 0.f));
+  floor->SetRotation(glm::vec3(-90.f, 0.f, 0.f));
+  floor->SetScale(glm::vec3(10.f, 10.f, 1.f));
   _core.AddMeshSceneNode(floor);
   _meshes.push_back(floor);
 
-  auto container1 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(2.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+  std::shared_ptr<Primitive> qubePrimitive = std::make_shared<Cube>();
+
+  auto container1 = std::make_shared<MeshNode>(qubePrimitive);
   container1->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
+  container1->SetPosition(glm::vec3(2.f, 0.f, 0.f));
   _core.AddMeshSceneNode(container1);
   _meshes.push_back(container1);
 
-  auto container2 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.5f));
+  auto container2 = std::make_shared<MeshNode>(qubePrimitive);
   container2->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
+  container2->SetPosition(glm::vec3(0.f, 0.f, -1.f));
+  container2->SetScale(glm::vec3(1.5f));
   _core.AddMeshSceneNode(container2, container1);
   _meshes.push_back(container2);
 
-  auto container3 = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(-1.f, 0.f, -1.f), glm::vec3(0.f), glm::vec3(1.f));
+  auto container3 = std::make_shared<MeshNode>(qubePrimitive);
   container3->SetMaterial(ResourceManager::Instance().GetMaterial("container"));
+  container3->SetPosition(glm::vec3(-1.f, 0.f, -1.f));
   _core.AddMeshSceneNode(container3);
   _meshes.push_back(container3);
 
-  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f));
+  auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>());
   btn->SetMaterial(ResourceManager::Instance().GetMaterial("windshield_btn"));
+  btn->SetPosition(glm::vec3(100.f, 718.f, 0.f));
+  btn->SetScale(glm::vec3(200.f, 100.f, 1.f));
   _core.AddWindshieldSceneNode(btn);
   _windshields.push_back(btn);
 
-  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+  auto flowerBox = std::make_shared<MeshNode>(qubePrimitive);
   flowerBox->SetMaterial(ResourceManager::Instance().GetMaterial("flower"));
   auto state = flowerBox->GetOrCreateCoreState();
   state->SetType(CoreState::OVERRIDE);
@@ -156,8 +162,9 @@ void Renderer::initLights()
   _core.AddLightSceneNode(lightNode4);
   _lights.push_back(lightNode4);
 
-  auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.5f));
+  auto lightMesh = std::make_shared<MeshNode>(std::make_shared<Cube>());
   lightMesh->SetMaterial(ResourceManager::Instance().GetMaterial("light"));
+  lightMesh->SetScale(glm::vec3(0.5f));
   _core.AddMeshSceneNode(lightMesh, lightNode);
 }
 
@@ -214,8 +221,9 @@ void Renderer::runExamples()
 
 void Renderer::stencilExample()
 {
-  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>(), glm::vec3(5.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(1.f));
+  auto flowerBox = std::make_shared<MeshNode>(std::make_shared<Cube>());
   flowerBox->SetMaterial(ResourceManager::Instance().GetMaterial("flower"));
+  flowerBox->SetPosition(glm::vec3(5.f, 0.f, 0.f));
   auto state = flowerBox->GetOrCreateCoreState();
   state->SetType(CoreState::OVERRIDE);
   state->SetPreExecCallback([]() {
@@ -246,16 +254,18 @@ void Renderer::textsExample()
 
 void Renderer::blendingExample()
 {
-  auto gr1 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.1f, 0.f, 1.5f), glm::vec3(0.f), glm::vec3(1.f));
+  auto gr1 = std::make_shared<MeshNode>(std::make_shared<Quad>());
   gr1->SetMaterial(ResourceManager::Instance().GetMaterial("window"));
+  gr1->SetPosition(glm::vec3(0.1f, 0.f, 1.5f));
   auto stategr1 = gr1->GetOrCreateCoreState();
   stategr1->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
   stategr1->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
   _core.AddMeshSceneNode(gr1);
   _meshes.push_back(gr1);
 
-  auto gr11 = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.f, 0.f, 2.f), glm::vec3(0.f), glm::vec3(1.f));
+  auto gr11 = std::make_shared<MeshNode>(std::make_shared<Quad>());
   gr11->SetMaterial(ResourceManager::Instance().GetMaterial("window"));
+  gr11->SetPosition(glm::vec3(0.f, 0.f, 2.f));
   auto stategr11 = gr11->GetOrCreateCoreState();
   stategr11->SetPreExecCallback([]() {glDisable(GL_CULL_FACE); });
   stategr11->SetPostExecCallback([]() {glEnable(GL_CULL_FACE); });
