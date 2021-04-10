@@ -1,5 +1,7 @@
 #pragma once
 #include <unordered_map>
+#include <nodes/Primitive.h>
+#include <graphics/Texture.h>
 
 class LightNodeBase;
 class CoreNode;
@@ -7,13 +9,11 @@ class CoreNode;
 namespace coreone
 {
   class MeshNode;
-  class Primitive;
 
   namespace graphics
   {
     class Shader;
     class Material;
-    class Texture;
   }
 
   class ResourceManager final
@@ -37,6 +37,7 @@ namespace coreone
     std::shared_ptr<graphics::Shader> GetShaderProgram(std::string tag);
 
     std::shared_ptr<graphics::Texture> LoadTexture2D(std::string tag, std::string path);
+    std::shared_ptr<graphics::Texture> CreateTexture(std::string tag, GLenum type, graphics::Texture::Format format, unsigned int width, unsigned int height);
     std::shared_ptr<graphics::Texture> GetTexture(std::string tag);
 
     std::shared_ptr<graphics::Material> CreateSimpleMaterial(std::string tag,

@@ -3,7 +3,6 @@
 #include <input/ResourceUploaders.h>
 #include <graphics/Shader.h>
 #include <graphics/Material.h>
-#include <graphics/Texture.h>
 #include <lights/LightNode.h>
 #include <MeshNode.h>
 #include <CoreNode.h>
@@ -145,4 +144,22 @@ std::shared_ptr<coreone::MeshNode> coreone::ResourceManager::GetMeshNode(std::st
   {
     return nullptr;
   }
+}
+
+std::shared_ptr<coreone::graphics::Texture> coreone::ResourceManager::CreateTexture(std::string tag, GLenum type, graphics::Texture::Format format, unsigned int width, unsigned int height)
+{
+  auto it = _textures.find(tag);
+  if (it != _textures.end())
+  {
+    return it->second;
+  }
+
+  auto texture = std::make_shared<Texture>(type, format, width, height);
+  if (texture->Valid())
+  {
+    _textures.insert({ tag, texture });
+    return texture;
+  }
+
+  return nullptr;
 }
