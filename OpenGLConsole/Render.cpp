@@ -55,6 +55,8 @@ void Renderer::initShaders()
   ResourceManager::Instance().LoadShaderProgram("light_node", _glVersion.first, _glVersion.second, "vertex_core.glsl", "fragment_light.glsl");
   ResourceManager::Instance().LoadShaderProgram("windshield_node", _glVersion.first, _glVersion.second, "windshield.vert", "windshield.frag");
   ResourceManager::Instance().LoadShaderProgram("text_node", _glVersion.first, _glVersion.second, "text.vert", "text.frag");
+
+  //ResourceManager::Instance().LoadShaderProgram("tmp_screen_quad", _glVersion.first, _glVersion.second, "screen_quad.vert", "screen_quad.frag");
 }
 
 void Renderer::initMaterials()
@@ -68,6 +70,8 @@ void Renderer::initMaterials()
   ResourceManager::Instance().CreateSimpleMaterial("windshield_btn", "windshield_node");
 
   ResourceManager::Instance().CreateSimpleMaterial("text", "text_node");
+
+  //ResourceManager::Instance().CreateSimpleMaterial("tmp_screen_mat", "tmp_screen_quad", "tmp_screen_color_buf", "", false);
 }
 
 void Renderer::initTextures()
@@ -84,6 +88,8 @@ void Renderer::initTextures()
   ResourceManager::Instance().LoadTexture2D("window_diff", "Images/window.png");
 
   ResourceManager::Instance().LoadTexture2D("grass_diff", "Images/grass.png");
+
+  //ResourceManager::Instance().CreateTexture("tmp_screen_color_buf", GL_TEXTURE_2D, graphics::Texture::COLOR, 1024, 768);
 }
 
 void Renderer::initCamera()

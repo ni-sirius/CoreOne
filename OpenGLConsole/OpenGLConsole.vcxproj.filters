@@ -253,5 +253,11 @@
     <None Include="text.frag">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="screen_quad.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="screen_quad.vert">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

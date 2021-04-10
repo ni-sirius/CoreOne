@@ -52,20 +52,26 @@ void Core::SetWindow(corewindow::CoreWindow* window)
 
 
     //Addition frame buffer test
+    auto clrBuffer = ResourceManager::Instance().CreateTexture("tmp_screen_color_buf", GL_TEXTURE_2D, graphics::Texture::COLOR, 1024, 768);
+    auto screenShader = ResourceManager::Instance().LoadShaderProgram("tmp_screen_quad", 4,5, "screen_quad.vert", "screen_quad.frag");
+    auto screenMat = ResourceManager::Instance().CreateSimpleMaterial("tmp_screen_mat", "tmp_screen_quad", "tmp_screen_color_buf", "", false);
+    auto screenQuad = ResourceManager::Instance().CreateMeshWithPrimitive<Quad>("tmp_screen", "quad");
+    screenQuad->SetMaterial(screenMat);
+
     glGenFramebuffers(1, &_tmpFramebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, _tmpFramebuffer);
     //
-    _tmpClrBuffer.CreateTexture(GL_TEXTURE_2D, graphics::Texture::COLOR, 1024, 768);
-    _tmpClrBuffer.Bind(0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tmpClrBuffer.GetID(), 0);
-    _tmpClrBuffer.Unbind();
+    clrBuffer->Bind(0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, clrBuffer->GetID(), 0);
+    clrBuffer->Unbind();
+
     //TMP
     _tmpDSTex.CreateTexture(GL_TEXTURE_2D, graphics::Texture::DEPTH_STENCIL, 1024, 768);
     _tmpDSTex.Bind(0);
     //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _tmpDSTex.GetID(), 0);
     _tmpDSTex.Unbind();
     //TMP
-    //
+
     _tmpStenDepthRB.CreateRenderBuffer(graphics::RenderBuffer::DEPTH_STENCIL, 1024, 768);
     _tmpStenDepthRB.Bind();
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _tmpStenDepthRB.GetID());
@@ -75,33 +81,6 @@ void Core::SetWindow(corewindow::CoreWindow* window)
       std::cout << "TMP framebuffer init error" << std::endl;
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    //_tmpQuad = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(0.1f, 0.f, 1.5f), glm::vec3(0.f), glm::vec3(1.f), _materials[0], _textures[6]);
-
-    //Quad
-    float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-    // positions   // texCoords
-    -1.0f,  1.0f,  0.0f, 1.0f,
-    -1.0f, -1.0f,  0.0f, 0.0f,
-    1.0f, -1.0f,  1.0f, 0.0f,
-
-    -1.0f,  1.0f,  0.0f, 1.0f,
-    1.0f, -1.0f,  1.0f, 0.0f,
-    1.0f,  1.0f,  1.0f, 1.0f
-    };
-
-    glGenVertexArrays(1, &_tmpQuadVAO);
-    glGenBuffers(1, &_tmpQuadVBO);
-    glBindVertexArray(_tmpQuadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, _tmpQuadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-    //Shader
-    _tmpShader = ResourceManager::Instance().LoadShaderProgram("screen_quad", 4, 5, "screen_quad.vert", "screen_quad.frag");
     //~Addition frame buffer test
   }
 }
@@ -152,34 +131,18 @@ void Core::Render()
     rootNode->Render(_viewMat, _projectionMat, _camera, _lightManager);
 
   //Second Pass
- // auto btn = std::make_shared<MeshNode>(std::make_shared<Quad>(), glm::vec3(100.f, 718.f, 0.f), glm::vec3(0.f), glm::vec3(200.f, 100.f, 1.f), _materials[2]);
-
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDisable(GL_DEPTH_TEST);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
-  _tmpShader->SetUniform("screenTexture", 0);
-  _tmpShader->Use();
 
-  glBindVertexArray(_tmpQuadVAO);
-
-  _tmpClrBuffer.Bind(0);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  _tmpClrBuffer.Unbind();
-
-  //draw here a second quad
+  ResourceManager::Instance().GetMeshNode("tmp_screen")->Render(glm::mat4{ 1.f }, glm::mat4{ 1.f }, nullptr, nullptr);
 
   glEnable(GL_DEPTH_TEST); //return depth test
 
-  //End draw
+  //End draw(Move to endDraw func?)
   _window->SwapBuffers();
   glFlush();
-
-  //Clear up all (Move to endDraw func?)
-  glBindVertexArray(0);
-  glUseProgram(0);
-  glActiveTexture(0);
-  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Core::SetCamera(std::shared_ptr<Camera> camera, float fov, float nearPlane, float farPlane)

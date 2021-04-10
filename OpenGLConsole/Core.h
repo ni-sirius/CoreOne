@@ -89,13 +89,8 @@ namespace coreone
 
     //DEPRECATED
     unsigned int _tmpFramebuffer;
-    graphics::Texture _tmpClrBuffer;
     graphics::Texture _tmpDSTex;
     graphics::RenderBuffer _tmpStenDepthRB;
-    unsigned int _tmpQuadVAO;
-    unsigned int _tmpQuadVBO;
-    std::shared_ptr<graphics::Shader> _tmpShader;
-    //MeshNode _tmpQuad;
 
   private:
     bool initGLEW();
