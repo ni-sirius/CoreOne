@@ -39,10 +39,11 @@ void MeshNode::Render(glm::mat4 viewMat, glm::mat4 projectionMat,
     if (_coreState)
       _coreState->setState();
 
-    _material->SetMaterialState(_modelMatrix, viewMat, projectionMat, camera->GetCameraPosition(), *lightManager);
+    glm::vec3 cameraPos{ 0.f };
+    if (camera)
+      cameraPos = camera->GetCameraPosition();
 
-    //bind VAO
-    //glBindVertexArray(_VAO);
+    _material->SetMaterialState(_modelMatrix, viewMat, projectionMat, cameraPos, lightManager);
 
     //Main draw call
     _primitive->DrawPrimitive();

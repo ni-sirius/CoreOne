@@ -14,7 +14,7 @@ Material::Material(glm::vec3 ambient,
 }
 
 void Material::SetMaterialState(glm::mat4 modelMat, glm::mat4 viewMat, glm::mat4 projMat,
-                                glm::vec3 cameraPos, const LightManager& lightMan) const
+                                glm::vec3 cameraPos, std::shared_ptr<LightManager> lightMan) const
 {
   if (_shader)
   {
@@ -30,7 +30,8 @@ void Material::SetMaterialState(glm::mat4 modelMat, glm::mat4 viewMat, glm::mat4
       _specularTexture->Bind(_specularTexUnit);
     }
 
-    lightMan.LoadLightsToShader(_shader);
+    if (lightMan)
+      lightMan->LoadLightsToShader(_shader);
 
     // TODO Rewrite uniform-set system
     _shader->SetUniform("ModelMat", modelMat);

@@ -13,7 +13,7 @@ namespace coreone::graphics
     ~Material() = default;
 
     void SetMaterialState(glm::mat4 modelMat, glm::mat4 viewMat, glm::mat4 projMat, glm::vec3 cameraPos,
-                          const LightManager& lightMan) const;
+      std::shared_ptr<LightManager> lightMan) const;
     void UnsetMaterialState() const;
 
     inline void SetDiffuseTexture(std::shared_ptr<Texture> diffTex, GLint unit) {
